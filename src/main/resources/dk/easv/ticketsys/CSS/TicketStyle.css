@@ -1,17 +1,17 @@
 .root {
-    -fx-background-color: #FFFFFF; /* Білий фон */
+    -fx-background-color: #FFFFFF;
 }
 
 #couponPane, #ticketPane {
-    -fx-background-color: #FFFFFF; /* Білий фон */
-    -fx-border-color: #00A8F3; /* Блакитна рамка */
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #00A8F3;
     -fx-border-width: 3px;
     -fx-border-radius: 10px;
     -fx-padding: 15px;
 }
 
 #couponContainer, #ticketContainer {
-    -fx-background-color: #E3F2FD; /* Світло-блакитний фон контейнера */
+    -fx-background-color: #E3F2FD;
     -fx-background-radius: 15px;
     -fx-padding: 20px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.5, 0, 0);
