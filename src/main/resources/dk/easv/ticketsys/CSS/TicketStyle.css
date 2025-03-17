@@ -1,0 +1,98 @@
+.root {
+    -fx-background-color: #FFFFFF; /* Білий фон */
+}
+
+#couponPane, #ticketPane {
+    -fx-background-color: #FFFFFF; /* Білий фон */
+    -fx-border-color: #00A8F3; /* Блакитна рамка */
+    -fx-border-width: 3px;
+    -fx-border-radius: 10px;
+    -fx-padding: 15px;
+}
+
+#couponContainer, #ticketContainer {
+    -fx-background-color: #E3F2FD; /* Світло-блакитний фон контейнера */
+    -fx-background-radius: 15px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.5, 0, 0);
+}
+
+.header-box {
+    -fx-background-color: #019ee3;
+    -fx-padding: 15px;
+    -fx-background-radius: 10px;
+    -fx-alignment: center;
+}
+
+.header-label {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.ticket-content {
+    -fx-background-color: #E3F2FD;
+    -fx-background-radius: 15px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.5, 0, 0);
+}
+
+.event-name {
+    -fx-text-fill: #00A8F3;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.detail-label {
+    -fx-text-fill: #00B6FF;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.value-label {
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+}
+
+.separator-line {
+    -fx-stroke: #00A8F3;
+    -fx-stroke-width: 1.5;
+}
+
+.qr-code {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0.5, 0, 0);
+}
+
+.print-button {
+    -fx-background-color: #019ee3;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 25px;
+    -fx-border-color: #00A8F3;
+    -fx-border-width: 2px;
+}
+
+.print-button:hover {
+    -fx-background-color: #00C8FF;
+    -fx-cursor: hand;
+}
+
+.print-button:pressed {
+    -fx-background-color: #00A0E3;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+.footer-text {
+    -fx-text-fill: black;
+    -fx-font-size: 12px;
+}
+
+.valid-label {
+    -fx-text-fill: #1AC567;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-rotate: 15;
+}
