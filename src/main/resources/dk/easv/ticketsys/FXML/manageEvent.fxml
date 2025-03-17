@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.EventEditController">
+
+   <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Create/Manage event" />
+
+   <!-- Event Title -->
+   <HBox spacing="10">
+      <Label text="*Event title:" />
+      <TextField fx:id="eventTitleField" prefWidth="300" />
+   </HBox>
+
+   <!-- Start Date & Time -->
+   <HBox spacing="10">
+      <Label text="*Start date and time:" />
+      <TextField fx:id="startDateField" prefWidth="300" />
+   </HBox>
+
+   <!-- End Date & Time -->
+   <HBox spacing="10">
+      <Label text="End date and time:" />
+      <TextField fx:id="endDateField" prefWidth="300" />
+   </HBox>
+
+   <!-- Location -->
+   <HBox spacing="10">
+      <Label text="Location:" />
+      <TextField fx:id="locationField" prefWidth="300" />
+   </HBox>
+
+   <!-- Location Guidance -->
+   <HBox spacing="10">
+      <Label text="Location guidance:" />
+      <TextField fx:id="locationGuidanceField" prefWidth="300" />
+   </HBox>
+
+   <!-- Type of Event -->
+   <HBox spacing="10">
+      <Label text="Type of event:" />
+      <ComboBox fx:id="eventTypeComboBox" prefWidth="200" />
+      <Button text="New event type" />
+   </HBox>
+
+   <!-- Image Selection -->
+   <HBox spacing="10">
+      <Label text="Image:" />
+      <TextField fx:id="imagePathField" prefWidth="250" />
+      <Button text="Browse" />
+   </HBox>
+
+   <!-- Active Tickets -->
+   <Label text="Active type of tickets:" />
+   <FlowPane hgap="10" vgap="5">
+      <CheckBox text="Normal" />
+      <CheckBox text="VIP" />
+      <CheckBox text="Guest" />
+      <CheckBox text="Fast track" />
+      <CheckBox text="Participant" />
+      <CheckBox text="Chuck Noris" />
+      <CheckBox text="Some very important person, who is famous" />
+      <CheckBox text="Madonna" />
+      <CheckBox text="Steve Jobs" />
+   </FlowPane>
+
+   <!-- Special Tickets -->
+   <Label text="Special tickets:" />
+   <FlowPane hgap="10" vgap="5">
+      <CheckBox text="Free beer" />
+      <CheckBox text="Free pizza" />
+      <CheckBox text="Free taxi" />
+   </FlowPane>
+
+   <!-- Description -->
+   <Label text="*Description:" />
+   <TextArea fx:id="descriptionArea" prefHeight="100" prefWidth="400" />
+
+   <!-- Buttons -->
+   <HBox alignment="CENTER" spacing="10">
+      <Button text="Delete ticket type" />
+      <Button text="Add ticket type" />
+      <Button onAction="#cancel" text="Cancel" />
+      <Button fx:id="saveBtn" text="Save" />
+   </HBox>
+
+</VBox>

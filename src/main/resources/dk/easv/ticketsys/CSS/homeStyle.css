@@ -1,0 +1,190 @@
+#leftBox
+{
+    -fx-min-width: 125px;
+    -fx-pref-width: 125px;
+}
+#vSeparator
+{
+}
+#rightBox
+{
+    -fx-pref-width: 475px;
+}
+#title
+{
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 20px 0px 0px 20px;
+}
+#currentP
+{
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-translate-x: -20px;
+}
+#eventsPane
+{
+}
+#card
+{
+    -fx-background-color: #E8E8E8;
+    -fx-border-color: #019ee3;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-pref-width: 300px;
+}
+#cardText
+{
+    -fx-font-family: Arial;
+    -fx-font-size: 14px;
+}
+#cardButton
+{
+    -fx-background-color: #019ee3;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-min-height: 30px;
+}
+#cardTitle
+{
+    -fx-font-family: Arial;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+#eventTitle
+{
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+#description
+{
+    -fx-max-width: 610px;
+}
+#coordinator
+{
+    -fx-font-size: 12px;
+    -fx-text-fill: gray;
+}
+#time
+{
+    -fx-font-size: 12px;
+    -fx-text-fill: gray;
+}
+#link
+{
+    -fx-font-size: 12px;
+    -fx-text-fill: #019ee3;
+    -fx-cursor: hand;
+}
+#user
+{
+    -fx-background-color: #E5E4E2;
+    -fx-background-radius: 20px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+    -fx-border-color: transparent;
+}
+#searchBox
+{
+    -fx-background-color: #F5F5F5;
+    -fx-alignment: center-left;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1px;
+}
+#search
+{
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-size: 14px;
+    -fx-text-fill: #757575;
+}
+#searchIcon
+{
+    -fx-translate-x: 5px;
+}
+#sideBtnSelected
+{
+    -fx-background-color: #f4f0ff;
+    -fx-text-fill: #019ee3;
+}
+#sideBtnNotSelected
+{
+    -fx-background-color: transparent;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+#sideBtnNotSelected:hover
+{
+    -fx-background-color: #f4f0ff;
+    -fx-text-fill: #019ee3;
+}
+#ticketCount
+{
+    -fx-font-size: 13px;
+    -fx-text-fill: grey;
+}
+#newEvent
+{
+    -fx-background-color: #019ee3;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+#newUser
+{
+    -fx-translate-x: 270px;
+    -fx-background-color: #019ee3;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+#inputField
+{
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-pref-width: 190px;
+    -fx-min-width: 190px;
+}
+#descInput
+{
+    -fx-pref-height: 100px;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+}
+#addNewEvent
+{
+    -fx-background-color: #019ee3;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 100px;
+    -fx-cursor: hand;
+}
+#userCard
+{
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 5px;
+    -fx-min-width: 430px;
+    -fx-padding: 10px;
+    -fx-pref-width: 580px;
+}
+#username
+{
+    -fx-font-weight: bold;
+}
+#infoLabel
+{
+    -fx-text-fill: grey;
+}
