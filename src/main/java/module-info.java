@@ -1,6 +1,9 @@
 module dk.easv.ticketsys {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
+    requires java.naming;
+    requires com.microsoft.sqlserver.jdbc;
 
 
     opens dk.easv.ticketsys to javafx.fxml;
