@@ -3,6 +3,7 @@ package dk.easv.ticketsys.PL;
 import dk.easv.ticketsys.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -31,6 +32,8 @@ public class AdminController
     private FlowPane eventsPane;
     @FXML
     private Label currentP;
+    @FXML
+    private Button newUser;
     private Image usersSel = new Image(getClass().getResourceAsStream("/dk/easv/ticketsys/Images/user.png"));
     private Image eventsSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png"));
     private Image usersNotSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/userNotSel.png"));
@@ -55,6 +58,8 @@ public class AdminController
             currentP.setText("Events");
             eventsPane.getChildren().clear();
             eventsPane.getChildren().setAll(events);
+            newUser.setVisible(false);
+            newUser.setDisable(true);
         }
     }
 
@@ -74,7 +79,15 @@ public class AdminController
             currentP.setText("Users");
             eventsPane.getChildren().clear();
             eventsPane.getChildren().setAll(users);
+            newUser.setVisible(true);
+            newUser.setDisable(false);
         }
+    }
+
+    @FXML
+    private void newUserTab()
+    {
+
     }
 
     private HBox createEventCard(InputStream imagePath, String title, String location, String dateTime) {
@@ -124,11 +137,9 @@ public class AdminController
     }
 
     private VBox createUserCard(String name, String email, String type) {
-        VBox row = new VBox(-10);
-        row.setId("usersCard");
-        row.setAlignment(Pos.CENTER_LEFT);
-
-        VBox userInfo = new VBox(5);
+        VBox card = new VBox(5);
+        card.setOnMouseClicked(_ -> { });
+        card.setId("usersCard");
 
         Label nameLabel = new Label(name);
         nameLabel.setId("cardTitle");
@@ -137,22 +148,7 @@ public class AdminController
 
         Label typeLabel = new Label("Type: " + type);
 
-        userInfo.getChildren().addAll(nameLabel, emailLabel, typeLabel);
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        Hyperlink editLink = new Hyperlink("Edit");
-        editLink.setId("link");
-
-        Hyperlink deleteLink = new Hyperlink("Delete");
-        deleteLink.setId("link");
-
-        HBox actions = new HBox(10, editLink, deleteLink);
-        actions.setAlignment(Pos.CENTER_RIGHT);
-
-        row.getChildren().addAll(userInfo, spacer, actions);
-
-        return row;
+        card.getChildren().addAll(nameLabel, emailLabel, typeLabel);
+        return card;
     }
 }

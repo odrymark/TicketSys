@@ -179,6 +179,7 @@
     -fx-border-width: 2px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
-    -fx-pref-width: 300px;
+    -fx-pref-width: 200px;
     -fx-padding: 10px 10px 10px 10px;
+    -fx-cursor: hand;
 }
