@@ -25,7 +25,7 @@
 #eventsPane
 {
 }
-#card
+#eventsCard
 {
     -fx-background-color: #E8E8E8;
     -fx-border-color: #019ee3;
@@ -172,19 +172,13 @@
     -fx-pref-width: 100px;
     -fx-cursor: hand;
 }
-#userCard
+#usersCard
 {
-    -fx-border-color: #E0E0E0;
-    -fx-border-radius: 5px;
-    -fx-min-width: 430px;
-    -fx-padding: 10px;
-    -fx-pref-width: 580px;
-}
-#username
-{
-    -fx-font-weight: bold;
-}
-#infoLabel
-{
-    -fx-text-fill: grey;
+    -fx-background-color: #E8E8E8;
+    -fx-border-color: #019ee3;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-pref-width: 300px;
+    -fx-padding: 10px 10px 10px 10px;
 }

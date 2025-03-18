@@ -45,7 +45,7 @@ public class CoordinatorController
         }
     }
 
-    private static HBox createEventCard(InputStream imagePath, String title, String location, String dateTime) {
+    private HBox createEventCard(InputStream imagePath, String title, String location, String dateTime) {
         HBox card = new HBox();
         card.setSpacing(10);
         card.setPadding(new Insets(10));

@@ -1,16 +1,17 @@
 package dk.easv.ticketsys.PL;
 
 import dk.easv.ticketsys.Main;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 import java.io.InputStream;
@@ -28,10 +29,14 @@ public class AdminController
     private ImageView eventsImage;
     @FXML
     private FlowPane eventsPane;
+    @FXML
+    private Label currentP;
     private Image usersSel = new Image(getClass().getResourceAsStream("/dk/easv/ticketsys/Images/user.png"));
     private Image eventsSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png"));
     private Image usersNotSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/userNotSel.png"));
     private Image eventsNotSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/eventsNotSel.png"));
+    private ObservableList<HBox> events = FXCollections.observableArrayList();
+    private ObservableList<VBox> users = FXCollections.observableArrayList();
     private final Button temp = new Button();
 
     @FXML
@@ -39,20 +44,25 @@ public class AdminController
     {
         if(!isEventsWin)
         {
+            //TEMPORARY TEST FOR EVENT CARDS
+            events.add(createEventCard(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/eventsNotSel.png"), "Title", "Location", "2025-02-12 19:30"));
+
             sideBtnNotSelected.setId("sideBtnNotSelected");
             sideBtnSelected.setId("sideBtnSelected");
             usersImage.setImage(usersNotSel);
             eventsImage.setImage(eventsSel);
             isEventsWin = true;
+            currentP.setText("Events");
+            eventsPane.getChildren().clear();
+            eventsPane.getChildren().setAll(events);
         }
     }
 
     @FXML
     private void usersTab()
     {
-        //TEMPORARY TEST FOR CARDS
-        eventsPane.getChildren().add(createEventCard(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/eventsNotSel.png"), "Title", "Location", "2025-02-12 19:30"));
-
+        //TEMPORARY TEST FOR USER CARDS
+        users.add(createUserCard("User", "user@email.com", "User"));
 
         if(isEventsWin)
         {
@@ -61,14 +71,17 @@ public class AdminController
             usersImage.setImage(usersSel);
             eventsImage.setImage(eventsNotSel);
             isEventsWin = false;
+            currentP.setText("Users");
+            eventsPane.getChildren().clear();
+            eventsPane.getChildren().setAll(users);
         }
     }
 
-    private static HBox createEventCard(InputStream imagePath, String title, String location, String dateTime) {
+    private HBox createEventCard(InputStream imagePath, String title, String location, String dateTime) {
         HBox card = new HBox();
         card.setSpacing(10);
         card.setPadding(new Insets(10));
-        card.setId("card");
+        card.setId("eventsCard");
 
         ImageView eventImage = new ImageView(new Image(imagePath));
         eventImage.setFitWidth(120);
@@ -108,5 +121,38 @@ public class AdminController
         card.getChildren().addAll(eventImage, eventDetails);
 
         return card;
+    }
+
+    private VBox createUserCard(String name, String email, String type) {
+        VBox row = new VBox(-10);
+        row.setId("usersCard");
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        VBox userInfo = new VBox(5);
+
+        Label nameLabel = new Label(name);
+        nameLabel.setId("cardTitle");
+
+        Label emailLabel = new Label("Email: " + email);
+
+        Label typeLabel = new Label("Type: " + type);
+
+        userInfo.getChildren().addAll(nameLabel, emailLabel, typeLabel);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Hyperlink editLink = new Hyperlink("Edit");
+        editLink.setId("link");
+
+        Hyperlink deleteLink = new Hyperlink("Delete");
+        deleteLink.setId("link");
+
+        HBox actions = new HBox(10, editLink, deleteLink);
+        actions.setAlignment(Pos.CENTER_RIGHT);
+
+        row.getChildren().addAll(userInfo, spacer, actions);
+
+        return row;
     }
 }
