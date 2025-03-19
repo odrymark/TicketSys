@@ -1,6 +1,7 @@
 package dk.easv.ticketsys.be;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class Event {
     private int id;
@@ -29,9 +30,9 @@ public class Event {
         this.createdBy = createdBy;
     }
 
-    public Event(String title, String startDateTime, String location, int eventType, String description) {
+    public Event(String title, Timestamp startDateTime, String location, int eventType, String description) {
         this.title = title;
-        this.startDateTime = LocalDateTime.parse(startDateTime);
+        this.startDateTime = startDateTime;
         this.description = description;
         this.location = location;
         this.eventType = eventType;
