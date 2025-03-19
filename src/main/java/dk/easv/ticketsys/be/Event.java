@@ -1,6 +1,8 @@
 package dk.easv.ticketsys.be;
 
+import java.net.HttpCookie;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Event {
     private int id;
@@ -10,6 +12,7 @@ public class Event {
     private String location;
     private String locationGuidence;
     private String description;
+    private ArrayList<TicketType> ticketTypes;
 
 
 
@@ -27,6 +30,7 @@ public class Event {
         this.description = description;
         this.imgSrc = imgSrc;
         this.createdBy = createdBy;
+        this.ticketTypes = new ArrayList<>();
     }
 
     public Event(String title, String startDateTime, String location, int eventType, String description) {
@@ -35,6 +39,7 @@ public class Event {
         this.description = description;
         this.location = location;
         this.eventType = eventType;
+        this.ticketTypes = new ArrayList<>();
     }
 
     public int getId() {
@@ -115,5 +120,49 @@ public class Event {
 
     public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public void setEndDate(String s) {
+        this.endDateTime = LocalDateTime.parse(s);
+    }
+
+    public void setLocationGuide(String text) {
+        this.locationGuidence = text;
+    }
+
+    public void setNotes(String text) {
+        this.description = text;
+    }
+
+    public void setTypeOfEvent(int a) {
+        this.eventType = a;
+    }
+
+    public void setTicketTypes(ArrayList<TicketType> ticketTypes) {
+        this.ticketTypes.addAll(ticketTypes);
+    }
+
+    public String getStartDate() {
+        return startDateTime.toString();
+    }
+
+    public String getEndDate() {
+        return endDateTime.toString();
+    }
+
+    public String imageSrcProperty() {
+        return imgSrc;
+    }
+
+    public String getLocationGuide() {
+        return locationGuidence;
+    }
+
+    public int getTypeOfEvent() {
+        return eventType;
+    }
+
+    public String getNotes() {
+        return description;
     }
 }
