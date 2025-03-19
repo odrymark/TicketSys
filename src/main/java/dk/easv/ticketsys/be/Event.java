@@ -10,6 +10,10 @@ public class Event {
     private String location;
     private String locationGuidence;
     private String description;
+
+
+
+    private int eventType;
     private String imgSrc;
     private int createdBy;
 
@@ -23,6 +27,14 @@ public class Event {
         this.description = description;
         this.imgSrc = imgSrc;
         this.createdBy = createdBy;
+    }
+
+    public Event(String title, String startDateTime, String location, int eventType, String description) {
+        this.title = title;
+        this.startDateTime = LocalDateTime.parse(startDateTime);
+        this.description = description;
+        this.location = location;
+        this.eventType = eventType;
     }
 
     public int getId() {
@@ -55,6 +67,14 @@ public class Event {
 
     public void setEndDateTime(LocalDateTime endDateTime) {
         this.endDateTime = endDateTime;
+    }
+
+    public int getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(int eventType) {
+        this.eventType = eventType;
     }
 
     public String getLocation() {

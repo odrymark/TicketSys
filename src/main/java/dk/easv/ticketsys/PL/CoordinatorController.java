@@ -33,7 +33,7 @@ public class CoordinatorController
     {
         try
         {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/manageEvent.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/new_event.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = (Stage) newEvent.getScene().getWindow();
             stage.setScene(scene);

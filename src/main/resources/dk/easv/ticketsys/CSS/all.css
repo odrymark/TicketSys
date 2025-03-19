@@ -1,0 +1,40 @@
+.button {
+        -fx-background-color: #f0f0f0;
+        -fx-background-radius: 15;
+        -fx-border-radius: 15;
+        -fx-border-color: transparent;
+        -fx-font-size: 14px;
+        -fx-font-weight: bold;
+        -fx-text-fill: #333;
+        -fx-padding: 5 20;
+}
+.button:pressed {
+        -fx-background-color: #dcdcdc;
+}
+
+.inside_form_button {
+        -fx-font-size: 12px;
+        -fx-padding: 2 5;
+}
+
+.header_text {
+        -fx-text-fill: black;
+        -fx-font-weight: bold;
+        -fx-font-size: 16;
+}
+
+.shader_background {
+        -fx-background-color: #f0f0f0;
+        -fx-opacity: 0.55;
+}
+
+.bold_default_size {
+        -fx-font-weight: bold;
+}
+
+.popup_background {
+        -fx-background-color: #d00000;
+        -fx-opacity: 0.9;
+        -fx-background-radius: 5;
+        -fx-border-radius: 5;
+}

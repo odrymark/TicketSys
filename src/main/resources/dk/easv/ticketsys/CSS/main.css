@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Allan:wght@400;700&family=Luckiest+Guy&display=swap');
+
+.root {
+    -fx-background-color: #FFF;
+}
+
+.left-pane {
+    -fx-border-color: transparent #000000 transparent transparent; /* Only right border */
+    -fx-border-width: 0 2px 0 0;
+    -fx-padding: 10;
+}
+
+.bottom-pane {
+    -fx-background-color: #d00000;
+}
+.bottomBar {
+    -fx-background-color: #d00000;
+}
+
+.other_header {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-effect: dropshadow(gaussian, grey, 3, 0.5, 0.2, 0.1);
+}
+
+.luckiest-guy-regular {
+    -fx-font-family: "Luckiest Guy", serif;
+    -fx-font-weight: 400;
+    -fx-font-style: normal;
+}
+
+.allan-regular {
+    -fx-font-family: "Allan", serif;
+    -fx-font-weight: 400;
+    -fx-font-style: normal;
+}
+
+.allan-bold {
+    -fx-font-family: "Allan", serif;
+    -fx-font-weight: 700;
+    -fx-font-style: normal;
+}
+
+#menuButton {
+    -fx-font-size: 20;
+}

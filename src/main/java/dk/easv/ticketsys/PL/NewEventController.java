@@ -2,12 +2,14 @@ package dk.easv.ticketsys.PL;
 
 import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.EventType;
 import dk.easv.ticketsys.be.TicketType;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -112,6 +114,33 @@ public class NewEventController implements Initializable {
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
+        ArrayList<Integer> ticketTypes = new ArrayList<>();
+        for (Node node : flowTicketTypes.getChildren()) {
+            if (node instanceof CheckBox) {
+                CheckBox cb = (CheckBox) node;
+                if (cb.isSelected()) {
+                    String cbId = cb.getId();
+                    String cbIdSplit = cbId.split("_")[1];
+                    int id = Integer.parseInt(cbIdSplit);
+                    System.out.println(cb.getText());
+                    ticketTypes.add(id);
+                }
+            }
+        }
+        for (Node node : flowSpecialTickets.getChildren()) {
+            if (node instanceof CheckBox) {
+                CheckBox cb = (CheckBox) node;
+                if (cb.isSelected()) {
+                    String cbId = cb.getId();
+                    String cbIdSplit = cbId.split("_")[1];
+                    int id = Integer.parseInt(cbIdSplit);
+                    ticketTypes.add(id);
+                }
+            }
+        }
+        if (!ticketTypes.isEmpty()) {
+            eventToSave.setTicketTypes(ticketTypes);
+        }
         System.out.println(eventToSave.toString());
         System.out.println("Saving...");
     }
@@ -316,13 +345,13 @@ public class NewEventController implements Initializable {
         return ticketTypes;
     }
     public void getDummyType() {
-        ArrayList<String> dummyTypes = new ArrayList<>();
-        dummyTypes.add("Normal");
-        dummyTypes.add("Culture");
-        dummyTypes.add("Sport");
-        dummyTypes.add("Hiking");
-        dummyTypes.add("Sight seeing");
-        dummyTypes.add("Dance");
+        ArrayList<EventType> dummyTypes = new ArrayList<>();
+        dummyTypes.add(new EventType(1, "Normal"));
+        dummyTypes.add(new EventType(2, "Culture"));
+        dummyTypes.add(new EventType(3, "Sport"));
+        dummyTypes.add(new EventType(4, "Hiking"));
+        dummyTypes.add(new EventType(5, "Sight seeing"));
+        dummyTypes.add(new EventType(6, "Dance"));
         dropEventType.getItems().clear();
         dropEventType.getItems().addAll(dummyTypes);
     }

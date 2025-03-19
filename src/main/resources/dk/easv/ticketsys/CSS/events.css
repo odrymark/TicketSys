@@ -1,0 +1,26 @@
+/* Table Header Styling */
+.table-view .column-header-background {
+    -fx-background-color: #d00000;
+}
+
+.table-view .column-header .label {
+    -fx-background-color: #d00000;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
+
+/* Row Alternating Colors */
+.table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
+.table-row-cell:even {
+    -fx-background-color: white;
+}
+
+/* Selected Row */
+.table-row-cell:selected {
+    -fx-background-color: #f4a43b;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+}
