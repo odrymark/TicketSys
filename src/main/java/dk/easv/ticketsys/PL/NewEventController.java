@@ -114,7 +114,7 @@ public class NewEventController implements Initializable {
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
-        ArrayList<Integer> ticketTypes = new ArrayList<>();
+        ArrayList<TicketType> ticketTypes = new ArrayList<>();
         for (Node node : flowTicketTypes.getChildren()) {
             if (node instanceof CheckBox) {
                 CheckBox cb = (CheckBox) node;
@@ -122,8 +122,9 @@ public class NewEventController implements Initializable {
                     String cbId = cb.getId();
                     String cbIdSplit = cbId.split("_")[1];
                     int id = Integer.parseInt(cbIdSplit);
+                    String name = cb.getText();
                     System.out.println(cb.getText());
-                    ticketTypes.add(id);
+                    ticketTypes.add(new TicketType(id, name, false));
                 }
             }
         }
@@ -134,7 +135,9 @@ public class NewEventController implements Initializable {
                     String cbId = cb.getId();
                     String cbIdSplit = cbId.split("_")[1];
                     int id = Integer.parseInt(cbIdSplit);
-                    ticketTypes.add(id);
+                    String name = cb.getText();
+                    ticketTypes.add(new TicketType(id, name, true));
+
                 }
             }
         }

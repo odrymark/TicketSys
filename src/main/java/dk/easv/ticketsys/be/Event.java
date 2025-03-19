@@ -2,6 +2,8 @@ package dk.easv.ticketsys.be;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class Event {
     private int id;
@@ -17,6 +19,7 @@ public class Event {
     private int eventType;
     private String imgSrc;
     private int createdBy;
+    private ArrayList<TicketType> ticketTypes;
 
     public Event(int id, String title, Timestamp startDateTime, Timestamp endDateTime, String location, String locationGuidence, String description, String imgSrc, int createdBy) {
         this.id = id;
@@ -28,14 +31,16 @@ public class Event {
         this.description = description;
         this.imgSrc = imgSrc;
         this.createdBy = createdBy;
+        this.ticketTypes = new ArrayList<>();
     }
 
-    public Event(String title, Timestamp startDateTime, String location, int eventType, String description) {
+    public Event(String title, String startDateTime, String location, int eventType, String description) {
         this.title = title;
-        this.startDateTime = startDateTime;
+        this.startDateTime = Timestamp.valueOf(startDateTime);
         this.description = description;
         this.location = location;
         this.eventType = eventType;
+        this.ticketTypes = new ArrayList<>();
     }
 
     public int getId() {
@@ -144,5 +149,26 @@ public class Event {
 
     public String getNotes() {
         return description;
+    }
+
+    public void setEndDate(String s) {
+        this.endDateTime = Timestamp.valueOf(s);
+    }
+
+    public void setLocationGuide(String text) {
+        this.locationGuidence = text;
+    }
+
+    public void setNotes(String text) {
+        this.description = text;
+    }
+
+    public void setTypeOfEvent(int a) {
+        this.eventType = a;
+    }
+
+    public void setTicketTypes(ArrayList<TicketType> ticketTypes) {
+        this.ticketTypes.clear();
+        this.ticketTypes.addAll(ticketTypes);
     }
 }
