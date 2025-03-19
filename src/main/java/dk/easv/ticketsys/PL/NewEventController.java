@@ -117,6 +117,7 @@ public class NewEventController implements Initializable {
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
+        eventToSave.setImgSrc(txtFileName.getText());
         ArrayList<TicketType> ticketTypes = new ArrayList<>();
         for (Node node : flowTicketTypes.getChildren()) {
             if (node instanceof CheckBox) {
@@ -198,8 +199,12 @@ public class NewEventController implements Initializable {
         }
     }
 
-    @FXML private void btnImageClicked(ActionEvent event) {
-        System.out.println("Browse");
+    @FXML private void btnImageClicked(ActionEvent event) throws TicketExceptions {
+        BLLManager bllManager = new BLLManager();
+        String filePath = bllManager.chooseFile(btnImage.getScene().getWindow());
+        if (filePath != null) {
+            txtFileName.setText(filePath);
+        }
     }
 
     @FXML private void btnDeleteTicketType(ActionEvent event) {
