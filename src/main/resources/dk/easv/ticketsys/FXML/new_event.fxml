@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="500.0" prefWidth="600.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.NewEventController">
+    <children>
+        <VBox alignment="TOP_CENTER" spacing="5.0">
+            <children>
+                <Label fx:id="lblTitle" styleClass="header_text" text="Create/Manage event" />
+                <GridPane fx:id="gridPaneForm">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="206.20001220703125" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="392.5999877929687" minWidth="10.0" prefWidth="372.5999877929687" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="ALWAYS" />
+                        <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="ALWAYS" />
+                        <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label text="*Event title:" />
+                        <TextField fx:id="txtTitle" promptText="Title" GridPane.columnIndex="1" />
+                        <Label layoutX="20.0" layoutY="16.0" text="*Start date &amp; time:" GridPane.rowIndex="1" />
+                        <Label layoutX="20.0" layoutY="16.0" text="End date &amp; time:" GridPane.rowIndex="2" />
+                        <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <children>
+                                <DatePicker fx:id="dateStart">
+                                    <HBox.margin>
+                                        <Insets right="10.0" />
+                                    </HBox.margin>
+                                </DatePicker>
+                                <Spinner fx:id="spStartHour" maxWidth="70.0" />
+                                <Spinner fx:id="spStartMinute" maxWidth="70.0" />
+                            </children>
+                        </HBox>
+                        <HBox layoutX="217.0" layoutY="40.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <children>
+                                <DatePicker fx:id="dateEnd" disable="true">
+                                    <HBox.margin>
+                                        <Insets right="10.0" />
+                                    </HBox.margin>
+                                </DatePicker>
+                                <Spinner fx:id="spEndHour" maxWidth="70.0" />
+                                <Spinner fx:id="spEndMinute" maxWidth="70.0" />
+                            </children>
+                        </HBox>
+                        <Label layoutX="20.0" layoutY="16.0" text="Location:" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtLocation" promptText="location" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label layoutX="20.0" layoutY="16.0" text="Location guidance:" GridPane.rowIndex="4" />
+                        <TextArea fx:id="txtaLocation" prefHeight="200.0" prefWidth="200.0" promptText="how to get there" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label layoutX="20.0" layoutY="16.0" text="Type of event:" GridPane.rowIndex="5" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                            <children>
+                                <ChoiceBox fx:id="dropEventType" prefWidth="200.0">
+                                    <HBox.margin>
+                                        <Insets right="5.0" />
+                                    </HBox.margin>
+                                </ChoiceBox>
+                                <TextField fx:id="txtNewEventType" managed="false" prefWidth="200.0" promptText="Add new event type">
+                                    <HBox.margin>
+                                        <Insets right="10.0" />
+                                    </HBox.margin>
+                                </TextField>
+                                <Button fx:id="btnEventType" mnemonicParsing="false" onAction="#btnEventTypeClicked" styleClass="inside_form_button" text="New event type" />
+                            </children>
+                        </HBox>
+                        <Label layoutX="20.0" layoutY="16.0" text="Image:" GridPane.rowIndex="6" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                            <children>
+                                <TextField fx:id="txtFileName" disable="true" prefWidth="200.0" promptText="Filename">
+                                    <HBox.margin>
+                                        <Insets right="10.0" />
+                                    </HBox.margin>
+                                </TextField>
+                                <Button fx:id="btnImage" mnemonicParsing="false" onAction="#btnImageClicked" styleClass="inside_form_button" text="Browse" />
+                            </children>
+                        </HBox>
+                        <Label layoutX="20.0" layoutY="16.0" text="Active type of tickets:" GridPane.rowIndex="7" />
+                        <FlowPane fx:id="flowTicketTypes" hgap="10.0" maxHeight="1.7976931348623157E308" rowValignment="TOP" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.vgrow="ALWAYS" />
+                        <Label layoutX="20.0" layoutY="16.0" text="Special tickets:" GridPane.rowIndex="8" />
+                        <FlowPane fx:id="flowSpecialTickets" hgap="10" maxHeight="Infinity" prefHeight="200.0" prefWidth="200.0" rowValignment="TOP" vgap="5" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <Label layoutX="20.0" layoutY="16.0" text="*Description:" GridPane.rowIndex="9" />
+                        <TextArea fx:id="txtaDescription" prefHeight="200.0" prefWidth="200.0" promptText="Description of the event" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+
+                    </children>
+                    <padding>
+                        <Insets left="10.0" right="10.0" />
+                    </padding>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </GridPane>
+                <Region VBox.vgrow="ALWAYS">
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                </Region>
+                <HBox alignment="BOTTOM_RIGHT" prefHeight="30">
+                    <children>
+                        <Button fx:id="btnDeleteTicketType" layoutX="257.0" layoutY="10.0" onAction="#btnDeleteTicketType" text="Delete ticket type">
+                            <HBox.margin>
+                                <Insets bottom="15.0" right="10.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnAddTicketType" onAction="#btnAddTicketTypeClicked" text="Add ticket type">
+                            <HBox.margin>
+                                <Insets bottom="15.0" right="10.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnCancel" onAction="#btnCancelClicked" text="Cancel">
+                            <HBox.margin>
+                                <Insets bottom="15.0" right="10.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnSave" onAction="#btnSaveClicked" text="Save">
+                            <HBox.margin>
+                                <Insets bottom="15.0" right="10.0" />
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets left="10.0" right="10.0" />
+            </padding>
+        </VBox>
+        <VBox fx:id="vboxShader" prefHeight="500.0" prefWidth="600.0" styleClass="shader_background" visible="false" />
+        <VBox fx:id="vboxNewTicketType" alignment="TOP_CENTER" maxHeight="200.0" maxWidth="280.0" prefHeight="200.0" prefWidth="280.0" spacing="5.0" styleClass="popup_background" visible="false">
+            <children>
+                <Label fx:id="lblNewTicketTitle" styleClass="bold_default_size" text="New ticket type">
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Label>
+                <HBox fx:id="hbNewEventTitle" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                    <children>
+                        <Label text="Name:">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </Label>
+                        <TextField fx:id="txtNewTicketType">
+                            <HBox.margin>
+                                <Insets left="57.0" />
+                            </HBox.margin>
+                        </TextField>
+                    </children>
+                </HBox>
+                <HBox fx:id="hbConnectEvent" visible="false">
+                    <children>
+                        <Label fx:id="lblConnectToEvent" text="Connect to event">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </Label>
+                        <ChoiceBox fx:id="choiceEvents" prefWidth="150.0">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </ChoiceBox>
+                    </children>
+                </HBox>
+                <CheckBox fx:id="chkSpecialInNewTicketType" text="Is it special ticket?" />
+                <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                    <children>
+                        <Button fx:id="btnNewTicketCancel" mnemonicParsing="false" onAction="#btnNewTicketCancelClicked" styleClass="inside_form_button" text="Cancel">
+                            <HBox.margin>
+                                <Insets bottom="10.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Button fx:id="btnNewTicketSave" mnemonicParsing="false" onAction="#btnNewTicketSaveClicked" styleClass="inside_form_button" text="Add">
+                            <HBox.margin>
+                                <Insets bottom="10.0" left="10.0" right="10.0" />
+                            </HBox.margin>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</StackPane>
