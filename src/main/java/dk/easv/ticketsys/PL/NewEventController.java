@@ -4,6 +4,8 @@ import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.be.EventType;
 import dk.easv.ticketsys.be.TicketType;
+import dk.easv.ticketsys.bll.BLLManager;
+import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -107,7 +109,7 @@ public class NewEventController implements Initializable {
         showNewTicketPopup();
     }
 
-    @FXML private void btnCancelClicked(ActionEvent event) {
+    @FXML private void btnCancelClicked() {
         try
         {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
@@ -122,7 +124,7 @@ public class NewEventController implements Initializable {
         }
     }
 
-    @FXML private void btnSaveClicked(ActionEvent event) {
+    @FXML private void btnSaveClicked(ActionEvent event) throws TicketExceptions {
         LocalDate startDate = dateStart.getValue();
         LocalDate endDate = dateEnd.getValue();
         if (startDate == null) {
@@ -131,17 +133,19 @@ public class NewEventController implements Initializable {
         }
         String startDateString = startDate.toString() + " "
                 + formatTime((Integer) spStartHour.getValueFactory().getValue()) + ":"
-                + formatTime((Integer) spStartMinute.getValueFactory().getValue());
-        Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), 1, "a.jpg" );
+ oleksandr_8c
+            
 
-        if (endDate != null) {
-            eventToSave.setEndDate(endDate.toString() + " " + formatTime((Integer) spEndHour.getValueFactory().getValue())
-                    + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()));
-        }
-
+                + formatTime((Integer) spStartMinute.getValueFactory().getValue()) + ":00";
+        System.out.println(startDateString);
+        Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), 1, "a.jpg", 14 );
+        eventToSave.setEndDate(endDate.toString() + " " + formatTime((Integer) spEndHour.getValueFactory().getValue())
+                + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()) + ":00");
+ master
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
+        eventToSave.setImgSrc(txtFileName.getText());
         ArrayList<TicketType> ticketTypes = new ArrayList<>();
         for (Node node : flowTicketTypes.getChildren()) {
             if (node instanceof CheckBox cb) {
@@ -169,11 +173,19 @@ public class NewEventController implements Initializable {
             eventToSave.setTicketTypes(ticketTypes);
         }
 
-        System.out.println("Saving event: " + eventToSave.getTitle());
-        System.out.println("With ticket types: ");
-        for (TicketType tt : ticketTypes) {
-            System.out.println("   -> " + tt.getId() + " " + tt.getName() + " (special=" + tt.getSpecial() + ")");
+
+       
+
+        BLLManager bllManager = new BLLManager();
+        int newId = bllManager.uploadNewEvent(eventToSave);
+        if (newId > 0) {
+            eventToSave.setId(newId);
+            btnCancelClicked();
         }
+        else
+            System.out.println("Upload did not succeed!");
+        System.out.println("Saving...");
+
     }
 
 
@@ -243,8 +255,12 @@ public class NewEventController implements Initializable {
         }
     }
 
-    @FXML private void btnImageClicked(ActionEvent event) {
-        System.out.println("Browse");
+    @FXML private void btnImageClicked(ActionEvent event) throws TicketExceptions {
+        BLLManager bllManager = new BLLManager();
+        String filePath = bllManager.chooseFile(btnImage.getScene().getWindow());
+        if (filePath != null) {
+            txtFileName.setText(filePath);
+        }
     }
 
     @FXML private void btnDeleteTicketType(ActionEvent event) {
