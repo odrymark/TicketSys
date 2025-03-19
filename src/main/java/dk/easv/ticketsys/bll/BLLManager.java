@@ -30,4 +30,7 @@ public class BLLManager {
         return null;
     }
 
+    public void deleteEvent(Event event){
+        dalManager.deleteEvent(event);
+    }
 }

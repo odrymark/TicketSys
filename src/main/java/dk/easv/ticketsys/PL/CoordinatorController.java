@@ -51,7 +51,7 @@ public class CoordinatorController
         for (Event event : events) {
             try {
                 InputStream imageStream = Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png");
-                HBox eventCard = createEventCard(imageStream, event.getTitle(), event.getLocation(), event.getStartDateTime().toString());
+                HBox eventCard = createEventCard(imageStream, event);
                 eventsPane.getChildren().add(eventCard);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -76,7 +76,7 @@ public class CoordinatorController
         }
     }
 
-    private HBox createEventCard(InputStream imagePath, String title, String location, String dateTime) {
+    private HBox createEventCard(InputStream imagePath, Event event) {
         HBox card = new HBox();
         card.setSpacing(10);
         card.setPadding(new Insets(10));
@@ -92,13 +92,13 @@ public class CoordinatorController
 
         HBox controls = new HBox(5);
 
-        Label titleLabel = new Label(title);
+        Label titleLabel = new Label(event.getTitle());
         titleLabel.setId("cardTitle");
 
-        Label locationLabel = new Label(location);
+        Label locationLabel = new Label(event.getLocation());
         locationLabel.setId("cardText");
 
-        Label dateLabel = new Label("\uD83D\uDD52 " + dateTime);
+        Label dateLabel = new Label("\uD83D\uDD52 " + event.getStartDate());
         dateLabel.setId("cardText");
 
         Button editBtn = new Button("Edit");
@@ -113,7 +113,10 @@ public class CoordinatorController
         deleteBtn.setMinWidth(40);
         deleteBtn.setId("cardButton");
         deleteBtn.setFont(new Font("Arial", 16));
-        deleteBtn.setOnAction(e -> card.setVisible(false));
+        deleteBtn.setOnAction(e -> {
+            bllManager.deleteEvent(event);
+            eventsPane.getChildren().remove(card);
+        });
 
         controls.getChildren().addAll(infoBtn, editBtn, deleteBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
