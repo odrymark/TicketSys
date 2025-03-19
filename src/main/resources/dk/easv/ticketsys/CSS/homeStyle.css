@@ -182,4 +182,10 @@
     -fx-pref-width: 200px;
     -fx-padding: 10px 10px 10px 10px;
     -fx-cursor: hand;
-}
+}.popup_background {
+     -fx-background-color: #FFFFFF;
+     -fx-border-color: #666;
+     -fx-border-width: 2px;
+     -fx-padding: 10;
+     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0.5, 0, 0);
+ }
