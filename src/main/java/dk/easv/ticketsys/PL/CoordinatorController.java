@@ -1,6 +1,9 @@
 package dk.easv.ticketsys.PL;
 
 import dk.easv.ticketsys.Main;
+import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.bll.BLLManager;
+import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -18,6 +21,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
+import java.util.List;
 
 public class CoordinatorController
 {
@@ -27,6 +31,33 @@ public class CoordinatorController
     private Button newEvent;
     @FXML
     private HBox searchBox;
+
+    private BLLManager bllManager;
+
+    @FXML
+    public void initialize() {
+        try {
+            bllManager = new BLLManager();
+            loadEvents();
+        } catch (TicketExceptions e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadEvents() {
+        eventsPane.getChildren().clear();
+
+        List<Event> events = bllManager.getAllEvents();
+        for (Event event : events) {
+            try {
+                InputStream imageStream = Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png");
+                HBox eventCard = createEventCard(imageStream, event.getTitle(), event.getLocation(), event.getStartDateTime().toString());
+                eventsPane.getChildren().add(eventCard);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @FXML
     private void newEventTab()

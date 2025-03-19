@@ -31,7 +31,7 @@ public class DALManager {
                         rs.getTimestamp("startDateTime"),
                         rs.getTimestamp("endDateTime"),
                         rs.getString("location"),
-                        rs.getString("locationGuidance"),
+                        rs.getString("locationGuidence"),
                         rs.getString("description"),
                         rs.getString("imgSrc"),
                         rs.getInt("createdBy")

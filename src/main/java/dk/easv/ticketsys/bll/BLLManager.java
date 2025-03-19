@@ -6,6 +6,8 @@ import dk.easv.ticketsys.dal.DALManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.stage.Window;
 
+import java.util.List;
+
 public class BLLManager {
     private final DALManager dalManager = new DALManager();
 
@@ -14,6 +16,10 @@ public class BLLManager {
 
     public int uploadNewEvent(Event event){
         return dalManager.uploadNewEvent(event);
+    }
+
+    public List<Event> getAllEvents(){
+        return dalManager.getAllEvents();
     }
 
     public String chooseFile(Window window){
