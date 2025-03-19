@@ -36,7 +36,9 @@ public class Event {
 
     public Event(String title, String startDateTime, String location, int eventType, String description) {
         this.title = title;
+
         this.startDateTime = Timestamp.valueOf(LocalDateTime.parse(startDateTime));
+
         this.description = description;
         this.location = location;
         this.eventType = eventType;
@@ -58,6 +60,7 @@ public class Event {
     public void setTitle(String title) {
         this.title = title;
     }
+
 
     public String getStartDateTime() {
         return String.valueOf(startDateTime.toLocalDateTime());
