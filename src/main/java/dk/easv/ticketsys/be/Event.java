@@ -117,4 +117,32 @@ public class Event {
     public void setCreatedBy(int createdBy) {
         this.createdBy = createdBy;
     }
+
+    public String getStartDate() {
+        return startDateTime.toString();
+    }
+
+    public String getEndDate() {
+        return endDateTime.toString();
+    }
+
+    public String imageSrc() {
+        return imgSrc;
+    }
+
+    public void setImageSrc(String imageSrc) {
+        this.imgSrc = imageSrc;
+    }
+
+    public String getLocationGuide() {
+        return locationGuidence;
+    }
+
+    public int getTypeOfEvent() {
+        return eventType;
+    }
+
+    public String getNotes() {
+        return description;
+    }
 }
