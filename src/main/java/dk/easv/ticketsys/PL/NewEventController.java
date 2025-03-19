@@ -133,7 +133,7 @@ public class NewEventController implements Initializable {
         }
         String startDateString = startDate.toString() + " "
                 + formatTime((Integer) spStartHour.getValueFactory().getValue()) + ":"
- oleksandr_8c
+
             
 
                 + formatTime((Integer) spStartMinute.getValueFactory().getValue()) + ":00";
@@ -141,7 +141,7 @@ public class NewEventController implements Initializable {
         Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), 1, "a.jpg", 14 );
         eventToSave.setEndDate(endDate.toString() + " " + formatTime((Integer) spEndHour.getValueFactory().getValue())
                 + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()) + ":00");
- master
+
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
