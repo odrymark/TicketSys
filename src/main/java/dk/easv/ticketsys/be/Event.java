@@ -1,19 +1,19 @@
 package dk.easv.ticketsys.be;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 public class Event {
     private int id;
     private String title;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private Timestamp startDateTime;
+    private Timestamp endDateTime;
     private String location;
     private String locationGuidence;
     private String description;
     private String imgSrc;
     private int createdBy;
 
-    public Event(int id, String title, LocalDateTime startDateTime, LocalDateTime endDateTime, String location, String locationGuidence, String description, String imgSrc, int createdBy) {
+    public Event(int id, String title, Timestamp startDateTime, Timestamp endDateTime, String location, String locationGuidence, String description, String imgSrc, int createdBy) {
         this.id = id;
         this.title = title;
         this.startDateTime = startDateTime;
@@ -41,19 +41,19 @@ public class Event {
         this.title = title;
     }
 
-    public LocalDateTime getStartDateTime() {
+    public Timestamp getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
+    public void setStartDateTime(Timestamp startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public LocalDateTime getEndDateTime() {
+    public Timestamp getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(LocalDateTime endDateTime) {
+    public void setEndDateTime(Timestamp endDateTime) {
         this.endDateTime = endDateTime;
     }
 
