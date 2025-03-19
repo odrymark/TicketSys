@@ -57,6 +57,35 @@ public class NewEventController implements Initializable {
     @FXML private Spinner spStartHour;
     @FXML private Spinner spStartMinute;
 
+    private int nextTicketTypeId = 1;//Counter for IDs of new ticket types
+    private final ArrayList<TicketType> dummyTicketTypes = new ArrayList<>();//An array of "test" (dummy) tickets
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // 1) load "fake" types into dummyTicketTypes
+        dummyTicketTypes.addAll(getDummyTicketTypes());
+        // 2) calculate what the largest ID is and continue counting +1 from it
+        findMaxTicketTypeId();
+        // 3) display CheckBoxes on the form
+        setDummyTicketTypes();
+        // 4) Fill in the ChoiceBox for the event type
+        getDummyType();
+        // 5) Configure spinners (hours/minutes) and date change listeners
+        setSpinners();
+        // 6) After loading the layout, adjust the height for flowTicketTypes
+        Platform.runLater(this::setTicketTypesHeight);
+    }
+
+    private void findMaxTicketTypeId() {
+        int maxId = 0;
+        for (TicketType t : dummyTicketTypes) {
+            if (t.getId() > maxId) {
+                maxId = t.getId();
+            }
+        }
+        nextTicketTypeId = maxId + 1;
+        System.out.println("Set nextTicketTypeId = " + nextTicketTypeId);
+    }
 
     public void setEventToEdit(Event eventToEdit) {
         if (eventToEdit != null) {
@@ -72,15 +101,6 @@ public class NewEventController implements Initializable {
             txtaDescription.setText(eventToEdit.getNotes());
             //TODO: select ticket types
         }
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-
-        setDummyTicketTypes();
-        getDummyType();
-        setSpinners();
-        Platform.runLater(this::setTicketTypesHeight);
     }
 
     @FXML private void btnAddTicketTypeClicked(ActionEvent event) {
@@ -105,23 +125,29 @@ public class NewEventController implements Initializable {
     @FXML private void btnSaveClicked(ActionEvent event) {
         LocalDate startDate = dateStart.getValue();
         LocalDate endDate = dateEnd.getValue();
+        if (startDate == null) {
+            System.out.println("Start date is null - please select it!");
+            return;
+        }
         String startDateString = startDate.toString() + " "
                 + formatTime((Integer) spStartHour.getValueFactory().getValue()) + ":"
                 + formatTime((Integer) spStartMinute.getValueFactory().getValue());
         Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), 1, "a.jpg" );
-        eventToSave.setEndDate(endDate.toString() + " " + formatTime((Integer) spEndHour.getValueFactory().getValue())
-                + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()));
+
+        if (endDate != null) {
+            eventToSave.setEndDate(endDate.toString() + " " + formatTime((Integer) spEndHour.getValueFactory().getValue())
+                    + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()));
+        }
+
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
         ArrayList<TicketType> ticketTypes = new ArrayList<>();
         for (Node node : flowTicketTypes.getChildren()) {
-            if (node instanceof CheckBox) {
-                CheckBox cb = (CheckBox) node;
+            if (node instanceof CheckBox cb) {
                 if (cb.isSelected()) {
                     String cbId = cb.getId();
-                    String cbIdSplit = cbId.split("_")[1];
-                    int id = Integer.parseInt(cbIdSplit);
+                    int id = Integer.parseInt(cbId.split("_")[1]);
                     String name = cb.getText();
                     System.out.println(cb.getText());
                     ticketTypes.add(new TicketType(id, name, false));
@@ -129,24 +155,27 @@ public class NewEventController implements Initializable {
             }
         }
         for (Node node : flowSpecialTickets.getChildren()) {
-            if (node instanceof CheckBox) {
-                CheckBox cb = (CheckBox) node;
+            if (node instanceof CheckBox cb) {
                 if (cb.isSelected()) {
                     String cbId = cb.getId();
-                    String cbIdSplit = cbId.split("_")[1];
-                    int id = Integer.parseInt(cbIdSplit);
+                    int id = Integer.parseInt(cbId.split("_")[1]);
                     String name = cb.getText();
                     ticketTypes.add(new TicketType(id, name, true));
-
                 }
             }
         }
+
         if (!ticketTypes.isEmpty()) {
             eventToSave.setTicketTypes(ticketTypes);
         }
-        System.out.println(eventToSave.toString());
-        System.out.println("Saving...");
+
+        System.out.println("Saving event: " + eventToSave.getTitle());
+        System.out.println("With ticket types: ");
+        for (TicketType tt : ticketTypes) {
+            System.out.println("   -> " + tt.getId() + " " + tt.getName() + " (special=" + tt.getSpecial() + ")");
+        }
     }
+
 
     private String formatTime(int value) {
         if (value < 10)
@@ -159,7 +188,33 @@ public class NewEventController implements Initializable {
     }
 
     @FXML private void btnNewTicketSaveClicked(ActionEvent event) {
-        //Do some stuff here
+        String newTypeName = txtNewTicketType.getText();
+        if (newTypeName == null || newTypeName.trim().isEmpty()) {
+            System.out.println("No ticket type name entered!");
+            return;
+        }
+
+        boolean isSpecial = chkSpecialInNewTicketType.isSelected();
+
+        int generatedId = nextTicketTypeId;
+        nextTicketTypeId++;
+
+        TicketType newlyCreated = new TicketType(generatedId, newTypeName, isSpecial);
+
+        CheckBox cb = new CheckBox(newTypeName);
+        cb.setId("cb_" + generatedId);
+
+        if (isSpecial) {
+            flowSpecialTickets.getChildren().add(cb);
+        } else {
+            flowTicketTypes.getChildren().add(cb);
+        }
+
+        dummyTicketTypes.add(newlyCreated);
+
+        System.out.println("Created new ticket type: " + newlyCreated.getName()
+                + " (id=" + newlyCreated.getId() + ", special=" + isSpecial + ")");
+
         closeNewTicketType();
     }
 
