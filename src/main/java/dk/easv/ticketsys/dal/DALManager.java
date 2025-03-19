@@ -93,4 +93,15 @@ public class DALManager {
             throw new RuntimeException(ex);
         }
     }
+
+    public void deleteEvent(Event event) {
+        try (Connection con = connectionManager.getConnection()) {
+            String sqlcommandDelete = "DELETE FROM Events WHERE id = ?";
+            PreparedStatement pstmtDelete = con.prepareStatement(sqlcommandDelete);
+            pstmtDelete.setInt(1, event.getId());
+            pstmtDelete.execute();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 }
