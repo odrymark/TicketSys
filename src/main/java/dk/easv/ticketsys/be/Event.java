@@ -1,14 +1,15 @@
 package dk.easv.ticketsys.be;
 
-import java.net.HttpCookie;
+
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Event {
     private int id;
     private String title;
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
+    private Timestamp startDateTime;
+    private Timestamp endDateTime;
     private String location;
     private String locationGuidence;
     private String description;
@@ -20,7 +21,7 @@ public class Event {
     private String imgSrc;
     private int createdBy;
 
-    public Event(int id, String title, LocalDateTime startDateTime, LocalDateTime endDateTime, String location, String locationGuidence, String description, String imgSrc, int createdBy) {
+    public Event(int id, String title, Timestamp startDateTime, Timestamp endDateTime, String location, String locationGuidence, String description, String imgSrc, int createdBy) {
         this.id = id;
         this.title = title;
         this.startDateTime = startDateTime;
@@ -35,7 +36,7 @@ public class Event {
 
     public Event(String title, String startDateTime, String location, int eventType, String description) {
         this.title = title;
-        this.startDateTime = LocalDateTime.parse(startDateTime);
+        this.startDateTime = Timestamp.valueOf(LocalDateTime.parse(startDateTime));
         this.description = description;
         this.location = location;
         this.eventType = eventType;
@@ -58,20 +59,20 @@ public class Event {
         this.title = title;
     }
 
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
+    public String getStartDateTime() {
+        return String.valueOf(startDateTime.toLocalDateTime());
     }
 
     public void setStartDateTime(LocalDateTime startDateTime) {
-        this.startDateTime = startDateTime;
+        this.startDateTime = Timestamp.valueOf(startDateTime);
     }
 
-    public LocalDateTime getEndDateTime() {
-        return endDateTime;
+    public String getEndDateTime() {
+        return String.valueOf(endDateTime);
     }
 
-    public void setEndDateTime(LocalDateTime endDateTime) {
-        this.endDateTime = endDateTime;
+    public void setEndDateTime(String endDateTime) {
+        this.endDateTime = Timestamp.valueOf(endDateTime);
     }
 
     public int getEventType() {
@@ -123,7 +124,7 @@ public class Event {
     }
 
     public void setEndDate(String s) {
-        this.endDateTime = LocalDateTime.parse(s);
+        this.endDateTime = Timestamp.valueOf(LocalDateTime.parse(s));
     }
 
     public void setLocationGuide(String text) {
