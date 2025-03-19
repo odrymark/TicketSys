@@ -4,6 +4,8 @@ import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.be.EventType;
 import dk.easv.ticketsys.be.TicketType;
+import dk.easv.ticketsys.bll.BLLManager;
+import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -87,7 +89,7 @@ public class NewEventController implements Initializable {
         showNewTicketPopup();
     }
 
-    @FXML private void btnCancelClicked(ActionEvent event) {
+    @FXML private void btnCancelClicked() {
         try
         {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
@@ -102,15 +104,16 @@ public class NewEventController implements Initializable {
         }
     }
 
-    @FXML private void btnSaveClicked(ActionEvent event) {
+    @FXML private void btnSaveClicked(ActionEvent event) throws TicketExceptions {
         LocalDate startDate = dateStart.getValue();
         LocalDate endDate = dateEnd.getValue();
         String startDateString = startDate.toString() + " "
                 + formatTime((Integer) spStartHour.getValueFactory().getValue()) + ":"
-                + formatTime((Integer) spStartMinute.getValueFactory().getValue());
-        Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), 1, "a.jpg" );
+                + formatTime((Integer) spStartMinute.getValueFactory().getValue()) + ":00";
+        System.out.println(startDateString);
+        Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), 1, "a.jpg", 14 );
         eventToSave.setEndDate(endDate.toString() + " " + formatTime((Integer) spEndHour.getValueFactory().getValue())
-                + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()));
+                + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()) + ":00");
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
@@ -144,7 +147,14 @@ public class NewEventController implements Initializable {
         if (!ticketTypes.isEmpty()) {
             eventToSave.setTicketTypes(ticketTypes);
         }
-        System.out.println(eventToSave.toString());
+        BLLManager bllManager = new BLLManager();
+        int newId = bllManager.uploadNewEvent(eventToSave);
+        if (newId > 0) {
+            eventToSave.setId(newId);
+            btnCancelClicked();
+        }
+        else
+            System.out.println("Upload did not succeed!");
         System.out.println("Saving...");
     }
 

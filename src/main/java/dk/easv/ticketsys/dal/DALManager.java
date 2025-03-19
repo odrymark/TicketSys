@@ -66,4 +66,31 @@ public class DALManager {
         }
         return users;
     }
+
+
+    public int uploadNewEvent(Event event) {
+        try (Connection con = connectionManager.getConnection()) {
+            int newId = 0;
+            String sqlcommandInsert = "INSERT INTO Events (title, startDateTime, endDateTime, location, " +
+                    " locationGuidence, description, imgSrc, createdBy)\n" +
+                    "OUTPUT INSERTED.ID\n" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+            PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandInsert);
+            pstmtSelect.setString(1, event.getTitle());
+            pstmtSelect.setTimestamp(2, event.getStartDateTime());
+            pstmtSelect.setTimestamp(3, event.getEndDateTime());
+            pstmtSelect.setString(4, event.getLocation());
+            pstmtSelect.setString(5, event.getLocationGuidence());
+            pstmtSelect.setString(6, event.getDescription());
+            pstmtSelect.setString(7, event.getImgSrc());
+            pstmtSelect.setInt(8, event.getCreatedBy());
+            ResultSet rs = pstmtSelect.executeQuery();
+            if (rs.next()) {
+                newId = rs.getInt(1);
+            }
+            return newId;
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 }

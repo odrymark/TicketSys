@@ -34,12 +34,14 @@ public class Event {
         this.ticketTypes = new ArrayList<>();
     }
 
-    public Event(String title, String startDateTime, String location, int eventType, String description) {
+    public Event(String title, String startDateTime, String location, int eventType, String description, int createdBy) {
         this.title = title;
+        System.out.println("be: " + startDateTime);
         this.startDateTime = Timestamp.valueOf(startDateTime);
         this.description = description;
         this.location = location;
         this.eventType = eventType;
+        this.createdBy = createdBy;
         this.ticketTypes = new ArrayList<>();
     }
 
