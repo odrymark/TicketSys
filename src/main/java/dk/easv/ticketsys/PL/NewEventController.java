@@ -59,34 +59,28 @@ public class NewEventController implements Initializable {
     @FXML private Spinner spStartHour;
     @FXML private Spinner spStartMinute;
 
-    private int nextTicketTypeId = 1;//Counter for IDs of new ticket types
     private final ArrayList<TicketType> dummyTicketTypes = new ArrayList<>();//An array of "test" (dummy) tickets
+    private final BLLManager bllManager = new BLLManager();
+
+    public NewEventController() throws TicketExceptions {
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // 1) load "fake" types into dummyTicketTypes
         dummyTicketTypes.addAll(getDummyTicketTypes());
-        // 2) calculate what the largest ID is and continue counting +1 from it
-        findMaxTicketTypeId();
         // 3) display CheckBoxes on the form
-        setDummyTicketTypes();
+        try {
+            setTicketTypes();
+        } catch (TicketExceptions e) {
+            throw new RuntimeException(e);
+        }
         // 4) Fill in the ChoiceBox for the event type
         getDummyType();
         // 5) Configure spinners (hours/minutes) and date change listeners
         setSpinners();
         // 6) After loading the layout, adjust the height for flowTicketTypes
         Platform.runLater(this::setTicketTypesHeight);
-    }
-
-    private void findMaxTicketTypeId() {
-        int maxId = 0;
-        for (TicketType t : dummyTicketTypes) {
-            if (t.getId() > maxId) {
-                maxId = t.getId();
-            }
-        }
-        nextTicketTypeId = maxId + 1;
-        System.out.println("Set nextTicketTypeId = " + nextTicketTypeId);
     }
 
     public void setEventToEdit(Event eventToEdit) {
@@ -133,25 +127,22 @@ public class NewEventController implements Initializable {
         }
         String startDateString = startDate.toString() + " "
                 + formatTime((Integer) spStartHour.getValueFactory().getValue()) + ":"
-
-            
-
                 + formatTime((Integer) spStartMinute.getValueFactory().getValue()) + ":00";
-        System.out.println(startDateString);
         Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), 1, "a.jpg", 14 );
         eventToSave.setEndDate(endDate.toString() + " " + formatTime((Integer) spEndHour.getValueFactory().getValue())
                 + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()) + ":00");
-
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
         eventToSave.setImgSrc(txtFileName.getText());
         ArrayList<TicketType> ticketTypes = new ArrayList<>();
         for (Node node : flowTicketTypes.getChildren()) {
-            if (node instanceof CheckBox cb) {
+            if (node instanceof CheckBox) {
+                CheckBox cb = (CheckBox) node;
                 if (cb.isSelected()) {
                     String cbId = cb.getId();
-                    int id = Integer.parseInt(cbId.split("_")[1]);
+                    String cbIdSplit = cbId.split("_")[1];
+                    int id = Integer.parseInt(cbIdSplit);
                     String name = cb.getText();
                     System.out.println(cb.getText());
                     ticketTypes.add(new TicketType(id, name, false));
@@ -159,23 +150,21 @@ public class NewEventController implements Initializable {
             }
         }
         for (Node node : flowSpecialTickets.getChildren()) {
-            if (node instanceof CheckBox cb) {
+            if (node instanceof CheckBox) {
+                CheckBox cb = (CheckBox) node;
                 if (cb.isSelected()) {
                     String cbId = cb.getId();
-                    int id = Integer.parseInt(cbId.split("_")[1]);
+                    String cbIdSplit = cbId.split("_")[1];
+                    int id = Integer.parseInt(cbIdSplit);
                     String name = cb.getText();
                     ticketTypes.add(new TicketType(id, name, true));
+
                 }
             }
         }
-
         if (!ticketTypes.isEmpty()) {
             eventToSave.setTicketTypes(ticketTypes);
         }
-
-
-       
-
         BLLManager bllManager = new BLLManager();
         int newId = bllManager.uploadNewEvent(eventToSave);
         if (newId > 0) {
@@ -185,9 +174,7 @@ public class NewEventController implements Initializable {
         else
             System.out.println("Upload did not succeed!");
         System.out.println("Saving...");
-
     }
-
 
     private String formatTime(int value) {
         if (value < 10)
@@ -208,9 +195,8 @@ public class NewEventController implements Initializable {
 
         boolean isSpecial = chkSpecialInNewTicketType.isSelected();
 
-        int generatedId = nextTicketTypeId;
-        nextTicketTypeId++;
 
+        int generatedId = bllManager.uploadNewTicketType(new TicketType(0, newTypeName, isSpecial));
         TicketType newlyCreated = new TicketType(generatedId, newTypeName, isSpecial);
 
         CheckBox cb = new CheckBox(newTypeName);
@@ -430,8 +416,8 @@ public class NewEventController implements Initializable {
         dropEventType.getItems().addAll(dummyTypes);
     }
 
-    private void setDummyTicketTypes() {
-        ArrayList<TicketType> ticketTypes = new ArrayList<>(getDummyTicketTypes());
+    private void setTicketTypes() throws TicketExceptions {
+        ArrayList<TicketType> ticketTypes = new ArrayList<>(bllManager.getTicketTypes());
 
 
         for (TicketType ticketType : ticketTypes) {

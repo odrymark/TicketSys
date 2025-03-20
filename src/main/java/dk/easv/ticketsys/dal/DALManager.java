@@ -1,13 +1,12 @@
 package dk.easv.ticketsys.dal;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +86,7 @@ public class DALManager {
             ResultSet rs = pstmtSelect.executeQuery();
             if (rs.next()) {
                 newId = rs.getInt(1);
+                System.out.println("DAL" + newId);
             }
             return newId;
         } catch (SQLException ex) {
@@ -102,6 +102,44 @@ public class DALManager {
             pstmtDelete.execute();
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    public ArrayList<TicketType> getAllTicketTypes() {
+        ArrayList<TicketType> ticketTypes = new ArrayList<>();
+        try {
+            Connection con = connectionManager.getConnection();
+            String sqlcommandSelect = "SELECT * FROM TicketTypes ORDER BY title ASC";
+            PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect);
+            ResultSet rs = pstmtSelect.executeQuery();
+            while (rs.next()) {
+                ticketTypes.add(new TicketType(rs.getInt("id"),
+                        rs.getString("title"), rs.getBoolean("isSpecial")));
+            }
+            return ticketTypes;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int uploadNewTicketType(TicketType ticketType) {
+        int newId = 0;
+        try {
+            Connection con = connectionManager.getConnection();
+            String sqlInsertCommand = "INSERT INTO TicketTypes (title, isSpecial) VALUES (?, ?)";
+            PreparedStatement pstmtInsert = con.prepareStatement(sqlInsertCommand, Statement.RETURN_GENERATED_KEYS);
+            pstmtInsert.setString(1, ticketType.getName());
+            pstmtInsert.setBoolean(2, ticketType.getSpecial());
+            int affectedRows = pstmtInsert.executeUpdate();
+            if (affectedRows > 0) {
+                ResultSet rs = pstmtInsert.getGeneratedKeys();
+                if (rs.next()) {
+                    newId = rs.getInt(1);
+                }
+            }
+            return newId;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
