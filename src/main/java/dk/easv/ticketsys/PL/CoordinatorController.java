@@ -4,10 +4,13 @@ import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -104,6 +107,9 @@ public class CoordinatorController
         Button editBtn = new Button("Edit");
         editBtn.setMinWidth(45);
         editBtn.setId("cardButton");
+        editBtn.setOnAction(e -> {
+           openEventEditPage(event, e);
+        });
 
         Button infoBtn = new Button("Info");
         infoBtn.setMinWidth(45);
@@ -123,5 +129,24 @@ public class CoordinatorController
         card.getChildren().addAll(eventImage, eventDetails);
 
         return card;
+    }
+
+    private void openEventEditPage(Event event, ActionEvent actionEvent) {
+        try
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/new_event.fxml"));
+            Parent root = fxmlLoader.load();
+            NewEventController eventController = fxmlLoader.getController();
+            eventController.setEventToEdit(event);
+
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 }

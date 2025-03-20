@@ -173,4 +173,9 @@ public class Event {
         this.ticketTypes.clear();
         this.ticketTypes.addAll(ticketTypes);
     }
+
+    @Override
+    public String toString() {
+        return "t: " + getTitle() + " sd: " + getStartDate() + " ed: " + getEndDate() + " et: " + getEventType() + " n: " + getNotes();
+    }
 }
