@@ -25,15 +25,15 @@ public class DALManager {
             ResultSet rs = pstmtSelect.executeQuery();
             while (rs.next()) {
                 events.add(new Event(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getTimestamp("startDateTime"),
-                        rs.getTimestamp("endDateTime"),
-                        rs.getString("location"),
-                        rs.getString("locationGuidence"),
-                        rs.getString("description"),
-                        rs.getString("imgSrc"),
-                        rs.getInt("createdBy")
+                                rs.getInt("id"),
+                                rs.getString("title"),
+                                rs.getTimestamp("startDateTime"),
+                                rs.getTimestamp("endDateTime"),
+                                rs.getString("location"),
+                                rs.getString("locationGuidence"),
+                                rs.getString("description"),
+                                rs.getString("imgSrc"),
+                                rs.getInt("createdBy")
                         )
                 );
             }
@@ -142,4 +142,38 @@ public class DALManager {
             throw new RuntimeException(e);
         }
     }
-}
+
+    public boolean updateEvent(Event eventToSave) {
+        String sqlcommandUpdate = "UPDATE Events SET title = ?, startDateTime = ?, endDateTime = ?, " +
+                "location = ?, locationGuidence = ?, description = ?, imgSrc = ? WHERE id = ?";
+        try (Connection con = connectionManager.getConnection();
+             PreparedStatement pstmtUpdate = con.prepareStatement(sqlcommandUpdate)) {
+
+            pstmtUpdate.setString(1, eventToSave.getTitle());
+            pstmtUpdate.setTimestamp(2, eventToSave.getStartDateTime() != null ? eventToSave.getStartDateTime() : null);
+            pstmtUpdate.setTimestamp(3, eventToSave.getEndDateTime() != null ? eventToSave.getEndDateTime() : null);
+            pstmtUpdate.setString(4, eventToSave.getLocation());
+            pstmtUpdate.setString(5, eventToSave.getLocationGuidence());
+            pstmtUpdate.setString(6, eventToSave.getDescription());
+            pstmtUpdate.setString(7, eventToSave.getImgSrc());
+            pstmtUpdate.setInt(8, eventToSave.getId());
+
+            int affectedRows = pstmtUpdate.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Boolean deleteTicketType(TicketType ticketTypeToDelete) {
+        String sqlcommandDelete = "DELETE FROM TicketTypes WHERE id = ?";
+        try (Connection con = connectionManager.getConnection();
+             PreparedStatement pstmtUpdate = con.prepareStatement(sqlcommandDelete)) {
+            pstmtUpdate.setInt(1, ticketTypeToDelete.getId());
+            int affectedRows = pstmtUpdate.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    }
