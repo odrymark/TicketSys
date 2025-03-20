@@ -176,6 +176,6 @@ public class Event {
 
     @Override
     public String toString() {
-        return "t: " + getTitle() + " sd: " + getStartDate() + " ed: " + getEndDate() + " et: " + getEventType() + " n: " + getNotes();
+        return "t: " + getTitle() + " sd: " + getStartDate() + " ed: " + getEndDate() + " et: " + getEventType() + " n: " + getNotes() + " img:" + imageSrc();
     }
 }

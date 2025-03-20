@@ -43,4 +43,12 @@ public class BLLManager {
     public int uploadNewTicketType(TicketType ticketType) {
         return dalManager.uploadNewTicketType(ticketType);
     }
+
+    public boolean updateEvent(Event eventToSave) {
+        return dalManager.updateEvent(eventToSave);
+    }
+
+    public Boolean deleteTicketType(TicketType ticketTypeToDelete) {
+        return dalManager.deleteTicketType(ticketTypeToDelete);
+    }
 }

@@ -27,7 +27,7 @@ public class NewEventController implements Initializable {
     @FXML private Label lblNewTicketTitle;
     @FXML private HBox hbNewEventTitle;
     @FXML private HBox hbConnectEvent;
-    @FXML private ChoiceBox choiceEvents;
+    @FXML private ChoiceBox<TicketType> choiceEvents;
     @FXML private CheckBox chkSpecialInNewTicketType;
     @FXML private GridPane gridPaneForm;
     @FXML private Label lblTitle;
@@ -61,12 +61,16 @@ public class NewEventController implements Initializable {
 
     private final ArrayList<TicketType> dummyTicketTypes = new ArrayList<>();
     private final BLLManager bllManager = new BLLManager();
+    private int isEditing;
+    private Boolean isDeletingEventType;
 
     public NewEventController() throws TicketExceptions {
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        isEditing = 0;
+        isDeletingEventType = false;
         // 1) load "fake" types into dummyTicketTypes
         dummyTicketTypes.addAll(bllManager.getTicketTypes());
         // 3) display CheckBoxes on the form
@@ -81,6 +85,7 @@ public class NewEventController implements Initializable {
 
     public void setEventToEdit(Event eventToEdit) {
         if (eventToEdit != null) {
+            isEditing = eventToEdit.getId();
             System.out.println(eventToEdit);
             txtTitle.setText(eventToEdit.getTitle());
             String[] startDateSplit = eventToEdit.getStartDate().split(" ");
@@ -106,7 +111,8 @@ public class NewEventController implements Initializable {
     }
 
     @FXML private void btnAddTicketTypeClicked(ActionEvent event) {
-        showNewTicketPopup();
+        isDeletingEventType = false;
+        showNewTicketPopup(true);
     }
 
     @FXML private void btnCancelClicked() {
@@ -125,11 +131,35 @@ public class NewEventController implements Initializable {
     }
 
     @FXML private void btnSaveClicked(ActionEvent event) throws TicketExceptions {
+        Event eventToSave = getEventToSave();
+        if (eventToSave == null) {
+            System.out.println("Event is null!");
+            return;
+        }
+        if (isEditing > 0) {
+            eventToSave.setId(isEditing);
+            if (bllManager.updateEvent(eventToSave))
+                System.out.println("Event updated success.");
+            else
+                System.out.println("Event not updated.");
+        }
+        else {
+            int newId = bllManager.uploadNewEvent(eventToSave);
+            if (newId > 0) {
+                eventToSave.setId(newId);
+                btnCancelClicked();
+            } else
+                System.out.println("Upload did not succeed!");
+        }
+        System.out.println("Saving...");
+    }
+
+    private Event getEventToSave() {
         LocalDate startDate = dateStart.getValue();
         LocalDate endDate = dateEnd.getValue();
         if (startDate == null) {
             System.out.println("Start date is null - please select it!");
-            return;
+            return null;
         }
         String startDateString = startDate.toString() + " "
                 + formatTime((Integer) spStartHour.getValueFactory().getValue()) + ":"
@@ -140,7 +170,13 @@ public class NewEventController implements Initializable {
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
         eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
-        eventToSave.setImgSrc(txtFileName.getText());
+        System.out.println(txtFileName.getText());
+        String[] imgSrcSplit= txtFileName.getText().split("\\.");
+        StringBuilder imgSrc = new StringBuilder();
+        for (int i = 1; i < imgSrcSplit.length; i++)
+            imgSrc.append("." + imgSrcSplit[i]);
+
+        eventToSave.setImgSrc(String.valueOf(imgSrc));
         ArrayList<TicketType> ticketTypes = new ArrayList<>();
         for (Node node : flowTicketTypes.getChildren()) {
             if (node instanceof CheckBox) {
@@ -173,15 +209,7 @@ public class NewEventController implements Initializable {
         if (!ticketTypes.isEmpty()) {
             eventToSave.setTicketTypes(ticketTypes);
         }
-        BLLManager bllManager = new BLLManager();
-        int newId = bllManager.uploadNewEvent(eventToSave);
-        if (newId > 0) {
-            eventToSave.setId(newId);
-            btnCancelClicked();
-        }
-        else
-            System.out.println("Upload did not succeed!");
-        System.out.println("Saving...");
+        return eventToSave;
     }
 
     private String formatTime(int value) {
@@ -192,6 +220,7 @@ public class NewEventController implements Initializable {
 
     @FXML private void btnNewTicketCancelClicked(ActionEvent event) {
         closeNewTicketType();
+        isDeletingEventType = false;
     }
 
         private void closeNewTicketType() {
@@ -212,6 +241,18 @@ public class NewEventController implements Initializable {
 
     @FXML private void btnNewTicketSaveClicked(ActionEvent event) {
         String newTypeName = txtNewTicketType.getText();
+        if (isDeletingEventType) {
+            TicketType ticketTypeToDelete = choiceEvents.getSelectionModel().getSelectedItem();
+            System.out.println("Deleting ticket: " + ticketTypeToDelete);
+            if (bllManager.deleteTicketType(ticketTypeToDelete))
+            {
+                System.out.println("Deleting ticket " + ticketTypeToDelete + " successfully.");
+                dummyTicketTypes.remove(ticketTypeToDelete);
+                removeCBTicketType(ticketTypeToDelete);
+                closeNewTicketType();
+            }
+            return;
+        }
         if (newTypeName == null || newTypeName.trim().isEmpty()) {
             System.out.println("No ticket type name entered!");
             return;
@@ -238,6 +279,29 @@ public class NewEventController implements Initializable {
                 + " (id=" + newlyCreated.getId() + ", special=" + isSpecial + ")");
 
         closeNewTicketType();
+    }
+
+    private void removeCBTicketType(TicketType ticketTypeToDelete) {
+        if (ticketTypeToDelete.getSpecial()) {
+            for (Node node : flowSpecialTickets.getChildren()) {
+                if (node instanceof CheckBox) {
+                    CheckBox cb = (CheckBox) node;
+                    if (cb.getId().equals("cb_" + ticketTypeToDelete.getId())) {
+                        flowSpecialTickets.getChildren().remove(cb);
+                        return;
+                    }
+                }
+            }
+        }
+        for (Node node : flowTicketTypes.getChildren()) {
+            if (node instanceof CheckBox) {
+                CheckBox cb = (CheckBox) node;
+                if (cb.getId().equals("cb_" + ticketTypeToDelete.getId())) {
+                    flowTicketTypes.getChildren().remove(cb);
+                    return;
+                }
+            }
+        }
     }
 
     public Button getCancelButton() {
@@ -274,7 +338,8 @@ public class NewEventController implements Initializable {
     }
 
     @FXML private void btnDeleteTicketType(ActionEvent event) {
-        showNewTicketPopup();
+        isDeletingEventType = true;
+        showNewTicketPopup(false);
         lblNewTicketTitle.setText("Delete ticket type");
         hbNewEventTitle.setVisible(false);
         hbConnectEvent.setVisible(true);
@@ -287,26 +352,16 @@ public class NewEventController implements Initializable {
     }
 
 
-    private void showNewTicketPopup() {
+    private void showNewTicketPopup(Boolean isCreating) {
         vboxShader.setVisible(true);
         vboxNewTicketType.setVisible(true);
         chkSpecialInNewTicketType.setSelected(false);
-        chkSpecialInNewTicketType.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (chkSpecialInNewTicketType.isSelected()) {
-                //choiceEvents.setVisible(true);
-                //hbConnectEvent.setVisible(true);
-                //choiceEvents.getItems().clear();
-                //choiceEvents.getItems().add("All");
-                if (!(txtTitle.getText() !=null) || !txtTitle.getText().isEmpty()) {
-                    choiceEvents.getItems().add(txtTitle.getText());
-                }
-                //Add all the other events to the choicebox
-            }
-            else {
-                hbConnectEvent.setVisible(false);
-                //choiceEvents.setVisible(false);
-            }
-        });
+        if (isCreating) {
+            lblNewTicketTitle.setText("Create new ticket type");
+        }
+        else
+            lblNewTicketTitle.setText("Delete ticket type");
+
     }
 
     private void setSpinners() {
