@@ -1,10 +1,13 @@
 package dk.easv.ticketsys.bll;
 
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.dal.ChooseFile;
 import dk.easv.ticketsys.dal.DALManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.stage.Window;
+
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -30,7 +33,14 @@ public class BLLManager {
         return null;
     }
 
+    public ArrayList<TicketType> getTicketTypes() {
+        return dalManager.getAllTicketTypes();
+    }
     public void deleteEvent(Event event){
         dalManager.deleteEvent(event);
+    }
+
+    public int uploadNewTicketType(TicketType ticketType) {
+        return dalManager.uploadNewTicketType(ticketType);
     }
 }
