@@ -68,13 +68,9 @@ public class NewEventController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // 1) load "fake" types into dummyTicketTypes
-        dummyTicketTypes.addAll(getTicketTypes());
+        dummyTicketTypes.addAll(bllManager.getTicketTypes());
         // 3) display CheckBoxes on the form
-        try {
-            setTicketTypes();
-        } catch (TicketExceptions e) {
-            throw new RuntimeException(e);
-        }
+        setTicketTypes();
         // 4) Fill in the ChoiceBox for the event type
         getDummyType();
         // 5) Configure spinners (hours/minutes) and date change listeners
@@ -150,12 +146,14 @@ public class NewEventController implements Initializable {
             if (node instanceof CheckBox) {
                 CheckBox cb = (CheckBox) node;
                 if (cb.isSelected()) {
-                    String cbId = cb.getId();
-                    String cbIdSplit = cbId.split("_")[1];
-                    int id = Integer.parseInt(cbIdSplit);
-                    String name = cb.getText();
-                    System.out.println(cb.getText());
-                    ticketTypes.add(new TicketType(id, name, false));
+                    if (cb.isSelected()) {
+                        String cbId = cb.getId();
+                        String cbIdSplit = cbId.split("_")[1];
+                        int id = Integer.parseInt(cbIdSplit);
+                        String name = cb.getText();
+                        System.out.println(cb.getText());
+                        ticketTypes.add(new TicketType(id, name, false));
+                    }
                 }
             }
         }
@@ -195,6 +193,22 @@ public class NewEventController implements Initializable {
     @FXML private void btnNewTicketCancelClicked(ActionEvent event) {
         closeNewTicketType();
     }
+
+        private void closeNewTicketType() {
+            txtNewTicketType.setText("");
+            vboxNewTicketType.setVisible(false);
+            vboxShader.setVisible(false);
+            hbNewEventTitle.setVisible(true);
+            //hbNewEventTitle.setManaged(true);
+            //hbConnectEvent.setManaged(false);
+            hbConnectEvent.setVisible(false);
+            //chkSpecialInNewTicketType.setManaged(true);
+            chkSpecialInNewTicketType.setVisible(true);
+            lblConnectToEvent.setText("Connect to event");
+            btnNewTicketSave.setText("Save");
+            lblNewTicketTitle.setText("New ticket type");
+
+        }
 
     @FXML private void btnNewTicketSaveClicked(ActionEvent event) {
         String newTypeName = txtNewTicketType.getText();
@@ -293,22 +307,6 @@ public class NewEventController implements Initializable {
                 //choiceEvents.setVisible(false);
             }
         });
-    }
-
-    private void closeNewTicketType() {
-        txtNewTicketType.setText("");
-        vboxNewTicketType.setVisible(false);
-        vboxShader.setVisible(false);
-        hbNewEventTitle.setVisible(true);
-        //hbNewEventTitle.setManaged(true);
-        //hbConnectEvent.setManaged(false);
-        hbConnectEvent.setVisible(false);
-        //chkSpecialInNewTicketType.setManaged(true);
-        chkSpecialInNewTicketType.setVisible(true);
-        lblConnectToEvent.setText("Connect to event");
-        btnNewTicketSave.setText("Save");
-        lblNewTicketTitle.setText("New ticket type");
-
     }
 
     private void setSpinners() {
@@ -414,7 +412,7 @@ public class NewEventController implements Initializable {
         dropEventType.getItems().addAll(dummyTypes);
     }
 
-    private void setTicketTypes() throws TicketExceptions {
+    private void setTicketTypes(){
         ArrayList<TicketType> ticketTypes = new ArrayList<>(bllManager.getTicketTypes());
 
 
