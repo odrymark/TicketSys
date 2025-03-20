@@ -59,7 +59,7 @@ public class NewEventController implements Initializable {
     @FXML private Spinner spStartHour;
     @FXML private Spinner spStartMinute;
 
-    private final ArrayList<TicketType> dummyTicketTypes = new ArrayList<>();//An array of "test" (dummy) tickets
+    private final ArrayList<TicketType> dummyTicketTypes = new ArrayList<>();
     private final BLLManager bllManager = new BLLManager();
 
     public NewEventController() throws TicketExceptions {
@@ -68,7 +68,7 @@ public class NewEventController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // 1) load "fake" types into dummyTicketTypes
-        dummyTicketTypes.addAll(getDummyTicketTypes());
+        dummyTicketTypes.addAll(getTicketTypes());
         // 3) display CheckBoxes on the form
         try {
             setTicketTypes();
@@ -85,17 +85,27 @@ public class NewEventController implements Initializable {
 
     public void setEventToEdit(Event eventToEdit) {
         if (eventToEdit != null) {
+            System.out.println(eventToEdit);
             txtTitle.setText(eventToEdit.getTitle());
-            txtStartDate.setText(eventToEdit.getStartDate());
-            if (eventToEdit.getEndDate() != null)
-                txtEndDate.setText(eventToEdit.getEndDate().toString());
+            String[] startDateSplit = eventToEdit.getStartDate().split(" ");
+            dateStart.setValue(LocalDate.parse(startDateSplit[0]));
+            String[] startTimeSplit = startDateSplit[1].split(":");
+            spStartHour.getValueFactory().setValue(Integer.parseInt(startTimeSplit[0]));
+            spStartMinute.getValueFactory().setValue(Integer.parseInt(startTimeSplit[1]));
+            if (eventToEdit.getEndDate() != null) {
+                String[] endDateSplit = eventToEdit.getEndDate().split(" ");
+                String[] endTimeSplit = endDateSplit[1].split(":");
+                dateEnd.setValue(LocalDate.parse(endDateSplit[0]));
+                spEndHour.getValueFactory().setValue(Integer.parseInt(endTimeSplit[0]));
+                spEndMinute.getValueFactory().setValue(Integer.parseInt(endTimeSplit[1]));
+            }
             txtLocation.setText(eventToEdit.getLocation());
             if (eventToEdit.getImgSrc() != null)
                 txtFileName.setText(eventToEdit.getImgSrc());
             txtaLocation.setText(eventToEdit.getLocationGuide());
             choiceEvents.getSelectionModel().select(eventToEdit.getTypeOfEvent());
             txtaDescription.setText(eventToEdit.getNotes());
-            //TODO: select ticket types
+            //TODO: select ticket types ???
         }
     }
 
@@ -254,13 +264,12 @@ public class NewEventController implements Initializable {
         lblNewTicketTitle.setText("Delete ticket type");
         hbNewEventTitle.setVisible(false);
         hbConnectEvent.setVisible(true);
+        choiceEvents.getItems().clear();
+        choiceEvents.getSelectionModel().clearSelection();
+        choiceEvents.getItems().addAll(dummyTicketTypes);
         lblConnectToEvent.setText("Ticket types");
         chkSpecialInNewTicketType.setVisible(false);
         btnNewTicketSave.setText("Delete");
-
-
-        //Add ticket types to the choicebox
-        choiceEvents.getItems().clear();
     }
 
 
@@ -270,10 +279,10 @@ public class NewEventController implements Initializable {
         chkSpecialInNewTicketType.setSelected(false);
         chkSpecialInNewTicketType.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (chkSpecialInNewTicketType.isSelected()) {
-                choiceEvents.setVisible(true);
-                hbConnectEvent.setVisible(true);
-                choiceEvents.getItems().clear();
-                choiceEvents.getItems().add("All");
+                //choiceEvents.setVisible(true);
+                //hbConnectEvent.setVisible(true);
+                //choiceEvents.getItems().clear();
+                //choiceEvents.getItems().add("All");
                 if (!(txtTitle.getText() !=null) || !txtTitle.getText().isEmpty()) {
                     choiceEvents.getItems().add(txtTitle.getText());
                 }
@@ -389,19 +398,8 @@ public class NewEventController implements Initializable {
         }
     }
 
-    public ArrayList<TicketType> getDummyTicketTypes() {
-        ArrayList<TicketType> ticketTypes = new ArrayList<>();
-        ticketTypes.add(new TicketType(1, "Normal", false));
-        ticketTypes.add(new TicketType(2, "VIP", false));
-        ticketTypes.add(new TicketType(3, "Guest", false));
-        ticketTypes.add(new TicketType(4, "Fast track", false));
-        ticketTypes.add(new TicketType(5, "Participant", false));
-        ticketTypes.add(new TicketType(6, "Free beer", true));
-        ticketTypes.add(new TicketType(7, "Free pizza", true));
-        ticketTypes.add(new TicketType(8, "Free taxi", true));
-        ticketTypes.add(new TicketType(9, "Chuck Noris", false));
-        ticketTypes.add(new TicketType(10, "Madonna", false));
-        ticketTypes.add(new TicketType(12, "Steve Jobs", false));
+    public ArrayList<TicketType> getTicketTypes() {
+        ArrayList<TicketType> ticketTypes = new ArrayList<>(bllManager.getTicketTypes());
         return ticketTypes;
     }
     public void getDummyType() {
