@@ -176,4 +176,30 @@ public class DALManager {
             throw new RuntimeException(ex);
         }
     }
+
+    public User getUserByPassword(String username, String password)  {
+        try (Connection con = connectionManager.getConnection()) {
+            String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, username);
+            ps.setString(2, password);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("fullName"),
+                        rs.getInt("roleID")
+                );
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     }
