@@ -14,8 +14,10 @@ import javafx.stage.Stage;
 
 public class LoginController {
 
-    @FXML private MFXPasswordField password;
-    @FXML private MFXTextField username;
+    @FXML
+    private MFXPasswordField password;
+    @FXML
+    private MFXTextField username;
 
     private BLLManager bllManager;
 
@@ -29,6 +31,22 @@ public class LoginController {
         }
     }
 
+    @FXML
+    private void login() {
+        if (!username.getText().isEmpty() && !password.getText().isEmpty()) {
+            try {
+                //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/admin.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
+
+                Scene scene = new Scene(fxmlLoader.load());
+                Stage stage = (Stage) username.getScene().getWindow();
+                stage.setScene(scene);
+                stage.show();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+/*
     @FXML
     void login(ActionEvent event) {
         String uName = username.getText().trim();
@@ -83,6 +101,7 @@ public class LoginController {
             System.out.println("Error opening Admin window!");
             e.printStackTrace();
         }
+    }*/
     }
-    }
+}
 
