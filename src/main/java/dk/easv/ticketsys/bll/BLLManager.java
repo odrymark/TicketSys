@@ -26,6 +26,10 @@ public class BLLManager {
         return dalManager.getAllEvents();
     }
 
+    public List<User> getAllUsers(){
+        return dalManager.getAllUsers();
+    }
+
     public String chooseFile(Window window){
         ChooseFile fileBrowser = new ChooseFile(window);
         if (fileBrowser.getSelectedFilePath() != null){
