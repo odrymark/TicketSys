@@ -2,6 +2,7 @@ package dk.easv.ticketsys.PL;
 
 import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.collections.FXCollections;
@@ -95,11 +96,25 @@ public class AdminController
         }
     }
 
+    private void loadUsers() {
+        eventsPane.getChildren().clear();
+
+        List<User> users = bllManager.getAllUsers();
+        for (User user : users) {
+            try {
+                VBox userCard = createUserCard(user);
+                eventsPane.getChildren().add(userCard);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @FXML
     private void usersTab()
     {
         //TEMPORARY TEST FOR USER CARDS
-        users.add(createUserCard("User", "user@email.com", "User"));
+        //users.add(createUserCard("User", "user@email.com", "User"));
 
         if(isEventsWin)
         {
@@ -109,8 +124,7 @@ public class AdminController
             eventsImage.setImage(eventsNotSel);
             isEventsWin = false;
             currentP.setText("Users");
-            eventsPane.getChildren().clear();
-            eventsPane.getChildren().setAll(users);
+            loadUsers();
             newUser.setVisible(true);
             newUser.setDisable(false);
         }
@@ -167,17 +181,17 @@ public class AdminController
         return card;
     }
 
-    private VBox createUserCard(String name, String email, String type) {
+    private VBox createUserCard(User user) {
         VBox card = new VBox(5);
         card.setOnMouseClicked(_ -> { });
         card.setId("usersCard");
 
-        Label nameLabel = new Label(name);
+        Label nameLabel = new Label(user.getFullName());
         nameLabel.setId("cardTitle");
 
-        Label emailLabel = new Label("Email: " + email);
+        Label emailLabel = new Label("Email: " + user.getEmail());
 
-        Label typeLabel = new Label("Type: " + type);
+        Label typeLabel = new Label("Type: " + user.getRoleID());
 
         card.getChildren().addAll(nameLabel, emailLabel, typeLabel);
         return card;
