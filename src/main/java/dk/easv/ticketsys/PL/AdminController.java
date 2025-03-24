@@ -1,6 +1,9 @@
 package dk.easv.ticketsys.PL;
 
 import dk.easv.ticketsys.Main;
+import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.bll.BLLManager;
+import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,6 +20,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 import java.io.InputStream;
+import java.util.List;
 
 public class AdminController
 {
@@ -45,11 +49,15 @@ public class AdminController
     @FXML
     private ScrollPane scrollP;
 
+    private BLLManager bllManager;
+
     @FXML
-    public void initialize()
-    {
+    public void initialize() throws TicketExceptions {
+        bllManager = new BLLManager();
+        loadEvents();
         eventsPane.prefWidthProperty().bind(scrollP.widthProperty());
         eventsPane.prefHeightProperty().bind(scrollP.heightProperty());
+
     }
 
     @FXML
@@ -58,7 +66,7 @@ public class AdminController
         if(!isEventsWin)
         {
             //TEMPORARY TEST FOR EVENT CARDS
-            events.add(createEventCard(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/eventsNotSel.png"), "Title", "Location", "2025-02-12 19:30"));
+            //events.add(createEventCard(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/eventsNotSel.png"), "Title", "Location", "2025-02-12 19:30"));
 
             sideBtnNotSelected.setId("sideBtnNotSelected");
             sideBtnSelected.setId("sideBtnSelected");
@@ -66,10 +74,24 @@ public class AdminController
             eventsImage.setImage(eventsSel);
             isEventsWin = true;
             currentP.setText("Events");
-            eventsPane.getChildren().clear();
-            eventsPane.getChildren().setAll(events);
+            loadEvents();
             newUser.setVisible(false);
             newUser.setDisable(true);
+        }
+    }
+
+    private void loadEvents() {
+        eventsPane.getChildren().clear();
+
+        List<Event> events = bllManager.getAllEvents();
+        for (Event event : events) {
+            try {
+                InputStream imageStream = Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png");
+                HBox eventCard = createEventCard(imageStream, event);
+                eventsPane.getChildren().add(eventCard);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -100,7 +122,7 @@ public class AdminController
 
     }
 
-    private HBox createEventCard(InputStream imagePath, String title, String location, String dateTime) {
+    private HBox createEventCard(InputStream imagePath, Event event) {
         HBox card = new HBox();
         card.setSpacing(10);
         card.setPadding(new Insets(10));
@@ -116,18 +138,14 @@ public class AdminController
 
         HBox controls = new HBox(5);
 
-        Label titleLabel = new Label(title);
+        Label titleLabel = new Label(event.getTitle());
         titleLabel.setId("cardTitle");
 
-        Label locationLabel = new Label(location);
+        Label locationLabel = new Label(event.getLocation());
         locationLabel.setId("cardText");
 
-        Label dateLabel = new Label("\uD83D\uDD52 " + dateTime);
+        Label dateLabel = new Label("\uD83D\uDD52 " + event.getStartDate());
         dateLabel.setId("cardText");
-
-        Button editBtn = new Button("Edit");
-        editBtn.setMinWidth(45);
-        editBtn.setId("cardButton");
 
         Button infoBtn = new Button("Info");
         infoBtn.setMinWidth(45);
@@ -137,9 +155,12 @@ public class AdminController
         deleteBtn.setMinWidth(40);
         deleteBtn.setId("cardButton");
         deleteBtn.setFont(new Font("Arial", 16));
-        deleteBtn.setOnAction(e -> card.setVisible(false));
+        deleteBtn.setOnAction(e -> {
+            bllManager.deleteEvent(event);
+            eventsPane.getChildren().remove(card);
+        });
 
-        controls.getChildren().addAll(infoBtn, editBtn, deleteBtn);
+        controls.getChildren().addAll(infoBtn, deleteBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
 
