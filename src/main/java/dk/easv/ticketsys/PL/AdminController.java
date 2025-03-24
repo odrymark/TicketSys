@@ -191,7 +191,7 @@ public class AdminController
 
         Label emailLabel = new Label("Email: " + user.getEmail());
 
-        Label typeLabel = new Label("Type: " + user.getRoleID());
+        Label typeLabel = new Label("Type: " + user.getRole());
 
         card.getChildren().addAll(nameLabel, emailLabel, typeLabel);
         return card;

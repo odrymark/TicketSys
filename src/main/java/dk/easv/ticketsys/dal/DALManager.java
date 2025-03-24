@@ -46,25 +46,28 @@ public class DALManager {
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Connection con = connectionManager.getConnection()) {
-            String sqlcommandSelect = "SELECT * FROM Users";
-            PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect);
-            ResultSet rs = pstmtSelect.executeQuery();
+            String sql = "SELECT u.id, u.username, u.password, u.email, u.fullName, r.roleName " +
+                    "FROM Users u " +
+                    "JOIN Roles r ON u.roleID = r.id";
+
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 users.add(new User(
-                                rs.getInt("id"),
-                                rs.getString("username"),
-                                rs.getString("password"),
-                                rs.getString("email"),
-                                rs.getString("fullName"),
-                                rs.getInt("roleID")
-                        )
-                );
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("fullName"),
+                        rs.getString("roleName")
+                ));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return users;
     }
+
 
 
     public int uploadNewEvent(Event event) {

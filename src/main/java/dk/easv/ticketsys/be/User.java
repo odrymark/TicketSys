@@ -6,6 +6,7 @@ public class User {
     private String password;
     private String email;
     private String fullName;
+    private String role;
     private int roleID;
 
     public User(int id, String username, String password, String email, String fullName, int roleID) {
@@ -15,6 +16,15 @@ public class User {
         this.email = email;
         this.fullName = fullName;
         this.roleID = roleID;
+    }
+
+    public User(int id, String username, String password, String email, String fullName, String role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.fullName = fullName;
+        this.role = role;
     }
 
     public int getId() {
@@ -63,5 +73,13 @@ public class User {
 
     public void setRoleID(int roleID) {
         this.roleID = roleID;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
