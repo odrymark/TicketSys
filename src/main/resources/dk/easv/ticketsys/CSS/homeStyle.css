@@ -108,7 +108,7 @@
 }
 #sideBtnSelected
 {
-    -fx-background-color: #f4f0ff;
+    -fx-background-color: rgba(1, 158, 227, 0.05);
     -fx-text-fill: #019ee3;
 }
 #sideBtnNotSelected
@@ -119,7 +119,7 @@
 }
 #sideBtnNotSelected:hover
 {
-    -fx-background-color: #f4f0ff;
+    -fx-background-color: rgba(1, 158, 227, 0.05);
     -fx-text-fill: #019ee3;
 }
 #ticketCount
@@ -139,7 +139,6 @@
 }
 #newUser
 {
-    -fx-translate-x: 270px;
     -fx-background-color: #019ee3;
     -fx-text-fill: white;
     -fx-font-size: 12px;

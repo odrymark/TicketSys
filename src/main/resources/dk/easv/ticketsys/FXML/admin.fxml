@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -12,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="400.0" maxWidth="790.0" minHeight="400.0" minWidth="790.0" prefHeight="400.0" prefWidth="790.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.AdminController">
+<HBox maxHeight="400.0" maxWidth="790.0" minHeight="400.0" minWidth="790.0" prefHeight="400.0" prefWidth="790.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.AdminController">
    <children>
       <VBox fx:id="leftBox" prefHeight="200.0" prefWidth="100.0" spacing="7.0">
          <children>
@@ -43,7 +44,7 @@
          </children>
       </VBox>
       <Separator orientation="VERTICAL" prefHeight="200.0" />
-      <VBox fx:id="rightBox" alignment="TOP_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="660.0" prefHeight="400.0" prefWidth="660.0">
+      <VBox fx:id="rightBox" alignment="TOP_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="475.0" prefHeight="400.0" prefWidth="660.0" HBox.hgrow="ALWAYS">
          <children>
             <ChoiceBox fx:id="user" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="150.0">
                <VBox.margin>
@@ -51,7 +52,7 @@
                </VBox.margin></ChoiceBox>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <VBox prefHeight="100.0" prefWidth="538.0" spacing="10.0">
+                  <VBox prefHeight="100.0" prefWidth="370.0" spacing="10.0">
                      <children>
                         <Label fx:id="currentP" text="Events" />
                         <HBox fx:id="searchBox" maxHeight="20.0" maxWidth="250.0" prefHeight="20.0" prefWidth="422.0">
@@ -69,11 +70,14 @@
                         <Insets left="30.0" />
                      </padding>
                   </VBox>
-                  <Button id="addNewEvent" fx:id="newUser" disable="true" maxHeight="32.0" maxWidth="95.0" minHeight="36.0" mnemonicParsing="false" onAction="#newUserTab" prefHeight="32.0" prefWidth="95.0" text="New User" visible="false">
-                     <HBox.margin>
-                        <Insets top="35.0" />
-                     </HBox.margin>
-                  </Button>
+                  <VBox alignment="TOP_RIGHT" minWidth="80.0" prefHeight="85.0" prefWidth="129.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button id="addNewEvent" fx:id="newUser" disable="true" maxHeight="32.0" maxWidth="95.0" minHeight="36.0" mnemonicParsing="false" onAction="#newUserTab" prefHeight="32.0" prefWidth="95.0" text="New User" visible="false" />
+                     </children>
+                     <padding>
+                        <Insets right="20.0" top="35.0" />
+                     </padding>
+                  </VBox>
                </children>
                <opaqueInsets>
                   <Insets />
@@ -82,10 +86,18 @@
                   <Insets />
                </VBox.margin>
             </HBox>
-            <FlowPane fx:id="eventsPane" hgap="10.0" maxHeight="275.0" minHeight="275.0" vgap="10.0">
-               <padding>
-                  <Insets left="20.0" />
-               </padding></FlowPane>
+            <ScrollPane fx:id="scrollP" hbarPolicy="NEVER" prefHeight="265.0" prefWidth="660.0" VBox.vgrow="ALWAYS">
+               <content>
+                  <FlowPane fx:id="eventsPane" hgap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="10.0">
+                     <padding>
+                        <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+                     </padding>
+                  </FlowPane>
+               </content>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="3.0" right="5.0" />
+               </VBox.margin>
+            </ScrollPane>
          </children></VBox>
    </children>
 </HBox>
