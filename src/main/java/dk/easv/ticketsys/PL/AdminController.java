@@ -9,8 +9,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -19,9 +22,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdminController
 {
@@ -49,6 +57,8 @@ public class AdminController
     private final Button temp = new Button();
     @FXML
     private ScrollPane scrollP;
+    private User userToEdit;
+    private Map<User, VBox> userCardMap = new HashMap<>();
 
     private BLLManager bllManager;
 
@@ -58,7 +68,7 @@ public class AdminController
         loadEvents();
         eventsPane.prefWidthProperty().bind(scrollP.widthProperty());
         eventsPane.prefHeightProperty().bind(scrollP.heightProperty());
-
+        userToEdit = null;
     }
 
     @FXML
@@ -104,6 +114,7 @@ public class AdminController
             try {
                 VBox userCard = createUserCard(user);
                 eventsPane.getChildren().add(userCard);
+                userCardMap.put(user, userCard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -131,9 +142,67 @@ public class AdminController
     }
 
     @FXML
-    private void newUserTab()
-    {
+    private void newUserTab(){
+        boolean isNew = false;
+        //TODO: save user only if save button was clicked. If the window just closes, don't do anything
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("FXML/users.fxml"));
+        Parent root;
+        try {
+            root = loader.load();
+            UsersController usersController = loader.getController();
+            usersController.setRole("Admin");
+            Stage stage = new Stage();
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("../Images/user.png")));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            if (userToEdit != null) {
+                usersController.isNewUser(false);
+                usersController.setUserToEdit(userToEdit);
+                stage.setTitle("Edit User");
+            }
+            else {
+                isNew = true;
+                usersController.isNewUser(true);
+                usersController.clearFields();
+                stage.setTitle("Add User");
+            }
 
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            User newUser = usersController.getUserToReturn();
+            if (usersController.getIsSaveUser()) {
+                SnackbarController controller = new SnackbarController();
+                if (isNew) {
+                    VBox userCard = createUserCard(newUser);
+                    eventsPane.getChildren().add(userCard);
+                    userCardMap.put(newUser, userCard);
+                } else {
+                    VBox userCard = userCardMap.get(userToEdit);
+                    if (userCard != null) {
+                        updateUserCard(userCard, newUser);
+                    } else
+                        System.out.println("UserCard was not found");
+                }
+            }
+
+            userToEdit = null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void updateUserCard(VBox userCard, User newUser) {
+        userCard.getChildren().clear();
+        userCard.setOnMouseClicked(_ -> { userToEdit = newUser; newUserTab();});
+        userCard.setId("usersCard");
+
+        Label nameLabel = new Label(newUser.getFullName());
+        nameLabel.setId("cardTitle");
+
+        Label emailLabel = new Label("Email: " + newUser.getEmail());
+
+        Label typeLabel = new Label("Type: " + newUser.getRole());
+
+        userCard.getChildren().addAll(nameLabel, emailLabel, typeLabel);
     }
 
     private HBox createEventCard(InputStream imagePath, Event event) {
@@ -183,7 +252,7 @@ public class AdminController
 
     private VBox createUserCard(User user) {
         VBox card = new VBox(5);
-        card.setOnMouseClicked(_ -> { });
+        card.setOnMouseClicked(_ -> { userToEdit = user; newUserTab();});
         card.setId("usersCard");
 
         Label nameLabel = new Label(user.getFullName());

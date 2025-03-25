@@ -205,4 +205,48 @@ public class DALManager {
             throw new RuntimeException(e);
         }
     }
+
+    public int insertUser(User user) {
+        try (Connection con = connectionManager.getConnection()) {
+            int newId = 0;
+            String sqlcommandInsert = "INSERT INTO Users (username, password, email, fullName, " +
+                    " roleId)\n" +
+                    "OUTPUT INSERTED.ID\n" +
+                    "VALUES (?, ?, ?, ?, ?);";
+            PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandInsert);
+            pstmtSelect.setString(1, user.getUsername());
+            pstmtSelect.setString(2, user.getPassword());
+            pstmtSelect.setString(3, user.getEmail());
+            pstmtSelect.setString(4, user.getFullName());
+            pstmtSelect.setInt(5, user.getRoleID());
+            ResultSet rs = pstmtSelect.executeQuery();
+            if (rs.next()) {
+                newId = rs.getInt(1);
+                System.out.println("DAL" + newId);
+            }
+            return newId;
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
     }
+
+    public boolean userUpdate(User user) {
+        String sqlcommandUpdate = "UPDATE Users SET username = ?, password = ?, email = ?, " +
+                "fullName = ?, roleId = ? WHERE id = ?";
+        try (Connection con = connectionManager.getConnection();
+             PreparedStatement pstmtUpdate = con.prepareStatement(sqlcommandUpdate)) {
+
+            pstmtUpdate.setString(1, user.getUsername());
+            pstmtUpdate.setString(2, user.getPassword());
+            pstmtUpdate.setString(3, user.getEmail());
+            pstmtUpdate.setString(4, user.getFullName());
+            pstmtUpdate.setInt(5, user.getRoleID());
+            pstmtUpdate.setInt(6, user.getId());
+
+            int affectedRows = pstmtUpdate.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

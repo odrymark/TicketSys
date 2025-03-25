@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane alignment="BOTTOM_CENTER" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.UsersController">
+   <children>
+      <VBox fx:id="vBox" alignment="BOTTOM_CENTER" prefHeight="500" prefWidth="400.0" stylesheets="@../CSS/homeStyle.css">
+         <children>
+            <Label fx:id="lblUserTitle" alignment="TOP_CENTER" styleClass="header_text" text="User management" />
+            <HBox fx:id="hbTop" spacing="5.0">
+               <children>
+      
+                  <VBox fx:id="vboxForm" alignment="TOP_CENTER" prefWidth="310.0" spacing="5.0">
+                     <children>
+                        <Label text="Name*" />
+                        <TextField fx:id="txtFullName" promptText="Full name" />
+                        <Label layoutX="10.0" layoutY="10.0" text="e-mail*" />
+                        <TextField fx:id="txtEmail" layoutX="10.0" layoutY="32.0" promptText="e-mail" />
+                        <Label layoutX="10.0" layoutY="63.0" text="username*" />
+                        <TextField fx:id="txtUsername" layoutX="10.0" layoutY="138.0" promptText="username" />
+                        <HBox fx:id="hboxRoles" prefWidth="200.0" spacing="5.0">
+                           <children>
+                              <Label text="Roles">
+                                 <HBox.margin>
+                                    <Insets right="85.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <CheckBox fx:id="chkAdmin" mnemonicParsing="false" text="Administrator" />
+                              <CheckBox fx:id="chkOrganiser" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="Organiser ">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </CheckBox>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="hboxResetPassAdmin" layoutX="10.0" layoutY="274.0" prefHeight="100.0" spacing="5.0">
+                           <children>
+                              <Label text="Password">
+                                 <HBox.margin>
+                                    <Insets right="63.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <CheckBox fx:id="chkPassword" mnemonicParsing="false" text="Reset password" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <VBox fx:id="vbPassword" spacing="5">
+                           <children>
+                              <Label text="Change Password" />
+                              <TextField fx:id="txtOldPass" promptText="Old password" />
+                              <TextField fx:id="txtNewPass1" promptText="New Pasword" />
+                              <TextField fx:id="txtNewPass2" promptText="New password again" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <HBox.margin>
+                        <Insets left="45.0" top="10.0" />
+                     </HBox.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </HBox>
+            <HBox fx:id="hbBottom" alignment="BOTTOM_RIGHT" maxHeight="50.0" prefHeight="30.0" spacing="10.0">
+               <children>
+                  <Button fx:id="btnSaveUser" mnemonicParsing="false" onAction="#btnSaveClicked" text="Save">
+                     <HBox.margin>
+                        <Insets bottom="15.0" right="45.0" top="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <HBox fx:id="hboxSnack" alignment="BOTTOM_CENTER" maxHeight="50.0" maxWidth="200.0" prefHeight="50.0" prefWidth="200.0" visible="false">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <StackPane.margin>
+            <Insets bottom="5.0" top="5.0" />
+         </StackPane.margin>
+      </HBox>
+   </children>
+</StackPane>
