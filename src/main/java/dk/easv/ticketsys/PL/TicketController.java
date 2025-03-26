@@ -38,8 +38,9 @@ public class TicketController
 
 
     public void getEvent(Event event) {
-        if (ticketEvent == null || ticketLocation == null || ticketDate == null || ticketTime == null || ticketParticipantName == null) {
-            System.err.println(" FXML elements are not initialized!");
+        if (ticketEvent == null || ticketLocation == null || ticketDate == null ||
+                ticketTime == null || ticketParticipantName == null) {
+            System.err.println("FXML elements are not initialized!");
             return;
         }
 
@@ -47,12 +48,15 @@ public class TicketController
         ticketDate.setText(event.getStartDate());
         ticketTime.setText(event.getStartDate());
         ticketLocation.setText(event.getLocation());
+        ticketEvent.setText(event.getTitle());
 
-        // Generate a unique ticket code – for example, using UUID
-        String ticketCode = UUID.randomUUID().toString();
-        generateBarcode(ticketCode);
-        generateQRCode(ticketCode);
+        // Create info text after scan QR Code
+        String ticketInfo = buildTicketInfo(event);
+
+        generateBarcode(ticketInfo);
+        generateQRCode(ticketInfo);
     }
+
     public void generateQRCode(String data) {
         try {
             int width = 150;
@@ -102,6 +106,15 @@ public class TicketController
             e.printStackTrace();
             System.out.println("Error generating Barcode.");
         }
+    }
+
+    private String buildTicketInfo(Event event) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Event: ").append(event.getTitle()).append("\n")
+                .append("Date: ").append(event.getStartDate()).append("\n")
+                .append("Location: ").append(event.getLocation());
+        // TODO add data about customer
+        return sb.toString();
     }
 
 
