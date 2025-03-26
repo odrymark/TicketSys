@@ -108,6 +108,17 @@ public class DALManager {
         }
     }
 
+    public void deleteUser(User user) {
+        try (Connection con = connectionManager.getConnection()) {
+            String sqlcommandDelete = "DELETE FROM Users WHERE id = ?";
+            PreparedStatement pstmtDelete = con.prepareStatement(sqlcommandDelete);
+            pstmtDelete.setInt(1, user.getId());
+            pstmtDelete.execute();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     public ArrayList<TicketType> getAllTicketTypes() {
         ArrayList<TicketType> ticketTypes = new ArrayList<>();
         try {

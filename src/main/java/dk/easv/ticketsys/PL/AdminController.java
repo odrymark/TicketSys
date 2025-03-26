@@ -234,6 +234,7 @@ public class AdminController
         Button deleteBtn = new Button("\uD83D\uDDD1");
         deleteBtn.setId("usersCardButton");
         deleteBtn.setOnAction(e -> {
+            bllManager.deleteUser(user);
             eventsPane.getChildren().remove(card);
         });
 
