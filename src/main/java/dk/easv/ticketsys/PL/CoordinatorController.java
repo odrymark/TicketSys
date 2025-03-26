@@ -81,6 +81,25 @@ public class CoordinatorController
         }
     }
 
+    private void openTicket(Event event)
+    {
+        try
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            TicketController ticketController = fxmlLoader.getController();
+            ticketController.getEvent(event);
+            stage.showAndWait();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     private HBox createEventCard(InputStream imagePath, Event event) {
         HBox card = new HBox();
         card.setSpacing(10);
@@ -113,9 +132,13 @@ public class CoordinatorController
            openEventEditPage(event, e);
         });
 
-        Button infoBtn = new Button("Info");
-        infoBtn.setMinWidth(45);
-        infoBtn.setId("cardButton");
+        Image ticketImg = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/images/ticket.png"));
+        ImageView ticketIcon = new ImageView(ticketImg);
+        ticketIcon.setPreserveRatio(true);
+        ticketIcon.setFitWidth(27);
+        Button ticketBtn = new Button("", ticketIcon);
+        ticketBtn.setOnAction(_ -> openTicket(event));
+        ticketBtn.setId("cardButton");
 
         Button deleteBtn = new Button("\uD83D\uDDD1");
         deleteBtn.setMinWidth(40);
@@ -126,7 +149,7 @@ public class CoordinatorController
             eventsPane.getChildren().remove(card);
         });
 
-        controls.getChildren().addAll(infoBtn, editBtn, deleteBtn);
+        controls.getChildren().addAll(ticketBtn, editBtn, deleteBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
 

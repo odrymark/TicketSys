@@ -53,6 +53,7 @@
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-min-height: 30px;
+    -fx-min-length: 20px;
     -fx-max-lenght: 20px;
     -fx-cursor: hand;
 }

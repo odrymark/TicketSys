@@ -165,6 +165,25 @@ public class AdminController
         }
     }
 
+    private void openTicket(Event event)
+    {
+        try
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            TicketController ticketController = fxmlLoader.getController();
+            ticketController.getEvent(event);
+            stage.showAndWait();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     private HBox createEventCard(InputStream imagePath, Event event) {
         HBox card = new HBox();
         card.setSpacing(10);
@@ -190,6 +209,14 @@ public class AdminController
         Label dateLabel = new Label("\uD83D\uDD52 " + event.getStartDate());
         dateLabel.setId("cardText");
 
+        Image ticketImg = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/images/ticket.png"));
+        ImageView ticketIcon = new ImageView(ticketImg);
+        ticketIcon.setPreserveRatio(true);
+        ticketIcon.setFitWidth(27);
+        Button ticketBtn = new Button("", ticketIcon);
+        ticketBtn.setOnAction(_ -> openTicket(event));
+        ticketBtn.setId("cardButton");
+
         Button infoBtn = new Button("Info");
         infoBtn.setMinWidth(45);
         infoBtn.setId("cardButton");
@@ -203,7 +230,7 @@ public class AdminController
             eventsPane.getChildren().remove(card);
         });
 
-        controls.getChildren().addAll(infoBtn, deleteBtn);
+        controls.getChildren().addAll(ticketBtn, infoBtn, deleteBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
 
@@ -215,6 +242,7 @@ public class AdminController
         card.setId("usersCard");
 
         VBox details = new VBox(5);
+        details.setFillWidth(true);
 
         HBox controls = new HBox(5);
         controls.setAlignment(Pos.BOTTOM_RIGHT);
