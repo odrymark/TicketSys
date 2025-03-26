@@ -41,8 +41,13 @@ public class BLLManager {
     public ArrayList<TicketType> getTicketTypes() {
         return dalManager.getAllTicketTypes();
     }
+
     public void deleteEvent(Event event){
         dalManager.deleteEvent(event);
+    }
+
+    public void deleteUser(User user){
+        dalManager.deleteUser(user);
     }
 
     public int uploadNewTicketType(TicketType ticketType) {
