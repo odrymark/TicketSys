@@ -50,7 +50,7 @@ public class TicketController
         ticketLocation.setText(event.getLocation());
         ticketEvent.setText(event.getTitle());
 
-        // Create info text after scan QR Code
+        // Create info text after scan QR Code1
         String ticketInfo = buildTicketInfo(event);
 
         generateBarcode(ticketInfo);
