@@ -1,6 +1,7 @@
 package dk.easv.ticketsys.bll;
 
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.Ticket;
 import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.dal.ChooseFile;
@@ -66,4 +67,8 @@ public class BLLManager {
 
         return dalManager.getUserByPassword(username, password);
     }
+    public int uploadNewTicket(Ticket ticket) {
+        return dalManager.uploadNewTicket(ticket);
+    }
+
 }
