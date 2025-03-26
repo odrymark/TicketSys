@@ -45,6 +45,16 @@
     -fx-font-weight: bold;
     -fx-text-fill: white;
     -fx-min-height: 30px;
+    -fx-cursor: hand;
+}
+#usersCardButton
+{
+    -fx-background-color: #019ee3;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-min-height: 30px;
+    -fx-max-lenght: 20px;
+    -fx-cursor: hand;
 }
 #cardTitle
 {
@@ -180,7 +190,7 @@
     -fx-background-radius: 10px;
     -fx-pref-width: 200px;
     -fx-padding: 10px 10px 10px 10px;
-    -fx-cursor: hand;
+
 }.popup_background {
      -fx-background-color: #FFFFFF;
      -fx-border-color: #666;

@@ -7,18 +7,20 @@ import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.InputStream;
 import java.util.List;
@@ -45,7 +47,7 @@ public class AdminController
     private Image usersNotSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/userNotSel.png"));
     private Image eventsNotSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/eventsNotSel.png"));
     private ObservableList<HBox> events = FXCollections.observableArrayList();
-    private ObservableList<VBox> users = FXCollections.observableArrayList();
+    private ObservableList<HBox> users = FXCollections.observableArrayList();
     private final Button temp = new Button();
     @FXML
     private ScrollPane scrollP;
@@ -58,7 +60,6 @@ public class AdminController
         loadEvents();
         eventsPane.prefWidthProperty().bind(scrollP.widthProperty());
         eventsPane.prefHeightProperty().bind(scrollP.heightProperty());
-
     }
 
     @FXML
@@ -66,9 +67,6 @@ public class AdminController
     {
         if(!isEventsWin)
         {
-            //TEMPORARY TEST FOR EVENT CARDS
-            //events.add(createEventCard(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/eventsNotSel.png"), "Title", "Location", "2025-02-12 19:30"));
-
             sideBtnNotSelected.setId("sideBtnNotSelected");
             sideBtnSelected.setId("sideBtnSelected");
             usersImage.setImage(usersNotSel);
@@ -102,7 +100,7 @@ public class AdminController
         List<User> users = bllManager.getAllUsers();
         for (User user : users) {
             try {
-                VBox userCard = createUserCard(user);
+                HBox userCard = createUserCard(user);
                 eventsPane.getChildren().add(userCard);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -113,9 +111,6 @@ public class AdminController
     @FXML
     private void usersTab()
     {
-        //TEMPORARY TEST FOR USER CARDS
-        //users.add(createUserCard("User", "user@email.com", "User"));
-
         if(isEventsWin)
         {
             sideBtnNotSelected.setId("sideBtnSelected");
@@ -125,6 +120,7 @@ public class AdminController
             isEventsWin = false;
             currentP.setText("Users");
             loadUsers();
+            eventsPane.getChildren().addAll(users);
             newUser.setVisible(true);
             newUser.setDisable(false);
         }
@@ -133,7 +129,40 @@ public class AdminController
     @FXML
     private void newUserTab()
     {
+        try
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/manageUser.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
 
+            stage.showAndWait();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private void editUser(User user)
+    {
+        try
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/manageUser.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            NewUserController newUserController = fxmlLoader.getController();
+            newUserController.getUser(user);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+
+            stage.showAndWait();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private HBox createEventCard(InputStream imagePath, Event event) {
@@ -181,10 +210,15 @@ public class AdminController
         return card;
     }
 
-    private VBox createUserCard(User user) {
-        VBox card = new VBox(5);
-        card.setOnMouseClicked(_ -> { });
+    private HBox createUserCard(User user) {
+        HBox card = new HBox(5);
         card.setId("usersCard");
+
+        VBox details = new VBox(5);
+
+        HBox controls = new HBox(5);
+        controls.setAlignment(Pos.BOTTOM_RIGHT);
+        controls.setPadding(new Insets(0, 0, 0, 5));
 
         Label nameLabel = new Label(user.getFullName());
         nameLabel.setId("cardTitle");
@@ -193,7 +227,19 @@ public class AdminController
 
         Label typeLabel = new Label("Type: " + user.getRole());
 
-        card.getChildren().addAll(nameLabel, emailLabel, typeLabel);
+        Button editBtn = new Button("Edit");
+        editBtn.setOnAction(_ -> editUser(user));
+        editBtn.setId("usersCardButton");
+
+        Button deleteBtn = new Button("\uD83D\uDDD1");
+        deleteBtn.setId("usersCardButton");
+        deleteBtn.setOnAction(e -> {
+            eventsPane.getChildren().remove(card);
+        });
+
+        controls.getChildren().addAll(editBtn, deleteBtn);
+        details.getChildren().addAll(nameLabel, emailLabel, typeLabel);
+        card.getChildren().addAll(details, controls);
         return card;
     }
 }
