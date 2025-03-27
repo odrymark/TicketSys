@@ -125,17 +125,23 @@ public class NewEventController implements Initializable {
             eventToSave.setId(isEditing);
             if (bllManager.updateEvent(eventToSave))
                 System.out.println("Event updated success.");
-            else
+            else {
                 System.out.println("Event not updated.");
+                return;
+            }
         }
         else {
             int newId = bllManager.uploadNewEvent(eventToSave);
             if (newId > 0) {
                 eventToSave.setId(newId);
-            } else
+                //btnCancelClicked();
+            } else {
                 System.out.println("Upload did not succeed!");
+                return;
+            }
         }
         System.out.println("Saving...");
+        //btnCancelClicked();
     }
 
     private Event getEventToSave() {
@@ -227,7 +233,6 @@ public class NewEventController implements Initializable {
         String newTypeName = txtNewTicketType.getText();
         if (isDeletingEventType) {
             TicketType ticketTypeToDelete = choiceEvents.getSelectionModel().getSelectedItem();
-            System.out.println("Deleting ticket: " + ticketTypeToDelete);
             if (bllManager.deleteTicketType(ticketTypeToDelete))
             {
                 System.out.println("Deleting ticket " + ticketTypeToDelete + " successfully.");

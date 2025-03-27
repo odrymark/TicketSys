@@ -67,6 +67,18 @@ public class BLLManager {
 
         return dalManager.getUserByPassword(username, password);
     }
+
+    public int insertNewUser(User userToReturn) {
+        return dalManager.insertUser(userToReturn);
+    }
+
+    public String hashPass(String s) {
+        return s;
+    }
+
+    public boolean userToUpdate(User userToReturn) {
+        return dalManager.userUpdate(userToReturn);
+    }
     public int uploadNewTicket(Ticket ticket) {
         return dalManager.uploadNewTicket(ticket);
     }

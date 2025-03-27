@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,8 +23,11 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdminController
 {
@@ -51,6 +55,8 @@ public class AdminController
     private final Button temp = new Button();
     @FXML
     private ScrollPane scrollP;
+    private User userToEdit;
+    private Map<User, HBox> userCardMap = new HashMap<>();
 
     private BLLManager bllManager;
 
@@ -60,6 +66,7 @@ public class AdminController
         loadEvents();
         eventsPane.prefWidthProperty().bind(scrollP.widthProperty());
         eventsPane.prefHeightProperty().bind(scrollP.heightProperty());
+        userToEdit = null;
     }
 
     @FXML
@@ -102,6 +109,7 @@ public class AdminController
             try {
                 HBox userCard = createUserCard(user);
                 eventsPane.getChildren().add(userCard);
+                userCardMap.put(user, userCard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -127,61 +135,67 @@ public class AdminController
     }
 
     @FXML
-    private void newUserTab()
-    {
-        try
-        {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/manageUser.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
+    private void newUserTab(){
+        boolean isNew = false;
+        //TODO: save user only if save button was clicked. If the window just closes, don't do anything
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("FXML/users.fxml"));
+        Parent root;
+        try {
+            root = loader.load();
+            UsersController usersController = loader.getController();
+            usersController.setRole("Admin");
             Stage stage = new Stage();
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("../Images/user.png")));
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
+            if (userToEdit != null) {
+                usersController.isNewUser(false);
+                usersController.setUserToEdit(userToEdit);
+                stage.setTitle("Edit User");
+            }
+            else {
+                isNew = true;
+                usersController.isNewUser(true);
+                usersController.clearFields();
+                stage.setTitle("Add User");
+            }
 
+            stage.setScene(new Scene(root));
             stage.showAndWait();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+            User newUser = usersController.getUserToReturn();
+            if (usersController.getIsSaveUser()) {
+                SnackbarController controller = new SnackbarController();
+                if (isNew) {
+                    HBox userCard = createUserCard(newUser);
+                    eventsPane.getChildren().add(userCard);
+                    userCardMap.put(newUser, userCard);
+                } else {
+                    HBox userCard = userCardMap.get(userToEdit);
+                    if (userCard != null) {
+                        updateUserCard(userCard, newUser);
+                    } else
+                        System.out.println("UserCard was not found");
+                }
+            }
+
+            userToEdit = null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void editUser(User user)
-    {
-        try
-        {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/manageUser.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = new Stage();
-            NewUserController newUserController = fxmlLoader.getController();
-            newUserController.getUser(user);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
+    private void updateUserCard(HBox userCard, User newUser) {
+        userCard.getChildren().clear();
+        userCard.setOnMouseClicked(_ -> { userToEdit = newUser; newUserTab();});
+        userCard.setId("usersCard");
 
-            stage.showAndWait();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
+        Label nameLabel = new Label(newUser.getFullName());
+        nameLabel.setId("cardTitle");
 
-    private void openTicket(Event event)
-    {
-        try
-        {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            TicketController ticketController = fxmlLoader.getController();
-            ticketController.getEvent(event);
-            stage.showAndWait();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        Label emailLabel = new Label("Email: " + newUser.getEmail());
+
+        Label typeLabel = new Label("Type: " + newUser.getRole());
+
+        userCard.getChildren().addAll(nameLabel, emailLabel, typeLabel);
     }
 
     private HBox createEventCard(InputStream imagePath, Event event) {
@@ -237,6 +251,10 @@ public class AdminController
         return card;
     }
 
+    private void openTicket(Event event) {
+
+    }
+
     private HBox createUserCard(User user) {
         HBox card = new HBox(5);
         card.setId("usersCard");
@@ -270,5 +288,10 @@ public class AdminController
         details.getChildren().addAll(nameLabel, emailLabel, typeLabel);
         card.getChildren().addAll(details, controls);
         return card;
+    }
+
+    private void editUser(User user) {
+        userToEdit = user;
+        newUserTab();
     }
 }
