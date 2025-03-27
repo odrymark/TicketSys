@@ -134,14 +134,14 @@ public class NewEventController implements Initializable {
             int newId = bllManager.uploadNewEvent(eventToSave);
             if (newId > 0) {
                 eventToSave.setId(newId);
-                btnCancelClicked();
+                //btnCancelClicked();
             } else {
                 System.out.println("Upload did not succeed!");
                 return;
             }
         }
         System.out.println("Saving...");
-        btnCancelClicked();
+        //btnCancelClicked();
     }
 
     private Event getEventToSave() {

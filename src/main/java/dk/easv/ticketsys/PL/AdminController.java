@@ -7,13 +7,11 @@ import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -58,7 +56,7 @@ public class AdminController
     @FXML
     private ScrollPane scrollP;
     private User userToEdit;
-    private Map<User, VBox> userCardMap = new HashMap<>();
+    private Map<User, HBox> userCardMap = new HashMap<>();
 
     private BLLManager bllManager;
 
@@ -167,11 +165,11 @@ public class AdminController
             if (usersController.getIsSaveUser()) {
                 SnackbarController controller = new SnackbarController();
                 if (isNew) {
-                    VBox userCard = createUserCard(newUser);
+                    HBox userCard = createUserCard(newUser);
                     eventsPane.getChildren().add(userCard);
                     userCardMap.put(newUser, userCard);
                 } else {
-                    VBox userCard = userCardMap.get(userToEdit);
+                    HBox userCard = userCardMap.get(userToEdit);
                     if (userCard != null) {
                         updateUserCard(userCard, newUser);
                     } else
@@ -185,7 +183,7 @@ public class AdminController
         }
     }
 
-    private void updateUserCard(VBox userCard, User newUser) {
+    private void updateUserCard(HBox userCard, User newUser) {
         userCard.getChildren().clear();
         userCard.setOnMouseClicked(_ -> { userToEdit = newUser; newUserTab();});
         userCard.setId("usersCard");
@@ -253,9 +251,10 @@ public class AdminController
         return card;
     }
 
-    private VBox createUserCard(User user) {
-        VBox card = new VBox(5);
-        card.setOnMouseClicked(_ -> { userToEdit = user; newUserTab();});
+    private void openTicket(Event event) {
+
+    }
+
     private HBox createUserCard(User user) {
         HBox card = new HBox(5);
         card.setId("usersCard");
@@ -289,5 +288,10 @@ public class AdminController
         details.getChildren().addAll(nameLabel, emailLabel, typeLabel);
         card.getChildren().addAll(details, controls);
         return card;
+    }
+
+    private void editUser(User user) {
+        userToEdit = user;
+        newUserTab();
     }
 }

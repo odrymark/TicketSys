@@ -238,7 +238,7 @@ public class DALManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+    }
     public int insertUser(User user) {
         try (Connection con = connectionManager.getConnection()) {
             int newId = 0;
