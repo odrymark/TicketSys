@@ -115,22 +115,7 @@ public class NewEventController implements Initializable {
         showNewTicketPopup(true);
     }
 
-    @FXML private void btnCancelClicked() {
-        try
-        {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = (Stage) btnCancel.getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        }
-        catch (Exception e)
-        {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    @FXML private void btnSaveClicked(ActionEvent event) throws TicketExceptions {
+    @FXML private void btnSaveClicked() throws TicketExceptions {
         Event eventToSave = getEventToSave();
         if (eventToSave == null) {
             System.out.println("Event is null!");
@@ -223,7 +208,7 @@ public class NewEventController implements Initializable {
         return "" + value;
     }
 
-    @FXML private void btnNewTicketCancelClicked(ActionEvent event) {
+    @FXML private void btnNewTicketCancelClicked() {
         closeNewTicketType();
         isDeletingEventType = false;
     }
@@ -244,7 +229,7 @@ public class NewEventController implements Initializable {
 
         }
 
-    @FXML private void btnNewTicketSaveClicked(ActionEvent event) {
+    @FXML private void btnNewTicketSaveClicked() {
         String newTypeName = txtNewTicketType.getText();
         if (isDeletingEventType) {
             TicketType ticketTypeToDelete = choiceEvents.getSelectionModel().getSelectedItem();
@@ -316,7 +301,7 @@ public class NewEventController implements Initializable {
         return btnSave;
     }
 
-    @FXML private void btnEventTypeClicked(ActionEvent event) {
+    @FXML private void btnEventTypeClicked() {
         if (dropEventType.isManaged()) {
             dropEventType.setManaged(false);
             dropEventType.setVisible(false);
@@ -333,7 +318,7 @@ public class NewEventController implements Initializable {
         }
     }
 
-    @FXML private void btnImageClicked(ActionEvent event) throws TicketExceptions {
+    @FXML private void btnImageClicked() throws TicketExceptions {
         BLLManager bllManager = new BLLManager();
         String filePath = bllManager.chooseFile(btnImage.getScene().getWindow());
         if (filePath != null) {
@@ -341,7 +326,7 @@ public class NewEventController implements Initializable {
         }
     }
 
-    @FXML private void btnDeleteTicketType(ActionEvent event) {
+    @FXML private void btnDeleteTicketType() {
         isDeletingEventType = true;
         showNewTicketPopup(false);
         lblNewTicketTitle.setText("Delete ticket type");

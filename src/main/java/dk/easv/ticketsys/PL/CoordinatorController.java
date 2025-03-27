@@ -21,6 +21,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
@@ -69,13 +70,33 @@ public class CoordinatorController
         {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/new_event.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = (Stage) newEvent.getScene().getWindow();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
-            stage.show();
+            stage.showAndWait();
         }
         catch (Exception e)
         {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void openTicket(Event event)
+    {
+        try
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            TicketController ticketController = fxmlLoader.getController();
+            ticketController.getEvent(event);
+            stage.showAndWait();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -111,9 +132,13 @@ public class CoordinatorController
            openEventEditPage(event, e);
         });
 
-        Button infoBtn = new Button("Info");
-        infoBtn.setMinWidth(45);
-        infoBtn.setId("cardButton");
+        Image ticketImg = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/images/ticket.png"));
+        ImageView ticketIcon = new ImageView(ticketImg);
+        ticketIcon.setPreserveRatio(true);
+        ticketIcon.setFitWidth(27);
+        Button ticketBtn = new Button("", ticketIcon);
+        ticketBtn.setOnAction(_ -> openTicket(event));
+        ticketBtn.setId("cardButton");
 
         Button deleteBtn = new Button("\uD83D\uDDD1");
         deleteBtn.setMinWidth(40);
@@ -124,7 +149,7 @@ public class CoordinatorController
             eventsPane.getChildren().remove(card);
         });
 
-        controls.getChildren().addAll(infoBtn, editBtn, deleteBtn);
+        controls.getChildren().addAll(ticketBtn, editBtn, deleteBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
 

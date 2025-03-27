@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="500.0" prefWidth="600.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.NewEventController">
+<StackPane prefHeight="500.0" prefWidth="600.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.NewEventController">
     <children>
         <VBox alignment="TOP_CENTER" spacing="5.0">
             <children>
@@ -126,11 +126,6 @@
                             </HBox.margin>
                         </Button>
                         <Button fx:id="btnAddTicketType" onAction="#btnAddTicketTypeClicked" text="Add ticket type">
-                            <HBox.margin>
-                                <Insets bottom="15.0" right="10.0" />
-                            </HBox.margin>
-                        </Button>
-                        <Button fx:id="btnCancel" onAction="#btnCancelClicked" text="Cancel">
                             <HBox.margin>
                                 <Insets bottom="15.0" right="10.0" />
                             </HBox.margin>

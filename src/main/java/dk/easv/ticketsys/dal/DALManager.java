@@ -2,6 +2,7 @@ package dk.easv.ticketsys.dal;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.Ticket;
 import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
@@ -108,6 +109,17 @@ public class DALManager {
         }
     }
 
+    public void deleteUser(User user) {
+        try (Connection con = connectionManager.getConnection()) {
+            String sqlcommandDelete = "DELETE FROM Users WHERE id = ?";
+            PreparedStatement pstmtDelete = con.prepareStatement(sqlcommandDelete);
+            pstmtDelete.setInt(1, user.getId());
+            pstmtDelete.execute();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     public ArrayList<TicketType> getAllTicketTypes() {
         ArrayList<TicketType> ticketTypes = new ArrayList<>();
         try {
@@ -205,6 +217,27 @@ public class DALManager {
             throw new RuntimeException(e);
         }
     }
+    public int uploadNewTicket(Ticket ticket) {
+        int newId = 0;
+        try (Connection con = connectionManager.getConnection()) {
+            String sqlInsertCommand = "INSERT INTO Tickets (eventID, buyerEmail, qrCode, barCode, printed, ticketType) " +
+                    "OUTPUT INSERTED.ID " +
+                    "VALUES (?, ?, ?, ?, ?, ?);";
+            PreparedStatement pstmtInsert = con.prepareStatement(sqlInsertCommand);
+            pstmtInsert.setInt(1, ticket.getEventID());
+            pstmtInsert.setString(2, ticket.getBuyerEmail());
+            pstmtInsert.setBytes(3, ticket.getQrCode());
+            pstmtInsert.setString(4, ticket.getBarCode());
+            pstmtInsert.setBoolean(5, ticket.isPrinted());
+            pstmtInsert.setInt(6, ticket.getTicketType());
+            ResultSet rs = pstmtInsert.executeQuery();
+            if (rs.next()) {
+                newId = rs.getInt(1);
+            }
+            return newId;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     public int insertUser(User user) {
         try (Connection con = connectionManager.getConnection()) {

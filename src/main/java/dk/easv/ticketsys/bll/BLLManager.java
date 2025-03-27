@@ -1,6 +1,7 @@
 package dk.easv.ticketsys.bll;
 
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.Ticket;
 import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.dal.ChooseFile;
@@ -41,8 +42,13 @@ public class BLLManager {
     public ArrayList<TicketType> getTicketTypes() {
         return dalManager.getAllTicketTypes();
     }
+
     public void deleteEvent(Event event){
         dalManager.deleteEvent(event);
+    }
+
+    public void deleteUser(User user){
+        dalManager.deleteUser(user);
     }
 
     public int uploadNewTicketType(TicketType ticketType) {
@@ -73,4 +79,8 @@ public class BLLManager {
     public boolean userToUpdate(User userToReturn) {
         return dalManager.userUpdate(userToReturn);
     }
+    public int uploadNewTicket(Ticket ticket) {
+        return dalManager.uploadNewTicket(ticket);
+    }
+
 }
