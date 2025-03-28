@@ -7,10 +7,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import dk.easv.ticketsys.be.Event;
-import dk.easv.ticketsys.be.Ticket;
+import dk.easv.ticketsys.be.SpecialTicket;
+import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.bll.BLLManager;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -24,16 +24,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CouponController {
-    @FXML
-    private Label ticketDate;
-    @FXML private Label ticketTime;
-    @FXML private Label ticketLocation;
-    @FXML private ImageView imgBarcode;
-    @FXML private ImageView imgQRCode;
-    @FXML private Label ticketEvent;
-    @FXML private Label ticketParticipantName;
+
+    @FXML private Label couponEvent;
+    @FXML private Label validDate;
+    @FXML private Label couponLocation;
+    @FXML private Label couponHolder;
+    @FXML private Label holderMail;    // Displays the generated coupon code
+    @FXML private Label termsLabel;
+    @FXML private ImageView couponBarcode;
+    @FXML private ImageView couponQrCode;
+
+    // Label to display the selected coupon type
+    @FXML private Label couponTypeLabel;
 
     private Event event;
+    private TicketType couponType;
     private BLLManager bllManager;
 
     @FXML
@@ -42,50 +47,69 @@ public class CouponController {
             bllManager = new BLLManager();
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Error initializing BLLManager!");
+            System.err.println("Error initializing BLLManager in CouponController!");
         }
     }
 
-    public void getEvent(Event event) {
-        if (ticketEvent == null || ticketLocation == null || ticketDate == null ||
-                ticketTime == null || ticketParticipantName == null) {
-            System.err.println("FXML elements are not initialized!");
-            return;
-        }
+    public void setEvent(Event event) {
         this.event = event;
-        ticketDate.setText(event.getStartDate());
-        ticketTime.setText(event.getStartDate());
-        ticketLocation.setText(event.getLocation());
-        ticketEvent.setText(event.getTitle());
+        updateUI();
+    }
 
-        // Build ticket information string from event details
-        String ticketInfo = buildTicketInfo(event);
+    public void setCouponType(TicketType couponType) {
+        this.couponType = couponType;
+        updateCouponTypeUI();
+    }
 
-        // Generate and display barcode and QR code images
-        generateBarcode(ticketInfo);
-        generateQRCode(ticketInfo);
+    private void updateCouponTypeUI() {
+        if (couponType != null) {
+            couponTypeLabel.setText(couponType.getName());
+        } else {
+            couponTypeLabel.setText("Not Selected");
+        }
     }
 
     /**
-     * Generates a QR code image from the provided data and sets it in the ImageView.
+     * Updates the coupon UI
      */
+    private void updateUI() {
+        if (event != null) {
+            couponEvent.setText(event.getTitle());
+            couponLocation.setText(event.getLocation());
+            validDate.setText(event.getStartDate());
+            couponHolder.setText("Customer Name");
+          //TODO mail from data
+            holderMail.setText("mail");
+
+            updateCouponTypeUI();
+
+            String couponInfo = buildCouponInfo(event);
+            generateBarcode(couponInfo);
+            generateQRCode(couponInfo);
+        }
+    }
+
+    private String buildCouponInfo(Event event) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Coupon for: ").append(event.getTitle()).append("\n")
+                .append("Location: ").append(event.getLocation()).append("\n")
+                .append("Valid Until: ").append(event.getStartDate());
+        return sb.toString();
+    }
+
     public void generateQRCode(String data) {
         try {
-            int width = 150;
-            int height = 150;
+            int width = 150, height = 150;
             BitMatrix matrix = new MultiFormatWriter().encode(data, BarcodeFormat.QR_CODE, width, height);
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
             Image qrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-            imgQRCode.setImage(qrImage);
+            couponQrCode.setImage(qrImage);
         } catch (WriterException e) {
             e.printStackTrace();
-            System.out.println("Error generating QR code.");
+            System.out.println("Error generating QR code for coupon.");
         }
     }
 
-    /**
-     * Generates a barcode image from the provided data,  and sets it in the ImageView.
-     */
     public void generateBarcode(String data) {
         try {
             int width = 300;
@@ -104,26 +128,16 @@ public class CouponController {
             }
 
             Image fxImage = SwingFXUtils.toFXImage(rotatedImage, null);
-            imgBarcode.setImage(fxImage);
+            couponBarcode.setImage(fxImage);
         } catch (WriterException e) {
             e.printStackTrace();
             System.out.println("Error generating Barcode.");
         }
     }
 
-    private String buildTicketInfo(Event event) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Event: ").append(event.getTitle()).append("\n")
-                .append("Date: ").append(event.getStartDate()).append("\n")
-                .append("Location: ").append(event.getLocation());
-        // TODO: add customer-specific data if needed.
-        return sb.toString();
-    }
-
     private byte[] generateQRCodeData(String data) {
         try {
-            int width = 150;
-            int height = 150;
+            int width = 150, height = 150;
             BitMatrix matrix = new MultiFormatWriter().encode(data, BarcodeFormat.QR_CODE, width, height);
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -137,8 +151,7 @@ public class CouponController {
 
     private String generateBarCodeData(String data) {
         try {
-            int width = 300;
-            int height = 80;
+            int width = 300, height = 80;
             Map<EncodeHintType, Object> hints = new HashMap<>();
             hints.put(EncodeHintType.MARGIN, 1);
             BitMatrix bitMatrix = new MultiFormatWriter().encode(data, BarcodeFormat.CODE_128, width, height, hints);
@@ -153,30 +166,22 @@ public class CouponController {
         }
     }
 
-    public void printTicket() {
-        // Build the ticket information string from the event details
-        String ticketInfo = buildTicketInfo(event);
+    public void printCoupon() {
+        String couponInfo = buildCouponInfo(event);
+        byte[] qrCodeData = generateQRCodeData(couponInfo);
+        String barCodeData = generateBarCodeData(couponInfo);
 
-        // Generate raw data for QR code and barcode
-        byte[] qrCodeData = generateQRCodeData(ticketInfo);
-        String barCodeData = generateBarCodeData(ticketInfo);
+        String description = "Discount Coupon";
+        int eventID = event.getId();
 
-        //TODO
-        String buyerEmail = "user@example.com";
-        int ticketType = 17; // Example ticket type
-
-        // Create a new Ticket object
-        Ticket newTicket = new Ticket(0, event.getId(), buyerEmail, qrCodeData, barCodeData, false, ticketType);
-
-        // Save the ticket to the database using BLLManager
-        int newTicketId = bllManager.uploadNewTicket(newTicket);
-        if (newTicketId > 0) {
-            newTicket.setId(newTicketId);
-            System.out.println("Ticket saved with ID: " + newTicketId);
+        SpecialTicket coupon = new SpecialTicket(0, description, eventID, qrCodeData, barCodeData);
+        int newCouponId = bllManager.uploadNewCoupon(coupon);
+        if (newCouponId > 0) {
+            coupon.setId(newCouponId);
+            System.out.println("Coupon saved with ID: " + newCouponId);
         } else {
-            System.out.println("Error saving ticket");
+            System.out.println("Error saving coupon");
         }
-
-        // TODO printing functionality here.
+        // TODO: Add printing functionality if needed.
     }
 }

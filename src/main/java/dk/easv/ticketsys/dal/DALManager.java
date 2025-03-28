@@ -1,10 +1,7 @@
 package dk.easv.ticketsys.dal;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
-import dk.easv.ticketsys.be.Event;
-import dk.easv.ticketsys.be.Ticket;
-import dk.easv.ticketsys.be.TicketType;
-import dk.easv.ticketsys.be.User;
+import dk.easv.ticketsys.be.*;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 
 import java.sql.*;
@@ -239,6 +236,29 @@ public class DALManager {
             throw new RuntimeException(e);
         }
     }
+
+    //TODO join with customer  mail , name(?)
+    public int uploadNewCoupon(SpecialTicket coupon) {
+        int newId = 0;
+        try (Connection con = connectionManager.getConnection()) {
+            String sqlInsertCommand = "INSERT INTO SpecialTickets (description, eventID, qrCode, barCode) " +
+                    "OUTPUT INSERTED.ID " +
+                    "VALUES (?, ?, ?, ?);";
+            PreparedStatement pstmtInsert = con.prepareStatement(sqlInsertCommand);
+            pstmtInsert.setString(1, coupon.getDescription());
+            pstmtInsert.setInt(2, coupon.getEventID());
+            pstmtInsert.setBytes(3, coupon.getQrCode());
+            pstmtInsert.setString(4, coupon.getBarCode());
+            ResultSet rs = pstmtInsert.executeQuery();
+            if (rs.next()) {
+                newId = rs.getInt(1);
+            }
+            return newId;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public int insertUser(User user) {
         try (Connection con = connectionManager.getConnection()) {
             int newId = 0;

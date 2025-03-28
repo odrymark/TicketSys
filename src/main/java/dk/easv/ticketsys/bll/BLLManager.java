@@ -1,9 +1,6 @@
 package dk.easv.ticketsys.bll;
 
-import dk.easv.ticketsys.be.Event;
-import dk.easv.ticketsys.be.Ticket;
-import dk.easv.ticketsys.be.TicketType;
-import dk.easv.ticketsys.be.User;
+import dk.easv.ticketsys.be.*;
 import dk.easv.ticketsys.dal.ChooseFile;
 import dk.easv.ticketsys.dal.DALManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
@@ -79,8 +76,11 @@ public class BLLManager {
     public boolean userToUpdate(User userToReturn) {
         return dalManager.userUpdate(userToReturn);
     }
+
     public int uploadNewTicket(Ticket ticket) {
         return dalManager.uploadNewTicket(ticket);
     }
+
+    public int uploadNewCoupon(SpecialTicket coupon){return dalManager.uploadNewCoupon(coupon);}
 
 }

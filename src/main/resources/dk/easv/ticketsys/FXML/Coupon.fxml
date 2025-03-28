@@ -26,7 +26,7 @@
 
             <VBox prefHeight="192.0" prefWidth="283.0" spacing="15">
                 <Label fx:id="couponEvent" styleClass="event-name" text="Event Name" />
-                <Label prefHeight="18.0" prefWidth="97.0" styleClass="detail-label" text="Coupon Code:">
+                <Label fx:id="couponTypeLabel" prefHeight="23.0" prefWidth="203.0" styleClass="detail-label">
                     <font>
                         <Font size="18.0" />
                     </font>
@@ -61,15 +61,15 @@
                     </HBox>
 
                     <HBox alignment="CENTER_LEFT" spacing="10">
-                        <Label fx:id="couponCode" prefHeight="18.0" prefWidth="180.0" styleClass="value-label" />
+                        <Label fx:id="holderMail" prefHeight="18.0" prefWidth="180.0" styleClass="value-label" />
                     </HBox>
                 </VBox>
 
                 <Line />
 
                 <VBox spacing="5">
-                    <Label styleClass="detail-label" text="Terms &amp; Conditions" />
-                    <Label fx:id="termsLabel" styleClass="value-label" text="1. Valid for selected events only&#10;2. Non-transferable&#10;3. One-time use" />
+                    <Label styleClass="detail-label" text="Terms; Conditions" />
+                    <Label fx:id="termsLabel" styleClass="value-label" text="Valid for selected events only;" />
                 </VBox>
             </VBox>
 
