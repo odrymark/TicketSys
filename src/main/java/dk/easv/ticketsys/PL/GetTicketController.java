@@ -2,66 +2,65 @@ package dk.easv.ticketsys.PL;
 
 import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
-import dk.easv.ticketsys.be.Ticket;
+import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javafx.scene.image.ImageView;
+
+
 public class GetTicketController {
+
     @FXML private Label eventTitleLabel;
     @FXML private ImageView eventImageView;
     @FXML private ListView<String> participantsList;
-    @FXML private TextField participantEmailField; // Змінено з participantNameField
-    @FXML private Button btnGetTicket;
-    @FXML private Button btnGetCoupon;
-    @FXML private Button closeButton;
+    @FXML private TextField participantEmailField;
+    @FXML private ComboBox<TicketType> couponTypeComboBox;
 
     private Event event;
     private BLLManager bllManager;
 
-    public GetTicketController() {
+    @FXML
+    public void initialize() {
         try {
             bllManager = new BLLManager();
+
+            couponTypeComboBox.setItems(FXCollections.observableArrayList(bllManager.getTicketTypes()));
+
+            if (!couponTypeComboBox.getItems().isEmpty()) {
+                couponTypeComboBox.getSelectionModel().selectFirst();
+            }
         } catch (TicketExceptions e) {
             e.printStackTrace();
+            System.err.println("Error initializing BLLManager in GetTicketController!");
         }
     }
 
     public void setEvent(Event event) {
         this.event = event;
-        updateUI();
-    }
-
-    private void updateUI() {
-        if (event != null) {
-            eventTitleLabel.setText(event.getTitle());
-            // Додати завантаження зображення
-        }
+        eventTitleLabel.setText(event.getTitle());
     }
 
     @FXML
     private void addParticipant(ActionEvent actionEvent) {
         String email = participantEmailField.getText().trim();
-        if (!email.isEmpty() && email.contains("@")) { // check mail @
+        if (!email.isEmpty() && email.contains("@")) {
             if (!participantsList.getItems().contains(email)) {
                 participantsList.getItems().add(email);
             }
-            //We remove the text field clearing so that the email remains
-            // participantEmailField.clear();
         } else {
             showAlert("Invalid Email", "Please enter a valid email address");
         }
     }
-
 
     @FXML
     private void deleteParticipant(ActionEvent actionEvent) {
@@ -71,43 +70,44 @@ public class GetTicketController {
         }
     }
 
+
     @FXML
     private void getTicket(ActionEvent actionEvent) {
-        try
-        {
+        try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
+
             TicketController ticketController = fxmlLoader.getController();
             ticketController.getEvent(event);
-
             stage.showAndWait();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @FXML
     private void getCoupon(ActionEvent actionEvent) {
-        try
-        {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/Coupon.fxml"));
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/coupon.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
-            TicketController ticketController = fxmlLoader.getController();
-            ticketController.getEvent(event);
+
+            // Get the selected coupon type from the ComboBox
+            TicketType selectedCouponType = couponTypeComboBox.getValue();
+
+            // Pass event and coupon type data to the CouponController
+            CouponController couponController = fxmlLoader.getController();
+            couponController.setEvent(event);
+            couponController.setCouponType(selectedCouponType);
 
             stage.showAndWait();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
