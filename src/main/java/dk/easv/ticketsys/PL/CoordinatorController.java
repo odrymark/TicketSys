@@ -85,13 +85,13 @@ public class CoordinatorController
     {
         try
         {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/getTicket.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
-            TicketController ticketController = fxmlLoader.getController();
-            ticketController.getEvent(event);
+            GetTicketController getTicketController = fxmlLoader.getController();
+            getTicketController.setEvent(event);
             stage.showAndWait();
         }
         catch (Exception e)
