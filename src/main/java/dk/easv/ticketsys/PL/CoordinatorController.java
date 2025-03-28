@@ -129,7 +129,7 @@ public class CoordinatorController
         editBtn.setMinWidth(45);
         editBtn.setId("cardButton");
         editBtn.setOnAction(e -> {
-           openEventEditPage(event, e);
+            openEventEditPage(event, e);
         });
 
         Image ticketImg = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/images/ticket.png"));
