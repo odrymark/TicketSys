@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <StackPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.CoordinatorController">
    <children>
       <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="790.0" stylesheets="@../CSS/homeStyle.css">
@@ -95,6 +94,6 @@
             </VBox>
          </children>
       </HBox>
-      <HBox fx:id="hboxSnack" prefHeight="100.0" prefWidth="200.0" />
+      <HBox fx:id="hboxSnack" disable="true" prefHeight="100.0" prefWidth="200.0" />
    </children>
 </StackPane>
