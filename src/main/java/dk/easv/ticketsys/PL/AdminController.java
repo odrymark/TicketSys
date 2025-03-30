@@ -11,9 +11,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -32,20 +34,14 @@ import java.util.Map;
 public class AdminController
 {
     private Boolean isEventsWin = true;
-    @FXML
-    private Button sideBtnSelected;
-    @FXML
-    private Button sideBtnNotSelected;
-    @FXML
-    private ImageView usersImage;
-    @FXML
-    private ImageView eventsImage;
-    @FXML
-    private FlowPane eventsPane;
-    @FXML
-    private Label currentP;
-    @FXML
-    private Button newUser;
+    @FXML private Button sideBtnSelected;
+    @FXML private Button sideBtnNotSelected;
+    @FXML private ImageView usersImage;
+    @FXML private ImageView eventsImage;
+    @FXML private FlowPane eventsPane;
+    @FXML private Label currentP;
+    @FXML private Button newUser;
+    @FXML private ChoiceBox<String> user;
     private Image usersSel = new Image(getClass().getResourceAsStream("/dk/easv/ticketsys/Images/user.png"));
     private Image eventsSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png"));
     private Image usersNotSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/userNotSel.png"));
@@ -56,7 +52,11 @@ public class AdminController
     @FXML
     private ScrollPane scrollP;
     private User userToEdit;
-    private Map<User, HBox> userCardMap = new HashMap<>();
+    private Map<String, HBox> userCardMap;
+
+
+
+    private User loggedInUser;
 
     private BLLManager bllManager;
 
@@ -67,6 +67,9 @@ public class AdminController
         eventsPane.prefWidthProperty().bind(scrollP.widthProperty());
         eventsPane.prefHeightProperty().bind(scrollP.heightProperty());
         userToEdit = null;
+        loggedInUser = null;
+        userCardMap = new HashMap<>();
+        user.getItems().clear();
     }
 
     @FXML
@@ -109,7 +112,7 @@ public class AdminController
             try {
                 HBox userCard = createUserCard(user);
                 eventsPane.getChildren().add(userCard);
-                userCardMap.put(user, userCard);
+                userCardMap.put(user.getUsername(), userCard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -137,24 +140,31 @@ public class AdminController
     @FXML
     private void newUserTab(){
         boolean isNew = false;
-        //TODO: save user only if save button was clicked. If the window just closes, don't do anything
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("FXML/users.fxml"));
         Parent root;
         try {
             root = loader.load();
             UsersController usersController = loader.getController();
-            usersController.setRole("Admin");
             Stage stage = new Stage();
             stage.getIcons().add(new Image(getClass().getResourceAsStream("../Images/user.png")));
             stage.initModality(Modality.APPLICATION_MODAL);
             if (userToEdit != null) {
                 usersController.isNewUser(false);
                 usersController.setUserToEdit(userToEdit);
-                stage.setTitle("Edit User");
+                if (loggedInUser != null && loggedInUser.getUsername().equals(userToEdit.getUsername())) {
+                    usersController.setAdminEditingSelf(true);
+                    stage.setTitle("Edit profile");
+                }
+                else
+                    stage.setTitle("Edit User");
+                usersController.setLoggedinUser(loggedInUser);
+                usersController.setRole(loggedInUser.getRole());
+                user.getSelectionModel().select(0);
             }
             else {
                 isNew = true;
                 usersController.isNewUser(true);
+                //usersController.setRole(loggedInUser.getRole());
                 usersController.clearFields();
                 stage.setTitle("Add User");
             }
@@ -167,13 +177,19 @@ public class AdminController
                 if (isNew) {
                     HBox userCard = createUserCard(newUser);
                     eventsPane.getChildren().add(userCard);
-                    userCardMap.put(newUser, userCard);
+                    userCardMap.put(newUser.getUsername(), userCard);
                 } else {
-                    HBox userCard = userCardMap.get(userToEdit);
+                    HBox userCard = userCardMap.get(userToEdit.getUsername());
                     if (userCard != null) {
                         updateUserCard(userCard, newUser);
-                    } else
+                        if (userToEdit.getUsername().equals(loggedInUser.getUsername())) {
+                            loggedInUser.setFullName(newUser.getFullName());
+                            user.getItems().set(0, newUser.getFullName());
+                            user.getSelectionModel().select(0);
+                        }
+                    } else {
                         System.out.println("UserCard was not found");
+                    }
                 }
             }
 
@@ -184,18 +200,20 @@ public class AdminController
     }
 
     private void updateUserCard(HBox userCard, User newUser) {
-        userCard.getChildren().clear();
-        userCard.setOnMouseClicked(_ -> { userToEdit = newUser; newUserTab();});
+        //userCard.getChildren().clear();
         userCard.setId("usersCard");
-
-        Label nameLabel = new Label(newUser.getFullName());
-        nameLabel.setId("cardTitle");
-
-        Label emailLabel = new Label("Email: " + newUser.getEmail());
-
-        Label typeLabel = new Label("Type: " + newUser.getRole());
-
-        userCard.getChildren().addAll(nameLabel, emailLabel, typeLabel);
+        for (Node node : ((VBox) userCard.getChildren().getFirst()).getChildren()) { // Get the details VBox
+            if (node instanceof Label label) {
+                String text = label.getText();
+                if (text.startsWith("Email:")) {
+                    label.setText("Email: " + newUser.getEmail());
+                } else if (text.startsWith("Type:")) {
+                    label.setText("Type: " + newUser.getRole());
+                } else { // Assume this is the name label
+                    label.setText(newUser.getFullName());
+                }
+            }
+        }
     }
 
     private HBox createEventCard(InputStream imagePath, Event event) {
@@ -293,5 +311,44 @@ public class AdminController
     private void editUser(User user) {
         userToEdit = user;
         newUserTab();
+    }
+
+    public void setLoggedInUser(User loggedInUser) {
+        if (loggedInUser != null) {
+            this.loggedInUser = loggedInUser;
+            setDropDown();
+        }
+        else
+            System.out.println("No user is set who logged in");
+    }
+
+    private void setDropDown() {
+        user.getItems().add(loggedInUser.getFullName());
+        user.getItems().add("Edit profile");
+        user.getItems().add("Logout");
+        user.getSelectionModel().select(0);
+        user.setOnAction(event -> {
+            String selected = user.getSelectionModel().getSelectedItem();
+
+            if ("Edit profile".equals(selected)) {
+                userToEdit = loggedInUser;
+                newUserTab();
+            } else if ("Logout".equals(selected)) {
+                logout();
+            }
+        });
+    }
+
+    private void logout() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/login.fxml"));
+
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = (Stage) user.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

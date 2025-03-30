@@ -4,8 +4,11 @@ import dk.easv.ticketsys.be.*;
 import dk.easv.ticketsys.dal.ChooseFile;
 import dk.easv.ticketsys.dal.DALManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
+import javafx.scene.control.TextField;
 import javafx.stage.Window;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -69,8 +72,15 @@ public class BLLManager {
         return dalManager.insertUser(userToReturn);
     }
 
-    public String hashPass(String s) {
-        return s;
+    public String hashPass(String username, String pass) {
+        PasswordHasher hasher = new PasswordHasher();
+        String hashedPass = null;
+        try {
+            hashedPass = hasher.hashPassword(pass, username);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+        return hashedPass;
     }
 
     public boolean userToUpdate(User userToReturn) {
@@ -83,4 +93,17 @@ public class BLLManager {
 
     public int uploadNewCoupon(SpecialTicket coupon){return dalManager.uploadNewCoupon(coupon);}
 
+    public User login(String username, String pass) {
+        User user = dalManager.login(username, hashPass(username, pass));
+        return user;
+    }
+
+    public User loginTest() {
+        return dalManager.login("antal", "2Ze8mH0x2u2+C0zRHggCYk7QTZMxmsiKz2FicVAeac8=");
+    }
+
+    public boolean checkPassword(String txtUsername, String txtOldPass) {
+        User user = dalManager.login(txtUsername, hashPass(txtUsername, txtOldPass));
+        return user != null;
+    }
 }

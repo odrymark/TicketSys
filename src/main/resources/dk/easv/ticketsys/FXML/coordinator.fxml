@@ -94,6 +94,6 @@
             </VBox>
          </children>
       </HBox>
-      <HBox fx:id="hboxSnack" disable="true" prefHeight="100.0" prefWidth="200.0" />
+      <HBox fx:id="hboxSnack" disable="true" prefHeight="100.0" prefWidth="200.0" visible="false" />
    </children>
 </StackPane>

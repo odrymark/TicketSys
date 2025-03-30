@@ -3,6 +3,7 @@ package dk.easv.ticketsys.PL;
 import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.bll.BLLManager;
+import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -24,19 +26,20 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 public class CoordinatorController
 {
-    @FXML
-    private FlowPane eventsPane;
-    @FXML
-    private Button newEvent;
-    @FXML
-    private HBox searchBox;
+    @FXML private FlowPane eventsPane;
+    @FXML private Button newEvent;
+    @FXML private HBox searchBox;
+    @FXML private ChoiceBox<String> user;
+
 
     private BLLManager bllManager;
+    private User loggedinUser;
 
     @FXML
     public void initialize() {
@@ -46,6 +49,7 @@ public class CoordinatorController
         } catch (TicketExceptions e) {
             e.printStackTrace();
         }
+        loggedinUser = null;
     }
 
     private void loadEvents() {
@@ -171,6 +175,70 @@ public class CoordinatorController
         }
         catch (Exception e)
         {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void setLoggedinUser(User loggedinUser) {
+        if (loggedinUser != null) {
+            this.loggedinUser = loggedinUser;
+            setDropDown();
+        }
+        else
+            System.out.println("No user is set who logged in");
+    }
+
+    private void setDropDown() {
+        user.getItems().add(loggedinUser.getFullName());
+        user.getItems().add("Edit profile");
+        user.getItems().add("Logout");
+        user.getSelectionModel().select(0);
+        user.setOnAction(event -> {
+            String selected = user.getSelectionModel().getSelectedItem();
+
+            if ("Edit profile".equals(selected)) {
+                newUserTab();
+            } else if ("Logout".equals(selected)) {
+                logout();
+            }
+        });
+    }
+
+    private void newUserTab() {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("FXML/users.fxml"));
+        Parent root;
+        try {
+            root = loader.load();
+            UsersController usersController = loader.getController();
+            Stage stage = new Stage();
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("../Images/user.png")));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            usersController.isNewUser(false);
+            usersController.setUserToEdit(loggedinUser);
+            usersController.setAdminEditingSelf(false);
+            stage.setTitle("Edit profile");
+            usersController.setLoggedinUser(loggedinUser);
+            usersController.setRole(loggedinUser.getRole());
+            user.getSelectionModel().select(0);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            User newUser = usersController.getUserToReturn();
+            System.out.println("Updated the details");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private void logout() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/login.fxml"));
+
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = (Stage) user.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

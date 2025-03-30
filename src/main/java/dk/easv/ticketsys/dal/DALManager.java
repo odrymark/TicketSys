@@ -302,4 +302,27 @@ public class DALManager {
             throw new RuntimeException(e);
         }
     }
-}
+
+    public User login(String username, String pass) {
+        User userToLogIn = null;
+        String sqlcommandUpdate = "SELECT * FROM Users WHERE username = ? AND password = ?";
+        try (Connection con = connectionManager.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sqlcommandUpdate)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, pass);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                userToLogIn = new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("email"),
+                        rs.getString("fullName"),
+                        rs.getInt("roleID"));
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+        return userToLogIn;
+    }
+    }

@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.RadioButton?>
 <StackPane alignment="BOTTOM_CENTER" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.UsersController">
    <children>
       <VBox fx:id="vBox" alignment="BOTTOM_CENTER" prefHeight="500" prefWidth="400.0" stylesheets="@../CSS/homeStyle.css">
@@ -32,12 +33,12 @@
                                     <Insets right="85.0" />
                                  </HBox.margin>
                               </Label>
-                              <CheckBox fx:id="chkAdmin" mnemonicParsing="false" text="Administrator" />
-                              <CheckBox fx:id="chkOrganiser" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="Organiser ">
+                              <RadioButton fx:id="chkAdmin" mnemonicParsing="false" text="Administrator" />
+                              <RadioButton fx:id="chkOrganiser" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="Organiser ">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin>
-                              </CheckBox>
+                              </RadioButton>
                            </children>
                         </HBox>
                         <HBox fx:id="hboxResetPassAdmin" layoutX="10.0" layoutY="274.0" prefHeight="100.0" spacing="5.0">
@@ -53,6 +54,7 @@
                               <Insets />
                            </VBox.margin>
                         </HBox>
+                        <Label fx:id="lblPassInfo" visible="false" managed="false" />
                         <VBox fx:id="vbPassword" spacing="5">
                            <children>
                               <Label text="Change Password" />
