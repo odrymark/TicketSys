@@ -3,6 +3,7 @@ package dk.easv.ticketsys.PL;
 import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.bll.BLLManager;
+import dk.easv.ticketsys.bll.PasswordValidator;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,8 +31,8 @@ public class UsersController implements Initializable {
     @FXML private  TextField txtFullName;
     @FXML private  TextField txtEmail;
     @FXML private  TextField txtUsername;
-    @FXML private  CheckBox chkAdmin;
-    @FXML private  CheckBox chkOrganiser;
+    @FXML private  RadioButton chkAdmin;
+    @FXML private  RadioButton chkOrganiser;
     @FXML private  CheckBox chkPassword;
     @FXML private  HBox hbBottom;
     @FXML private  Button btnNewUser;
@@ -44,11 +45,21 @@ public class UsersController implements Initializable {
     @FXML private TextField txtNewPass2;
     @FXML private HBox hboxSnack;
     @FXML private VBox vBox;
+    @FXML private Label lblPassInfo;
 
     private boolean isNewUser;
     private User userToReturn;
     private User userToEdit;
+    private User loggedinUser;
     private boolean isSaveUser;
+    boolean isPasswordChanging;
+
+    ToggleGroup group;
+
+
+
+
+    private boolean isAdminEditingSelf;
 
     private final BLLManager bllManager;
 
@@ -66,19 +77,30 @@ public class UsersController implements Initializable {
         isNewUser = true;
         userToReturn = null;
         userToEdit = null;
+        loggedinUser = null;
         isSaveUser = false;
+        isPasswordChanging = false;
+        isAdminEditingSelf = false;
         hboxSnack.setVisible(false);
         hboxSnack.setManaged(false);
+        group = new ToggleGroup();
+        chkAdmin.setToggleGroup(group);
+        chkOrganiser.setToggleGroup(group);
+        setChkPassListener();
     }
 
+
+
     @FXML private void btnSaveClicked(ActionEvent event) {
-        if (checkFieldsCorrectness()) {
+        String errorMessage = checkFieldsCorrectness();
+        if (errorMessage.equals("Error:")) {
             isSaveUser = true;
+            String defaultPassword = bllManager.hashPass(txtUsername.getText(),
+                    (txtFullName.getText().toLowerCase().replaceAll("\\s", "") + "01"));
             if (isNewUser){
                 userToReturn = new User(-1, txtUsername.getText(),
-                        txtFullName.getText().toLowerCase().trim() + "01", txtEmail.getText(),
+                        defaultPassword, txtEmail.getText(),
                         txtFullName.getText(), getRole());
-            userToReturn.setPassword(bllManager.hashPass(txtFullName.getText().trim().toLowerCase() + "01"));
             userToReturn.setId(bllManager.insertNewUser(userToReturn));
             }
 
@@ -87,6 +109,12 @@ public class UsersController implements Initializable {
                 userToEdit.setEmail(txtEmail.getText());
                 userToEdit.setUsername(txtUsername.getText());
                 userToEdit.setRoleID(getRole());
+                if(chkPassword.isSelected())
+                    userToEdit.setPassword(defaultPassword);
+                if (isPasswordChanging) {
+                    userToEdit.setPassword(bllManager.hashPass(txtUsername.getText(), txtNewPass1.getText()));
+                    isPasswordChanging = false;
+                }
                 userToReturn = userToEdit;
                 bllManager.userToUpdate(userToReturn);
             }
@@ -105,7 +133,7 @@ public class UsersController implements Initializable {
                 hboxSnack.getChildren().clear();
                 hboxSnack.getChildren().add(snackBar);
                 String warningTextTitle = "Please check the correctness of all the fields.";
-                String warningText = "(Full name (min 3 character long), e-mail is correct\nand user name(no space and min 2 character long).";
+                String warningText = errorMessage;
                 Image img = new Image(getClass().getResourceAsStream("../Images/exclamation-triangle.png"));
 
                 controller.setSnackBar(warningTextTitle, warningText, img, 5, hboxSnack, windowWidth, controller.getDANGER(), controller);
@@ -116,22 +144,76 @@ public class UsersController implements Initializable {
         }
     }
 
-    private boolean checkFieldsCorrectness() {
-        boolean isCorrect = true;
+    private String checkFieldsCorrectness() {
+        String errorMessage = "Error:";
+        int errorNo = 0;
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         if (txtFullName.getText().isEmpty() || txtFullName.getText().length() < 3) {
-            isCorrect = false;
-            System.out.println("Problem with txtFullName");
+            errorNo++;
+            errorMessage += " User's full name must be at least 3 characters long";
+            setRedBorder (txtFullName);
         }
         if(!txtEmail.getText().matches(emailRegex)) {
-            isCorrect = false;
+            if (errorNo > 0)
+                errorMessage += "\n";
+            errorMessage += " User's email address is incorrect";
+            setRedBorder (txtEmail);
             System.out.println("Problem with the txtEmail");
         }
         if (txtUsername.getText().length() < 2 && txtUsername.getText().contains(" ")) {
-            isCorrect = false;
+            if (errorNo > 0)
+                errorMessage += "\n";
+            errorMessage += " User's username must be at least 2 characters long";
+            setRedBorder (txtUsername);
             System.out.println("Problem with the txtUsername");
         }
-        return  isCorrect;
+
+        //Checking password change fields
+        if (vbPassword.isVisible() && !txtNewPass1.getText().isEmpty()) {
+            PasswordValidator validator = new PasswordValidator();
+            if (!bllManager.checkPassword(txtUsername.getText(), txtOldPass.getText())) {
+                errorMessage += " Old password is incorrect";
+                setRedBorder (txtOldPass);
+            }
+            else if(!txtNewPass1.getText().equals(txtNewPass2.getText())) {
+                errorMessage += " New password fields are not matching";
+            }
+            else if (!validator.isValidPassword(txtNewPass1.getText())) {
+                errorMessage += " New password must be at least 5 characters,\ncontains at least a number and a special character.";
+                setRedBorder (txtNewPass1);
+                setRedBorder (txtNewPass2);
+            }
+            else
+                isPasswordChanging = true;
+        }
+
+        //Checking role settings
+        RadioButton selectedRadioButton = (RadioButton) group.getSelectedToggle();
+        if (selectedRadioButton == null) {
+            System.out.println("No role is selected");
+            errorMessage += " User's role must be selected";
+            if(!hboxRoles.getStyleClass().contains("error")) {
+                hboxRoles.getStyleClass().add("error");
+            }
+            group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) { // If a radio button is selected
+                    hboxRoles.getStyleClass().remove("error");
+                }
+            });
+        }
+        return  errorMessage;
+    }
+
+    private void setRedBorder(TextField txtField) {
+        txtField.requestFocus();
+        if (!txtField.getStyle().contains("error")) {
+            txtField.getStyleClass().add("error");
+        }
+        System.out.println("Problem with txtFullName");
+        txtField.requestFocus();
+        txtField.textProperty().addListener((observable, oldValue, newValue) -> {
+            txtField.getStyleClass().remove("error");
+        });
     }
 
     private int getRole() {
@@ -172,11 +254,10 @@ public class UsersController implements Initializable {
     }
 
     public void setRole (String role) {
-        if (role.equals("Admin") || role.equals("SuperUser"))
+        if ((role.equals("Admin") || role.equals("SuperUser")) && !isAdminEditingSelf || isNewUser)
                 hidePasswordFields();
-        else
+        else if (!role.equals("Admin") && !role.equals("SuperUser"))
             hideAdminButtons();
-
     }
 
     public void isNewUser(boolean b) {
@@ -184,6 +265,8 @@ public class UsersController implements Initializable {
         if (isNewUser) {
             clearFields();
             hboxResetPassAdmin.setVisible(false);
+            hboxResetPassAdmin.setManaged(false);
+            hidePasswordFields();
         }
     }
 
@@ -209,5 +292,27 @@ public class UsersController implements Initializable {
 
     public boolean getIsSaveUser() {
         return isSaveUser;
+    }
+
+    public void setLoggedinUser(User loggedinUser) {
+        this.loggedinUser = loggedinUser;
+    }
+
+    public void setAdminEditingSelf(boolean adminEditingSelf) {
+        isAdminEditingSelf = adminEditingSelf;
+    }
+
+    private void setChkPassListener() {
+        chkPassword.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                lblPassInfo.setText("Default password will be recovered: full name\nlower case, no space + \"01\"");
+                lblPassInfo.setVisible(true);
+                lblPassInfo.setManaged(true);
+            }
+            else {
+                lblPassInfo.setVisible(false);
+                lblPassInfo.setManaged(false);
+            }
+        });
     }
 }

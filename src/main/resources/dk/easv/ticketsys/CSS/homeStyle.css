@@ -219,3 +219,14 @@
  .alert-body {
      -fx-font-size: 10px;
  }
+.error {
+    -fx-border-width: 2px;
+    -fx-border-color: red;
+    -fx-background-color: #ffe6e6;
+    -fx-transition: all 0.3s ease;
+}
+
+.error:focus {
+    -fx-border-color: darkred; /* Darker red on focus */
+    -fx-background-color: #ffcccc; /* Lighter background on focus */
+}

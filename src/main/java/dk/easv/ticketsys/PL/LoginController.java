@@ -35,10 +35,18 @@ public class LoginController {
     private void login() {
         if (!username.getText().isEmpty() && !password.getText().isEmpty()) {
             try {
+                //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/admin.fxml"));
                 FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
-                //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
 
                 Scene scene = new Scene(fxmlLoader.load());
+                AdminController aController;
+                CoordinatorController cController;
+                //aController = fxmlLoader.getController();
+                cController = fxmlLoader.getController();
+                bllManager = new BLLManager();
+                User loggedIn = bllManager.loginTest();
+                //aController.setLoggedInUser(loggedIn);
+                cController.setLoggedinUser(loggedIn);
                 Stage stage = (Stage) username.getScene().getWindow();
                 stage.setScene(scene);
                 stage.show();
