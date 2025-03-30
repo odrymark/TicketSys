@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" fx:id="eventInfoAnchorPane" prefHeight="553.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.GetTicketController">
+
+    <children>
+        <AnchorPane fx:id="contentContainer" prefHeight="553.0" prefWidth="800.0">
+            <VBox layoutX="20.0" layoutY="20.0" prefHeight="315.0" prefWidth="300.0" spacing="10">
+                <children>
+                    <Label fx:id="eventTitleLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Event Name" />
+                    <ImageView fx:id="eventImageView" fitHeight="280.0" fitWidth="298.0" pickOnBounds="true" preserveRatio="true" />
+                </children>
+            </VBox>
+
+            <VBox layoutX="338.0" layoutY="20.0" prefHeight="409.0" prefWidth="441.0" spacing="10">
+                <children>
+                    <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Customer Email" />
+                    <ListView fx:id="participantsList" prefHeight="250.0" />
+                    <HBox spacing="10">
+                        <Button onAction="#addParticipant" text="Add Customer" />
+                        <TextField fx:id="participantEmailField" prefWidth="300.0" promptText="Enter customer email" />
+                    </HBox>
+                    <Button onAction="#deleteParticipant" text="Remove Selected" />
+                </children>
+            </VBox>
+
+            <HBox layoutX="8.0" layoutY="499.0" prefHeight="27.0" prefWidth="773.0" spacing="10">
+                <children>
+                    <Button onAction="#saveEvent" text="Save Changes" />
+                    <Button fx:id="btnGetTicket" onAction="#getTicket" text="Get Ticket" />
+                    <Button fx:id="btnGetCoupon" onAction="#getCoupon" text="Get Coupon" />
+                    <Button fx:id="closeButton" onAction="#close" text="Close" />
+                </children>
+            </HBox>
+        </AnchorPane>
+    </children>
+</AnchorPane>
