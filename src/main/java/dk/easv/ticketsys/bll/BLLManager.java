@@ -7,6 +7,7 @@ import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.scene.control.TextField;
 import javafx.stage.Window;
 
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
@@ -19,9 +20,7 @@ public class BLLManager {
     public BLLManager() throws TicketExceptions {
     }
 
-    public int uploadNewEvent(Event event){
-        return dalManager.uploadNewEvent(event);
-    }
+    public int uploadNewEvent(Event event){ return dalManager.uploadNewEvent(event); }
 
     public List<Event> getAllEvents(){
         return dalManager.getAllEvents();
@@ -105,5 +104,22 @@ public class BLLManager {
     public boolean checkPassword(String txtUsername, String txtOldPass) {
         User user = dalManager.login(txtUsername, hashPass(txtUsername, txtOldPass));
         return user != null;
+    }
+
+    public boolean waitForFile(String fileName, int maxAttempts, int waitMillis) {
+        File file = new File("./src/main/resources/dk/easv/ticketsys/Save/" + fileName);
+        int attempts = 0;
+        while (!file.exists() && attempts < maxAttempts) {
+            try {
+                Thread.sleep(waitMillis);
+                System.out.println("Waiting" + attempts);// Wait before checking again
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+            attempts++;
+        }
+        System.out.println("File exists? " + file.exists());
+        return file.exists();
     }
 }

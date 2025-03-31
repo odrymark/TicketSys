@@ -4,6 +4,7 @@ import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.be.EventType;
 import dk.easv.ticketsys.be.TicketType;
+import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.application.Platform;
@@ -63,6 +64,8 @@ public class NewEventController implements Initializable {
     private final BLLManager bllManager = new BLLManager();
     private int isEditing;
     private Boolean isDeletingEventType;
+    private User loggedinUser;
+    private Event eventToSave;
 
     public NewEventController() throws TicketExceptions {
     }
@@ -70,6 +73,8 @@ public class NewEventController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         isEditing = 0;
+        loggedinUser = null;
+        eventToSave = null;
         isDeletingEventType = false;
         // 1) load "fake" types into dummyTicketTypes
         dummyTicketTypes.addAll(bllManager.getTicketTypes());
@@ -104,7 +109,6 @@ public class NewEventController implements Initializable {
             if (eventToEdit.getImgSrc() != null)
                 txtFileName.setText(eventToEdit.getImgSrc());
             txtaLocation.setText(eventToEdit.getLocationGuide());
-            choiceEvents.getSelectionModel().select(eventToEdit.getTypeOfEvent());
             txtaDescription.setText(eventToEdit.getNotes());
             //TODO: select ticket types ???
         }
@@ -115,8 +119,8 @@ public class NewEventController implements Initializable {
         showNewTicketPopup(true);
     }
 
-    @FXML private void btnSaveClicked() throws TicketExceptions {
-        Event eventToSave = getEventToSave();
+    @FXML private void btnSaveClicked(ActionEvent event) throws TicketExceptions {
+        eventToSave = getEventToSave();
         if (eventToSave == null) {
             System.out.println("Event is null!");
             return;
@@ -141,7 +145,8 @@ public class NewEventController implements Initializable {
             }
         }
         System.out.println("Saving...");
-        //btnCancelClicked();
+        ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
+
     }
 
     private Event getEventToSave() {
@@ -154,19 +159,18 @@ public class NewEventController implements Initializable {
         String startDateString = startDate.toString() + " "
                 + formatTime((Integer) spStartHour.getValueFactory().getValue()) + ":"
                 + formatTime((Integer) spStartMinute.getValueFactory().getValue()) + ":00";
-        Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), 1, "a.jpg", 14 );
+        Event eventToSave = new Event(txtTitle.getText(), startDateString, txtLocation.getText(), txtaDescription.getText(), loggedinUser.getId() );
         eventToSave.setEndDate(endDate.toString() + " " + formatTime((Integer) spEndHour.getValueFactory().getValue())
                 + ":" + formatTime((Integer) spEndMinute.getValueFactory().getValue()) + ":00");
         eventToSave.setLocationGuide(txtaLocation.getText());
         eventToSave.setNotes(txtaDescription.getText());
-        eventToSave.setTypeOfEvent(dropEventType.getItems().indexOf(dropEventType.getSelectionModel().getSelectedItem()));
-        System.out.println(txtFileName.getText());
+        String filePath = "/dk/easv/ticketsys/Save/" + txtFileName.getText();
         String[] imgSrcSplit= txtFileName.getText().split("\\.");
         StringBuilder imgSrc = new StringBuilder();
         for (int i = 1; i < imgSrcSplit.length; i++)
             imgSrc.append("." + imgSrcSplit[i]);
 
-        eventToSave.setImgSrc(String.valueOf(imgSrc));
+        eventToSave.setImgSrc(filePath);
         ArrayList<TicketType> ticketTypes = new ArrayList<>();
         for (Node node : flowTicketTypes.getChildren()) {
             if (node instanceof CheckBox) {
@@ -196,6 +200,11 @@ public class NewEventController implements Initializable {
                 }
             }
         }
+        if (loggedinUser != null) {
+            eventToSave.setCreatedBy(loggedinUser.getId());
+        }
+        else
+            System.out.println("No userID, who created the event.");
         if (!ticketTypes.isEmpty()) {
             eventToSave.setTicketTypes(ticketTypes);
         }
@@ -483,5 +492,11 @@ public class NewEventController implements Initializable {
     }
 
 
+    public void setLoggedinUser(User loggedinUser) {
+        this.loggedinUser = loggedinUser;
+    }
 
+    public Event getNewEvent() {
+        return this.eventToSave;
+    }
 }
