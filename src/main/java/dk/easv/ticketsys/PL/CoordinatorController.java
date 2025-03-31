@@ -28,18 +28,23 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 
-public class CoordinatorController
-{
-    @FXML private FlowPane eventsPane;
-    @FXML private Button newEvent;
-    @FXML private HBox searchBox;
-    @FXML private ChoiceBox<String> user;
+public class CoordinatorController {
+    @FXML
+    private FlowPane eventsPane;
+    @FXML
+    private Button newEvent;
+    @FXML
+    private HBox searchBox;
+    @FXML
+    private ChoiceBox<String> user;
 
 
     private BLLManager bllManager;
     private User loggedinUser;
+    private HashMap<Integer, HBox> eventCardHash;
 
     @FXML
     public void initialize() {
@@ -54,13 +59,14 @@ public class CoordinatorController
 
     private void loadEvents() {
         eventsPane.getChildren().clear();
-
+        eventCardHash = new HashMap<>();
         List<Event> events = bllManager.getAllEvents();
         for (Event event : events) {
             try {
-                InputStream imageStream = Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png");
+                InputStream imageStream = getImage(event);
                 HBox eventCard = createEventCard(imageStream, event);
                 eventsPane.getChildren().add(eventCard);
+                eventCardHash.put(event.getId(), eventCard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -68,27 +74,40 @@ public class CoordinatorController
     }
 
     @FXML
-    private void newEventTab()
-    {
-        try
-        {
+    private void newEventTab() {
+        try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/new_event.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
+            NewEventController controller = fxmlLoader.getController();
+            controller.setLoggedinUser(loggedinUser);
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.showAndWait();
-        }
-        catch (Exception e)
-        {
+            Event event = controller.getNewEvent();
+            InputStream imageStream = getImage(event);
+            System.out.println("NEw card: " + event.toString());
+                HBox eventCard = createEventCard(imageStream, event);
+                eventsPane.getChildren().add(eventCard);
+                eventCardHash.put(event.getId(), eventCard);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void openTicket(Event event)
-    {
-        try
-        {
+    private InputStream getImage(Event event) {
+        InputStream imageStream = null;
+        System.out.println("GetImg: " + event.getImgSrc());
+        if (event.getImgSrc() != null && !event.getImgSrc().isEmpty()) {
+            imageStream = Main.class.getResourceAsStream(event.getImgSrc());
+        }
+        if (imageStream == null)
+            imageStream = Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/noImg.jpg");
+        return imageStream;
+    }
+
+    private void openTicket(Event event) {
+        try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/getTicket.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = new Stage();
@@ -97,9 +116,7 @@ public class CoordinatorController
             GetTicketController getTicketController = fxmlLoader.getController();
             getTicketController.setEvent(event);
             stage.showAndWait();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -114,6 +131,7 @@ public class CoordinatorController
         eventImage.setFitWidth(120);
         eventImage.setFitHeight(120);
         eventImage.setPreserveRatio(true);
+        eventImage.setId("Image");
 
         VBox eventDetails = new VBox(5);
         eventDetails.setAlignment(Pos.CENTER_LEFT);
@@ -124,10 +142,10 @@ public class CoordinatorController
         titleLabel.setId("cardTitle");
 
         Label locationLabel = new Label(event.getLocation());
-        locationLabel.setId("cardText");
+        locationLabel.setId("cardTextLocation");
 
         Label dateLabel = new Label("\uD83D\uDD52 " + event.getStartDate());
-        dateLabel.setId("cardText");
+        dateLabel.setId("cardTextDate");
 
         Button editBtn = new Button("Edit");
         editBtn.setMinWidth(45);
@@ -161,30 +179,64 @@ public class CoordinatorController
     }
 
     private void openEventEditPage(Event event, ActionEvent actionEvent) {
-        try
-        {
+        try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/new_event.fxml"));
-            Parent root = fxmlLoader.load();
+            Scene scene = new Scene(fxmlLoader.load());
             NewEventController eventController = fxmlLoader.getController();
             eventController.setEventToEdit(event);
-
-            Scene scene = new Scene(root);
-            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            eventController.setLoggedinUser(loggedinUser);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
-            stage.show();
-        }
-        catch (Exception e)
-        {
+            stage.showAndWait();
+            Event newEvent = eventController.getNewEvent();
+            InputStream imageStream = getImage(event);
+            HBox eventCard = createEventCard(imageStream, event);
+            editEventCard(event, newEvent);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
+
+    private void editEventCard(Event event, Event newEvent) {
+        System.out.println("Editting card: " + newEvent.getId() + " - " + newEvent.toString());
+        HBox eventCard = eventCardHash.get(event.getId());
+
+        if (eventCard != null) {
+            // Get the event image
+            Node firstNode = eventCard.getChildren().getFirst(); // ImageView is the first child
+            if (firstNode instanceof ImageView eventImageView) {
+                    InputStream imageStream = getImage(newEvent);
+                    eventImageView.setImage(new Image(imageStream)); // Update the image
+            }
+
+            // Get the VBox that holds event details
+            Node secondNode = eventCard.getChildren().get(1); // VBox is the second child
+            if (secondNode instanceof VBox eventDetails) {
+                // Loop through children and update relevant labels
+                for (Node node : eventDetails.getChildren()) {
+                    if (node instanceof Label label) {
+                        if (label.getId() != null) {
+                            switch (label.getId()) {
+                                case "cardTitle" -> label.setText(newEvent.getTitle()); //Update title
+                                case "cardTextLocation" -> label.setText(newEvent.getLocation()); //Update Location
+                                case "cardTextDate" -> label.setText("⌚ " + newEvent.getStartDate()); // Update date
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            System.out.println("Event card not found for event ID: " + event.getId());
+        }
+    }
+
 
     public void setLoggedinUser(User loggedinUser) {
         if (loggedinUser != null) {
             this.loggedinUser = loggedinUser;
             setDropDown();
-        }
-        else
+        } else
             System.out.println("No user is set who logged in");
     }
 
@@ -242,4 +294,6 @@ public class CoordinatorController
             System.out.println(e.getMessage());
         }
     }
+
+
 }

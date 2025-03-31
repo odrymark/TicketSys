@@ -16,7 +16,6 @@ public class Event {
 
 
 
-    private int eventType;
     private String imgSrc;
     private int createdBy;
     private ArrayList<TicketType> ticketTypes;
@@ -34,13 +33,12 @@ public class Event {
         this.ticketTypes = new ArrayList<>();
     }
 
-    public Event(String title, String startDateTime, String location, int eventType, String description, int createdBy) {
+    public Event(String title, String startDateTime, String location, String description, int createdBy) {
         this.title = title;
         System.out.println("be: " + startDateTime);
         this.startDateTime = Timestamp.valueOf(startDateTime);
         this.description = description;
         this.location = location;
-        this.eventType = eventType;
         this.createdBy = createdBy;
         this.ticketTypes = new ArrayList<>();
     }
@@ -75,14 +73,6 @@ public class Event {
 
     public void setEndDateTime(Timestamp endDateTime) {
         this.endDateTime = endDateTime;
-    }
-
-    public int getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(int eventType) {
-        this.eventType = eventType;
     }
 
     public String getLocation() {
@@ -145,10 +135,6 @@ public class Event {
         return locationGuidence;
     }
 
-    public int getTypeOfEvent() {
-        return eventType;
-    }
-
     public String getNotes() {
         return description;
     }
@@ -165,10 +151,6 @@ public class Event {
         this.description = text;
     }
 
-    public void setTypeOfEvent(int a) {
-        this.eventType = a;
-    }
-
     public void setTicketTypes(ArrayList<TicketType> ticketTypes) {
         this.ticketTypes.clear();
         this.ticketTypes.addAll(ticketTypes);
@@ -176,6 +158,6 @@ public class Event {
 
     @Override
     public String toString() {
-        return "t: " + getTitle() + " sd: " + getStartDate() + " ed: " + getEndDate() + " et: " + getEventType() + " n: " + getNotes() + " img:" + imageSrc();
+        return "t: " + getTitle() + " sd: " + getStartDate() + " ed: " + getEndDate() + " et: " + " n: " + getNotes() + " img:" + imageSrc();
     }
 }

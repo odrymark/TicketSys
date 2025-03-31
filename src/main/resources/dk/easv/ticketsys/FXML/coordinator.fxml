@@ -82,7 +82,7 @@
                         <Insets />
                      </VBox.margin>
                   </HBox>
-                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="265.0" prefWidth="660.0" VBox.vgrow="ALWAYS">
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
                      <content>
                         <FlowPane fx:id="eventsPane" minHeight="275.0" />
                      </content>

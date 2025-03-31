@@ -24,7 +24,7 @@ public class ChooseFile {
         chosenFile = fileChooser.showOpenDialog(window);
 
         if (chosenFile != null) {
-            File targetDir = new File("./Save");
+            File targetDir = new File("./src/main/resources/dk/easv/ticketsys/Save");
             if (!targetDir.exists()) {
                 targetDir.mkdirs();
             }
@@ -34,6 +34,7 @@ public class ChooseFile {
                 Files.copy(chosenFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 System.out.println("Image saved to " + targetFile.getAbsolutePath());
                 chosenFile = targetFile;
+                System.out.println(chosenFile.getAbsolutePath());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -43,7 +44,7 @@ public class ChooseFile {
 
     public String getSelectedFilePath() {
         if (chosenFile != null) {
-            return chosenFile.getAbsolutePath();
+            return chosenFile.getName();
         } else
             throw new RuntimeException("File is null, can not return filePath");
     }
