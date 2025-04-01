@@ -15,13 +15,9 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import javafx.scene.image.ImageView;
-
-
 public class GetTicketController {
 
     @FXML private Label eventTitleLabel;
-    @FXML private ImageView eventImageView;
     @FXML private ListView<String> participantsList;
     @FXML private TextField participantEmailField;
     @FXML private ComboBox<TicketType> couponTypeComboBox;
@@ -33,9 +29,7 @@ public class GetTicketController {
     public void initialize() {
         try {
             bllManager = new BLLManager();
-
             couponTypeComboBox.setItems(FXCollections.observableArrayList(bllManager.getTicketTypes()));
-
             if (!couponTypeComboBox.getItems().isEmpty()) {
                 couponTypeComboBox.getSelectionModel().selectFirst();
             }
@@ -70,7 +64,6 @@ public class GetTicketController {
         }
     }
 
-
     @FXML
     private void getTicket(ActionEvent actionEvent) {
         try {
@@ -82,6 +75,10 @@ public class GetTicketController {
 
             TicketController ticketController = fxmlLoader.getController();
             ticketController.getEvent(event);
+
+            String customerEmail = participantEmailField.getText().trim();
+
+
             stage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,10 +94,7 @@ public class GetTicketController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
 
-            // Get the selected coupon type from the ComboBox
             TicketType selectedCouponType = couponTypeComboBox.getValue();
-
-            // Pass event and coupon type data to the CouponController
             CouponController couponController = fxmlLoader.getController();
             couponController.setEvent(event);
             couponController.setCouponType(selectedCouponType);
