@@ -182,6 +182,5 @@ public class CouponController {
         } else {
             System.out.println("Error saving coupon");
         }
-        // TODO: Add printing functionality if needed.
     }
 }

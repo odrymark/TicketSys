@@ -207,7 +207,7 @@ public class CoordinatorController {
             eventsPane.getChildren().remove(position);
             //eventsPane.getChildren().add(position, createEventCard(imageStream, newEvent));
         }
-        else
+
 
     }
 
