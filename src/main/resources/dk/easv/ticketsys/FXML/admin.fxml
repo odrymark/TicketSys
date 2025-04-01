@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="400.0" maxWidth="790.0" minHeight="400.0" minWidth="790.0" prefHeight="400.0" prefWidth="790.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.AdminController">
+<HBox maxHeight="400.0" maxWidth="790.0" minHeight="400.0" minWidth="790.0" prefHeight="400.0" prefWidth="790.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.AdminController">
    <children>
       <VBox fx:id="leftBox" prefHeight="200.0" prefWidth="100.0" spacing="7.0">
          <children>
@@ -62,7 +62,7 @@
                                     <Image url="@../Images/search.png" />
                                  </image>
                               </ImageView>
-                              <TextField fx:id="search" maxWidth="200.0" prefWidth="254.0" promptText="Search" />
+                              <TextField fx:id="search" maxWidth="200.0" onKeyTyped="#applySearch" prefWidth="254.0" promptText="Search" />
                            </children>
                         </HBox>
                      </children>

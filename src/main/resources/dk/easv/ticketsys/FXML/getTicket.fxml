@@ -10,9 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="eventInfoAnchorPane" prefHeight="553.0" prefWidth="800.0"
-            xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="dk.easv.ticketsys.PL.GetTicketController">
+<AnchorPane id="AnchorPane" fx:id="eventInfoAnchorPane" prefHeight="553.0" prefWidth="800.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.GetTicketController">
 
     <children>
         <AnchorPane fx:id="contentContainer" prefHeight="553.0" prefWidth="800.0">
@@ -29,24 +27,24 @@
                     <ListView fx:id="participantsList" prefHeight="200.0" />
 
                     <HBox spacing="10">
-                        <Button onAction="#addParticipant" text="Add Customer" />
+                        <Button id="btn" onAction="#addParticipant" text="Add Customer" />
                         <TextField fx:id="participantEmailField" prefWidth="300.0" promptText="Enter customer email" />
                     </HBox>
-                    <Button onAction="#deleteParticipant" text="Remove Selected" />
+                    <Button id="btn" onAction="#deleteParticipant" text="Remove Selected" />
 
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Coupon Type:" style="-fx-font-weight: bold;"/>
-                        <ComboBox fx:id="couponTypeComboBox" prefWidth="200.0" promptText="Select coupon type"/>
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label style="-fx-font-weight: bold;" text="Coupon Type:" />
+                        <ComboBox fx:id="couponTypeComboBox" prefWidth="200.0" promptText="Select coupon type" />
                     </HBox>
                 </children>
             </VBox>
 
-            <HBox layoutX="8.0" layoutY="499.0" prefHeight="27.0" prefWidth="773.0" spacing="10">
+            <HBox alignment="TOP_RIGHT" layoutX="8.0" layoutY="499.0" prefHeight="27.0" prefWidth="773.0" spacing="10">
                 <children>
-                    <Button onAction="#saveEvent" text="Save Changes" />
-                    <Button fx:id="btnGetTicket" onAction="#getTicket" text="Get Ticket" />
-                    <Button fx:id="btnGetCoupon" onAction="#getCoupon" text="Get Coupon" />
-                    <Button fx:id="closeButton" onAction="#close" text="Close" />
+                    <Button id="cardButton" fx:id="closeButton" onAction="#close" text="Close" />
+                    <Button id="cardButton" onAction="#saveEvent" text="Save Changes" />
+                    <Button id="cardButton" fx:id="btnGetTicket" onAction="#getTicket" text="Get Ticket" />
+                    <Button id="cardButton" fx:id="btnGetCoupon" onAction="#getCoupon" text="Get Coupon" />
                 </children>
             </HBox>
         </AnchorPane>

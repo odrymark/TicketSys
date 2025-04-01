@@ -7,6 +7,7 @@ import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -14,10 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -34,6 +32,7 @@ import java.util.Map;
 public class AdminController
 {
     private Boolean isEventsWin = true;
+    @FXML private TextField search;
     @FXML private Button sideBtnSelected;
     @FXML private Button sideBtnNotSelected;
     @FXML private ImageView usersImage;
@@ -48,7 +47,8 @@ public class AdminController
     private Image eventsNotSel = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/eventsNotSel.png"));
     private ObservableList<HBox> events = FXCollections.observableArrayList();
     private ObservableList<HBox> users = FXCollections.observableArrayList();
-    private final Button temp = new Button();
+    private FilteredList<HBox> filteredEvents = new FilteredList<>(events);
+    private FilteredList<HBox> filteredUsers = new FilteredList<>(users);
     @FXML
     private ScrollPane scrollP;
     private User userToEdit;
@@ -63,13 +63,66 @@ public class AdminController
     @FXML
     public void initialize() throws TicketExceptions {
         bllManager = new BLLManager();
+        userCardMap = new HashMap<>();
+        initEvents();
+        initUsers();
         loadEvents();
         eventsPane.prefWidthProperty().bind(scrollP.widthProperty());
         eventsPane.prefHeightProperty().bind(scrollP.heightProperty());
         userToEdit = null;
         loggedInUser = null;
-        userCardMap = new HashMap<>();
         user.getItems().clear();
+    }
+
+    private void initEvents() {
+        eventsPane.getChildren().clear();
+
+        List<Event> retrEvents = bllManager.getAllEvents();
+        for (Event event : retrEvents) {
+            try {
+                InputStream imageStream = Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png");
+                HBox eventCard = createEventCard(imageStream, event);
+                events.add(eventCard);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void initUsers() {
+        eventsPane.getChildren().clear();
+
+        List<User> retrUsers = bllManager.getAllUsers();
+        for (User user : retrUsers) {
+            try {
+                HBox userCard = createUserCard(user);
+                eventsPane.getChildren().add(userCard);
+                users.add(userCard);
+                userCardMap.put(user.getUsername(), userCard);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadEvents()
+    {
+        eventsPane.getChildren().clear();
+        eventsPane.getChildren().addAll(filteredEvents);
+        newUser.setDisable(true);
+        newUser.setVisible(false);
+        search.setText("");
+        applySearch();
+    }
+
+    private void loadUsers()
+    {
+        eventsPane.getChildren().clear();
+        eventsPane.getChildren().addAll(filteredUsers);
+        newUser.setDisable(false);
+        newUser.setVisible(true);
+        search.setText("");
+        applySearch();
     }
 
     @FXML
@@ -89,36 +142,6 @@ public class AdminController
         }
     }
 
-    private void loadEvents() {
-        eventsPane.getChildren().clear();
-
-        List<Event> events = bllManager.getAllEvents();
-        for (Event event : events) {
-            try {
-                InputStream imageStream = Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png");
-                HBox eventCard = createEventCard(imageStream, event);
-                eventsPane.getChildren().add(eventCard);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void loadUsers() {
-        eventsPane.getChildren().clear();
-
-        List<User> users = bllManager.getAllUsers();
-        for (User user : users) {
-            try {
-                HBox userCard = createUserCard(user);
-                eventsPane.getChildren().add(userCard);
-                userCardMap.put(user.getUsername(), userCard);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @FXML
     private void usersTab()
     {
@@ -131,9 +154,39 @@ public class AdminController
             isEventsWin = false;
             currentP.setText("Users");
             loadUsers();
-            eventsPane.getChildren().addAll(users);
             newUser.setVisible(true);
             newUser.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void applySearch()
+    {
+        eventsPane.getChildren().clear();
+        if(search.getText().isEmpty())
+        {
+            filteredEvents.setPredicate(event -> true);
+            filteredUsers.setPredicate(user -> true);
+        }
+        else
+        {
+            filteredEvents.setPredicate(event -> {
+                String title = (String) event.getProperties().get("title");
+                return title.toLowerCase().contains(search.getText().toLowerCase());
+            });
+            filteredUsers.setPredicate(user -> {
+                String title = (String) user.getProperties().get("username");
+                return title.toLowerCase().contains(search.getText().toLowerCase());
+            });
+        }
+
+        if(newUser.isDisable())
+        {
+            eventsPane.getChildren().addAll(filteredEvents);
+        }
+        else
+        {
+            eventsPane.getChildren().addAll(filteredUsers);
         }
     }
 
@@ -177,6 +230,7 @@ public class AdminController
                 if (isNew) {
                     HBox userCard = createUserCard(newUser);
                     eventsPane.getChildren().add(userCard);
+                    users.add(userCard);
                     userCardMap.put(newUser.getUsername(), userCard);
                 } else {
                     HBox userCard = userCardMap.get(userToEdit.getUsername());
@@ -260,11 +314,14 @@ public class AdminController
         deleteBtn.setOnAction(e -> {
             bllManager.deleteEvent(event);
             eventsPane.getChildren().remove(card);
+            events.remove(card);
         });
 
         controls.getChildren().addAll(ticketBtn, infoBtn, deleteBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
+
+        card.getProperties().put("title", event.getTitle());
 
         return card;
     }
@@ -278,7 +335,7 @@ public class AdminController
         card.setId("usersCard");
 
         VBox details = new VBox(5);
-        details.setFillWidth(true);
+        details.setId("cardDetails");
 
         HBox controls = new HBox(5);
         controls.setAlignment(Pos.BOTTOM_RIGHT);
@@ -293,18 +350,24 @@ public class AdminController
 
         Button editBtn = new Button("Edit");
         editBtn.setOnAction(_ -> editUser(user));
-        editBtn.setId("usersCardButton");
+        editBtn.setId("btn");
+        editBtn.setMinWidth(40);
+        editBtn.setMinHeight(30);
 
         Button deleteBtn = new Button("\uD83D\uDDD1");
         deleteBtn.setId("usersCardButton");
         deleteBtn.setOnAction(e -> {
             bllManager.deleteUser(user);
             eventsPane.getChildren().remove(card);
+            users.remove(card);
         });
 
         controls.getChildren().addAll(editBtn, deleteBtn);
         details.getChildren().addAll(nameLabel, emailLabel, typeLabel);
         card.getChildren().addAll(details, controls);
+
+        card.getProperties().put("username", user.getUsername());
+
         return card;
     }
 

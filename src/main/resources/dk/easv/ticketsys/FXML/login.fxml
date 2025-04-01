@@ -2,35 +2,43 @@
 
 <?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="loginVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../CSS/loginStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.LoginController">
+<VBox fx:id="loginVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0" stylesheets="@../CSS/loginStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.LoginController">
    <children>
-      <AnchorPane prefHeight="320.0" prefWidth="600.0">
+      <ImageView fitHeight="131.0" fitWidth="151.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/EASVLogo.png" />
+         </image>
+         <VBox.margin>
+            <Insets bottom="20.0" />
+         </VBox.margin>
+      </ImageView>
+      <HBox alignment="CENTER" prefHeight="37.0" prefWidth="600.0" spacing="5.0">
          <children>
-            <MFXTextField fx:id="username" layoutX="223.0" layoutY="186.0" minHeight="-Infinity" minWidth="-Infinity" onAction="#login" prefHeight="30.0" prefWidth="178.0" promptText="Username" />
-            <MFXPasswordField fx:id="password" layoutX="223.0" layoutY="229.0" minHeight="-Infinity" minWidth="-Infinity" onAction="#login" prefHeight="30.0" prefWidth="178.0" promptText="Password" />
-            <ImageView fitHeight="26.0" fitWidth="23.0" layoutX="173.0" layoutY="233.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Images/password.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="26.0" fitWidth="27.0" layoutX="173.0" layoutY="188.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="26.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../Images/userNotSel.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="131.0" fitWidth="151.0" layoutX="237.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true">
+            <MFXTextField fx:id="username" minHeight="-Infinity" minWidth="-Infinity" onAction="#login" prefHeight="30.0" prefWidth="178.0" promptText="Username" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="45.0" prefWidth="600.0" spacing="5.0">
+         <children>
+            <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../Images/EASVLogo.png" />
+                  <Image url="@../Images/password.png" />
                </image>
             </ImageView>
-            <Button fx:id="confirm" layoutX="237.0" layoutY="280.0" mnemonicParsing="false" onAction="#login" prefHeight="26.0" prefWidth="151.0" text="Login" />
+            <MFXPasswordField fx:id="password" minHeight="-Infinity" minWidth="-Infinity" onAction="#login" prefHeight="30.0" prefWidth="178.0" promptText="Password" />
          </children>
-      </AnchorPane>
+      </HBox>
+      <Button fx:id="confirm" mnemonicParsing="false" onAction="#login" prefHeight="26.0" prefWidth="151.0" text="Login" />
    </children>
 </VBox>

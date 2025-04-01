@@ -98,7 +98,7 @@ public class BLLManager {
     }
 
     public User loginTest() {
-        return dalManager.login("antal", "2Ze8mH0x2u2+C0zRHggCYk7QTZMxmsiKz2FicVAeac8=");
+        return dalManager.login("antal", "4HOhsH1OYNaDoh217i/2+V9+bB/1oOhBE2n/y4pRKZk=");
     }
 
     public boolean checkPassword(String txtUsername, String txtOldPass) {

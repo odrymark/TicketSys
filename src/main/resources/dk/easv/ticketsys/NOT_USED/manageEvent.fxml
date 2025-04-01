@@ -18,11 +18,14 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="500.0" prefWidth="600.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.EventEditController">
+<StackPane prefHeight="500.0" prefWidth="600.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.EventEditController">
    <children>
       <VBox alignment="TOP_CENTER" spacing="5.0">
          <children>
-            <Label fx:id="lblTitle" styleClass="header_text" text="Create/Manage event" />
+            <Label id="cardTitle" fx:id="lblTitle" text="Create/Manage event">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin></Label>
             <GridPane fx:id="gridPaneForm">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="206.20001220703125" />
@@ -34,8 +37,8 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="ALWAYS" />
                   <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="ALWAYS" />
                   <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
@@ -84,7 +87,7 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </TextField>
-                        <Button fx:id="btnEventType" mnemonicParsing="false" onAction="#btnEventTypeClicked" styleClass="inside_form_button" text="New event type" />
+                        <Button id="cardButton" fx:id="btnEventType" mnemonicParsing="false" onAction="#btnEventTypeClicked" styleClass="inside_form_button" text="New event type" />
                      </children>
                   </HBox>
                   <Label layoutX="20.0" layoutY="16.0" text="Image:" GridPane.rowIndex="6" />
@@ -95,7 +98,7 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </TextField>
-                        <Button fx:id="btnImage" mnemonicParsing="false" onAction="#btnImageClicked" styleClass="inside_form_button" text="Browse" />
+                        <Button id="cardButton" fx:id="btnImage" mnemonicParsing="false" onAction="#btnImageClicked" styleClass="inside_form_button" text="Browse" />
                      </children>
                   </HBox>
                   <Label layoutX="20.0" layoutY="16.0" text="Active type of tickets:" GridPane.rowIndex="7" />
@@ -120,22 +123,22 @@
             </Region>
             <HBox alignment="BOTTOM_RIGHT" prefHeight="30">
                <children>
-                  <Button fx:id="btnDeleteTicketType" layoutX="257.0" layoutY="10.0" onAction="#btnDeleteTicketType" text="Delete ticket type">
+                  <Button id="cardButton" fx:id="btnDeleteTicketType" layoutX="257.0" layoutY="10.0" onAction="#btnDeleteTicketType" text="Delete ticket type">
                      <HBox.margin>
                         <Insets bottom="15.0" right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnAddTicketType" onAction="#btnAddTicketTypeClicked" text="Add ticket type">
+                  <Button id="cardButton" fx:id="btnAddTicketType" onAction="#btnAddTicketTypeClicked" text="Add ticket type">
                      <HBox.margin>
                         <Insets bottom="15.0" right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnCancel" onAction="#btnCancelClicked" text="Cancel">
+                  <Button id="cardButton" fx:id="btnCancel" onAction="#btnCancelClicked" text="Cancel">
                      <HBox.margin>
                         <Insets bottom="15.0" right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="btnSave" onAction="#btnSaveClicked" text="Save">
+                  <Button id="cardButton" fx:id="btnSave" onAction="#btnSaveClicked" text="Save">
                      <HBox.margin>
                         <Insets bottom="15.0" right="10.0" />
                      </HBox.margin>

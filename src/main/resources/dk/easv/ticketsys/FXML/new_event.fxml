@@ -22,7 +22,10 @@
     <children>
         <VBox alignment="TOP_CENTER" spacing="5.0">
             <children>
-                <Label fx:id="lblTitle" styleClass="header_text" text="Create/Manage event" />
+                <Label id="cardTitle" fx:id="lblTitle" styleClass="header_text" text="Create/Manage event">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin></Label>
                 <GridPane fx:id="gridPaneForm">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.199951171875" minWidth="10.0" prefWidth="206.20001220703125" />
@@ -68,9 +71,9 @@
                             </children>
                         </HBox>
                         <Label layoutX="20.0" layoutY="16.0" text="Location:" GridPane.rowIndex="3" />
-                        <TextField fx:id="txtLocation" promptText="location" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="txtLocation" promptText="Location" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Label layoutX="20.0" layoutY="16.0" text="Location guidance:" GridPane.rowIndex="4" />
-                        <TextArea fx:id="txtaLocation" prefHeight="200.0" prefWidth="200.0" promptText="how to get there" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <TextArea fx:id="txtaLocation" prefHeight="200.0" prefWidth="200.0" promptText="How to get there" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <Label layoutX="20.0" layoutY="16.0" text="Type of event:" GridPane.rowIndex="5" />
                         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                             <children>
@@ -84,7 +87,7 @@
                                         <Insets right="10.0" />
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="btnEventType" mnemonicParsing="false" onAction="#btnEventTypeClicked" styleClass="inside_form_button" text="New event type" />
+                                <Button id="btn" fx:id="btnEventType" minHeight="21.0" mnemonicParsing="false" onAction="#btnEventTypeClicked" prefWidth="105.0" styleClass="inside_form_button" text="New event type" />
                             </children>
                         </HBox>
                         <Label layoutX="20.0" layoutY="16.0" text="Image:" GridPane.rowIndex="6" />
@@ -95,7 +98,7 @@
                                         <Insets right="10.0" />
                                     </HBox.margin>
                                 </TextField>
-                                <Button fx:id="btnImage" mnemonicParsing="false" onAction="#btnImageClicked" styleClass="inside_form_button" text="Browse" />
+                                <Button id="btn" fx:id="btnImage" mnemonicParsing="false" onAction="#btnImageClicked" styleClass="inside_form_button" text="Browse" />
                             </children>
                         </HBox>
                         <Label layoutX="20.0" layoutY="16.0" text="Active type of tickets:" GridPane.rowIndex="7" />
@@ -120,17 +123,17 @@
                 </Region>
                 <HBox alignment="BOTTOM_RIGHT" prefHeight="30">
                     <children>
-                        <Button fx:id="btnDeleteTicketType" layoutX="257.0" layoutY="10.0" onAction="#btnDeleteTicketType" text="Delete ticket type">
+                        <Button id="cardButton" fx:id="btnDeleteTicketType" layoutX="257.0" layoutY="10.0" onAction="#btnDeleteTicketType" text="Delete ticket type">
                             <HBox.margin>
                                 <Insets bottom="15.0" right="10.0" />
                             </HBox.margin>
                         </Button>
-                        <Button fx:id="btnAddTicketType" onAction="#btnAddTicketTypeClicked" text="Add ticket type">
+                        <Button id="cardButton" fx:id="btnAddTicketType" onAction="#btnAddTicketTypeClicked" text="Add ticket type">
                             <HBox.margin>
                                 <Insets bottom="15.0" right="10.0" />
                             </HBox.margin>
                         </Button>
-                        <Button fx:id="btnSave" onAction="#btnSaveClicked" text="Save">
+                        <Button id="cardButton" fx:id="btnSave" onAction="#btnSaveClicked" text="Save">
                             <HBox.margin>
                                 <Insets bottom="15.0" right="10.0" />
                             </HBox.margin>
