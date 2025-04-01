@@ -201,34 +201,14 @@ public class CoordinatorController {
     private void editEventCard(Event event, Event newEvent) {
         System.out.println("Editting card: " + newEvent.getId() + " - " + newEvent.toString());
         HBox eventCard = eventCardHash.get(event.getId());
-
-        if (eventCard != null) {
-            // Get the event image
-            Node firstNode = eventCard.getChildren().getFirst(); // ImageView is the first child
-            if (firstNode instanceof ImageView eventImageView) {
-                    InputStream imageStream = getImage(newEvent);
-                    eventImageView.setImage(new Image(imageStream)); // Update the image
-            }
-
-            // Get the VBox that holds event details
-            Node secondNode = eventCard.getChildren().get(1); // VBox is the second child
-            if (secondNode instanceof VBox eventDetails) {
-                // Loop through children and update relevant labels
-                for (Node node : eventDetails.getChildren()) {
-                    if (node instanceof Label label) {
-                        if (label.getId() != null) {
-                            switch (label.getId()) {
-                                case "cardTitle" -> label.setText(newEvent.getTitle()); //Update title
-                                case "cardTextLocation" -> label.setText(newEvent.getLocation()); //Update Location
-                                case "cardTextDate" -> label.setText("⌚ " + newEvent.getStartDate()); // Update date
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            System.out.println("Event card not found for event ID: " + event.getId());
+        if (eventCard == null) {
+            InputStream imageStream = getImage(newEvent);
+            int position = eventsPane.getChildren().indexOf(eventCard);
+            eventsPane.getChildren().remove(position);
+            //eventsPane.getChildren().add(position, createEventCard(imageStream, newEvent));
         }
+        else
+
     }
 
 
