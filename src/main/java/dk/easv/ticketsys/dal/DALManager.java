@@ -34,7 +34,7 @@ public class DALManager {
                                 rs.getInt("createdBy")
                         )
                 );
-                String sqlcommandSelect2 = "SELECT et.id, t.title, t.isSpecial\n" +
+                String sqlcommandSelect2 = "SELECT t.id, t.title, t.isSpecial\n" +
                         "FROM EventTicket et\n" +
                         "JOIN TicketTypes t ON et.ticket_type_id = t.id WHERE event_id = ? ";
                 PreparedStatement pstmtSelect2 = con.prepareStatement(sqlcommandSelect2);
@@ -48,6 +48,7 @@ public class DALManager {
                             rs2.getBoolean("isSpecial")
                     ));}
                 events.getLast().setTicketTypes(ticketTypes);
+                ticketTypes.clear();
                 //rs2.close();
             }
 

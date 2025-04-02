@@ -132,20 +132,21 @@ public class NewEventController implements Initializable {
             for (Node node : flowTicketTypes.getChildren()) {
                 if (node instanceof CheckBox) {
                     CheckBox cb = (CheckBox) node;
-                    int id = valueOf(cb.getId().split("_")[1]);
+                    int id = Integer.parseInt(cb.getId().replace("cb_", ""));
                     System.out.println(id + "");
                     if (editTicketTypeHash.containsKey(id))
-                        cb.setSelected(true);
+                        Platform.runLater(() -> cb.setSelected(true));
                 }
             }
             for (Node node : flowSpecialTickets.getChildren()) {
                 if (node instanceof CheckBox) {
                     CheckBox cb = (CheckBox) node;
-                    if (editTicketTypeHash.get(valueOf(cb.getId().split("_")[1])) != null)
+                    int id = Integer.parseInt(cb.getId().replace("cb_", ""));
+                    if (editTicketTypeHash.containsKey(id));
                         cb.setSelected(true);
                 }
             }
-            //TODO: finish the checkbox-checking in when ticket type was added before
+            //TODO: update the ticket types as well for the event
         }
     }
 
