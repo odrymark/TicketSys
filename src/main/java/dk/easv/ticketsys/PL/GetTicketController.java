@@ -1,19 +1,24 @@
 package dk.easv.ticketsys.PL;
 
 import dk.easv.ticketsys.Main;
+import dk.easv.ticketsys.be.Customer;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.util.List;
 
 public class GetTicketController {
 
@@ -21,6 +26,9 @@ public class GetTicketController {
     @FXML private ListView<String> participantsList;
     @FXML private TextField participantEmailField;
     @FXML private ComboBox<TicketType> couponTypeComboBox;
+    @FXML private TextField customerNameField;
+    @FXML private TextField customerEmailField;
+    @FXML private TableView<Customer> customersTable;
 
     private Event event;
     private BLLManager bllManager;
@@ -33,6 +41,18 @@ public class GetTicketController {
             if (!couponTypeComboBox.getItems().isEmpty()) {
                 couponTypeComboBox.getSelectionModel().selectFirst();
             }
+
+            TableColumn<Customer, String> nameCol = new TableColumn<>("Name");
+            nameCol.setPrefWidth(150);
+            nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+            TableColumn<Customer, String> emailCol = new TableColumn<>("Email");
+            emailCol.setPrefWidth(250);
+            emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+            customersTable.getColumns().setAll(nameCol, emailCol);
+
+            loadCustomers();
         } catch (TicketExceptions e) {
             e.printStackTrace();
             System.err.println("Error initializing BLLManager in GetTicketController!");
@@ -45,14 +65,41 @@ public class GetTicketController {
     }
 
     @FXML
-    private void addParticipant(ActionEvent actionEvent) {
-        String email = participantEmailField.getText().trim();
-        if (!email.isEmpty() && email.contains("@")) {
-            if (!participantsList.getItems().contains(email)) {
-                participantsList.getItems().add(email);
+    private void addParticipant(ActionEvent actionEvent)  {
+        String name = customerNameField.getText().trim();
+        String email = customerEmailField.getText().trim();
+        if (name.isEmpty()) {
+            showAlert("Invalid Name", "Please enter a valid name.");
+            return;
+        }
+        if (email.isEmpty() || !email.contains("@")) {
+            showAlert("Invalid Email", "Please enter a valid email address.");
+            return;
+        }
+        try {
+            int newId = bllManager.insertCustomer(name, email);
+            if (newId > 0) {
+                System.out.println("Customer saved with ID: " + newId);
+                customerNameField.clear();
+                customerEmailField.clear();
+                loadCustomers();
+            } else {
+                System.out.println("Error saving customer");
             }
-        } else {
-            showAlert("Invalid Email", "Please enter a valid email address");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to save customer.");
+        }
+    }
+
+    private void loadCustomers() {
+        try {
+            List<Customer> customerList = bllManager.getAllCustomers();
+            ObservableList<Customer> customers = FXCollections.observableArrayList(customerList);
+            customersTable.setItems(customers);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load customers.");
         }
     }
 
@@ -77,7 +124,6 @@ public class GetTicketController {
             ticketController.getEvent(event);
 
             String customerEmail = participantEmailField.getText().trim();
-
 
             stage.showAndWait();
         } catch (Exception e) {
