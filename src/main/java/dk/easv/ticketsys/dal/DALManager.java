@@ -34,7 +34,24 @@ public class DALManager {
                                 rs.getInt("createdBy")
                         )
                 );
+                String sqlcommandSelect2 = "SELECT et.id, t.title, t.isSpecial\n" +
+                        "FROM EventTicket et\n" +
+                        "JOIN TicketTypes t ON et.ticket_type_id = t.id WHERE event_id = ? ";
+                PreparedStatement pstmtSelect2 = con.prepareStatement(sqlcommandSelect2);
+                pstmtSelect2.setInt(1, rs.getInt("id"));
+                ResultSet rs2 = pstmtSelect2.executeQuery();
+                ArrayList<TicketType> ticketTypes = new ArrayList<>();
+                while (rs2.next()) {
+                    ticketTypes.add(new TicketType(
+                            rs2.getInt("id"),
+                            rs2.getString("title"),
+                            rs2.getBoolean("isSpecial")
+                    ));}
+                events.getLast().setTicketTypes(ticketTypes);
+                //rs2.close();
             }
+
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -89,13 +106,34 @@ public class DALManager {
                 newId = rs.getInt(1);
                 System.out.println("DAL" + newId);
             }
-            return newId;
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
+            if (event.getTicketTypes().size() > 0) {
+
+                String sql = "INSERT INTO EventTicket (event_id, ticket_type_id) VALUES (?, ?)";
+
+                try (PreparedStatement pstmtt = con.prepareStatement(sql);) {
+                    con.setAutoCommit(false);
+
+                    for (TicketType ticketType : event.getTicketTypes()) {
+                        pstmtt.setInt(1, newId);
+                        pstmtt.setInt(2, ticketType.getId());
+                        pstmtt.addBatch(); // Add insert statement to the batch
+                    }
+
+                    pstmtt.executeBatch();
+                    con.commit();
+                    con.setAutoCommit(true);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                return newId;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+        return 0;
     }
 
-    public void deleteEvent(Event event) {
+        public void deleteEvent(Event event) {
         try (Connection con = connectionManager.getConnection()) {
             String sqlcommandDelete = "DELETE FROM Events WHERE id = ?";
             PreparedStatement pstmtDelete = con.prepareStatement(sqlcommandDelete);
@@ -171,6 +209,29 @@ public class DALManager {
             pstmtUpdate.setInt(8, eventToSave.getId());
 
             int affectedRows = pstmtUpdate.executeUpdate();
+
+            if (eventToSave.getTicketTypes().size() > 0) {
+                String deleteAllBefore = "DELETE FROM EventTicket WHERE event_id = ?";
+                String sql = "INSERT INTO EventTicket (event_id, ticket_type_id) VALUES (?, ?)";
+
+                try (PreparedStatement pstmtDelete = con.prepareStatement(deleteAllBefore);
+                        PreparedStatement pstmt = con.prepareStatement(sql);) {
+                    con.setAutoCommit(false); // Disable auto-commit for batch processing
+                    pstmtDelete.setInt(1, eventToSave.getId());
+                    pstmtDelete.executeUpdate();
+                    for (TicketType ticketType : eventToSave.getTicketTypes()) {
+                        pstmt.setInt(1, eventToSave.getId());
+                        pstmt.setInt(2, ticketType.getId());
+                        pstmt.addBatch(); // Add insert statement to the batch
+                    }
+
+                    pstmt.executeBatch();
+                    con.commit();
+                    con.setAutoCommit(true);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             return affectedRows > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);

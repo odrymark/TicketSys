@@ -17,11 +17,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
+
+import static java.lang.Integer.valueOf;
 
 public class NewEventController implements Initializable {
     @FXML private Label lblConnectToEvent;
@@ -37,16 +41,12 @@ public class NewEventController implements Initializable {
     @FXML private TextField txtEndDate;
     @FXML private TextField txtLocation;
     @FXML private TextArea txtaLocation;
-    @FXML private ChoiceBox dropEventType;
-    @FXML private TextField txtNewEventType;
-    @FXML private Button btnEventType;
     @FXML private TextField txtFileName;
     @FXML private Button btnImage;
     @FXML private FlowPane flowTicketTypes;
     @FXML private FlowPane flowSpecialTickets;
     @FXML private TextArea txtaDescription;
     @FXML private Button btnAddTicketType;
-    @FXML private Button btnCancel;
     @FXML private Button btnSave;
     @FXML private VBox vboxShader;
     @FXML private VBox vboxNewTicketType;
@@ -67,11 +67,26 @@ public class NewEventController implements Initializable {
     private User loggedinUser;
     private Event eventToSave;
 
+    public void setTicketTypeHashMap(HashMap<Integer, TicketType> ticketTypeHashMap) {
+        this.ticketTypeHashMap = ticketTypeHashMap;
+    }
+
+    public void addTicketType (int id, TicketType ticketType) {
+        this.ticketTypeHashMap.put(id, ticketType);
+    }
+
+    public TicketType getTicketType(int id) {
+        return this.ticketTypeHashMap.get(id);
+    }
+
+    private HashMap<Integer, TicketType> ticketTypeHashMap;
+
     public NewEventController() throws TicketExceptions {
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ticketTypeHashMap = new HashMap<>();
         isEditing = 0;
         loggedinUser = null;
         eventToSave = null;
@@ -80,11 +95,9 @@ public class NewEventController implements Initializable {
         dummyTicketTypes.addAll(bllManager.getTicketTypes());
         // 3) display CheckBoxes on the form
         setTicketTypes();
-        // 4) Fill in the ChoiceBox for the event type
-        getDummyType();
-        // 5) Configure spinners (hours/minutes) and date change listeners
+        // 4) Configure spinners (hours/minutes) and date change listeners
         setSpinners();
-        // 6) After loading the layout, adjust the height for flowTicketTypes
+        // 5) After loading the layout, adjust the height for flowTicketTypes
         Platform.runLater(this::setTicketTypesHeight);
     }
 
@@ -110,7 +123,29 @@ public class NewEventController implements Initializable {
                 txtFileName.setText(eventToEdit.getImgSrc());
             txtaLocation.setText(eventToEdit.getLocationGuide());
             txtaDescription.setText(eventToEdit.getNotes());
-            //TODO: select ticket types ???
+            //select ticket types
+            HashMap<Integer, TicketType> editTicketTypeHash = new HashMap<>();
+            for (TicketType ticketType : eventToEdit.getTicketTypes()) {
+                System.out.println(ticketType.toString());
+                editTicketTypeHash.put(ticketType.getId(), ticketType);
+            }
+            for (Node node : flowTicketTypes.getChildren()) {
+                if (node instanceof CheckBox) {
+                    CheckBox cb = (CheckBox) node;
+                    int id = valueOf(cb.getId().split("_")[1]);
+                    System.out.println(id + "");
+                    if (editTicketTypeHash.containsKey(id))
+                        cb.setSelected(true);
+                }
+            }
+            for (Node node : flowSpecialTickets.getChildren()) {
+                if (node instanceof CheckBox) {
+                    CheckBox cb = (CheckBox) node;
+                    if (editTicketTypeHash.get(valueOf(cb.getId().split("_")[1])) != null)
+                        cb.setSelected(true);
+                }
+            }
+            //TODO: finish the checkbox-checking in when ticket type was added before
         }
     }
 
@@ -302,30 +337,12 @@ public class NewEventController implements Initializable {
         }
     }
 
-    public Button getCancelButton() {
-        return btnCancel;
-    }
+
 
     public Button getSaveButton() {
         return btnSave;
     }
 
-    @FXML private void btnEventTypeClicked() {
-        if (dropEventType.isManaged()) {
-            dropEventType.setManaged(false);
-            dropEventType.setVisible(false);
-            txtNewEventType.setManaged(true);
-            txtNewEventType.setVisible(true);
-            btnEventType.setText("Cancel");
-        }
-        else {
-            txtNewEventType.setManaged(false);
-            txtNewEventType.setVisible(false);
-            dropEventType.setManaged(true);
-            dropEventType.setVisible(true);
-            btnEventType.setText("New event type");
-        }
-    }
 
     @FXML private void btnImageClicked() throws TicketExceptions {
         BLLManager bllManager = new BLLManager();
@@ -363,13 +380,34 @@ public class NewEventController implements Initializable {
     }
 
     private void setSpinners() {
-// Configure Hour Spinner (0-23)
+
+        //This converts the numbers on the dial to two digits
+        StringConverter<Integer> convertToTwoDigits = new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer value) {
+                return String.format("%02d", value); // Format as two digits
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    return Integer.parseInt(string);
+                } catch (NumberFormatException e) {
+                    return 0;
+                }
+            }
+        };
+
+
+        // Configure Hour Spinner (0-23)
         SpinnerValueFactory<Integer> hourFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 24, 12);
+        hourFactory.setConverter(convertToTwoDigits);
         spStartHour.setValueFactory(hourFactory);
         spStartHour.getValueFactory().setValue(12);
 
         // Configure Minute Spinner (0-59)
         SpinnerValueFactory<Integer> minuteFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 60, 0);
+        minuteFactory.setConverter(convertToTwoDigits);
         spStartMinute.setValueFactory(minuteFactory);
 
         // Make spinners editable
@@ -378,11 +416,13 @@ public class NewEventController implements Initializable {
 
         // Configure Hour Spinner (0-23)
         SpinnerValueFactory<Integer> hourFactoryEnd = new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 24, 12);
+        hourFactoryEnd.setConverter(convertToTwoDigits);
         spEndHour.setValueFactory(hourFactoryEnd);
         spEndHour.getValueFactory().setValue(12);
 
         // Configure Minute Spinner (0-59)
         SpinnerValueFactory<Integer> minuteFactoryEnd = new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 60, 0);
+        minuteFactoryEnd.setConverter(convertToTwoDigits);
         spEndMinute.setValueFactory(minuteFactoryEnd);
 
         // Make spinners editable
@@ -418,7 +458,17 @@ public class NewEventController implements Initializable {
                 dateEnd.setDisable(false);
             }
             updateEndDateRestrictions(newDate);
+            if (newDate != null) {
+                setSpinnersEnabled();
+            }
         });
+    }
+
+    private void setSpinnersEnabled() {
+        spStartHour.setDisable(false);
+        spStartMinute.setDisable(false);
+        spEndHour.setDisable(false);
+        spEndMinute.setDisable(false);
     }
 
     private void updateEndDateRestrictions(LocalDate minDate) {
@@ -436,8 +486,41 @@ public class NewEventController implements Initializable {
 
     private void wrapSpinner(Spinner<Integer> spinner, int min, int max) {
         try {
-            int value = Integer.parseInt(spinner.getEditor().getText());
+            //Check which spinner was changed and adjust the end/start timer as well
+            // but only if the dates are on the same day
+            if (dateStart.getValue().isEqual(dateEnd.getValue())) {
+                int startHour = (int) spStartHour.getValueFactory().getValue();
+                int startMinute = (int) spStartMinute.getValueFactory().getValue();
+                int endHour = (int) spEndHour.getValueFactory().getValue();
+                int endMinute = (int) spEndMinute.getValueFactory().getValue();
 
+                //Checking if the start time was set behind the end time
+                if (startHour > endHour || (startHour == endHour && startMinute >= endMinute)) {
+                    if (endHour == 0) {
+                        LocalDate newEndDate = dateEnd.getValue().plusDays(1);
+                        dateEnd.setValue(newEndDate);
+                        spEndMinute.getValueFactory().setValue(0);
+                    } else {
+                        int newEndHour = startHour + 1;
+                        int newEndMinute = startMinute;
+
+
+                        if (newEndMinute >= 60) {
+                            newEndMinute = 0;
+                            newEndHour++;
+                        }
+                        if (newEndHour > 23) {
+                            newEndHour = 0;
+
+                        }
+
+                        spEndHour.getValueFactory().setValue(newEndHour);
+                        spEndMinute.getValueFactory().setValue(newEndMinute);
+                    }
+                }
+            }
+            int value = Integer.parseInt(spinner.getEditor().getText());
+            // Make it move around
             if (value < min) {
                 spinner.getValueFactory().setValue(max); // Jump to max if below min
             } else if (value > max) {
@@ -453,17 +536,7 @@ public class NewEventController implements Initializable {
         ArrayList<TicketType> ticketTypes = new ArrayList<>(bllManager.getTicketTypes());
         return ticketTypes;
     }
-    public void getDummyType() {
-        ArrayList<EventType> dummyTypes = new ArrayList<>();
-        dummyTypes.add(new EventType(1, "Normal"));
-        dummyTypes.add(new EventType(2, "Culture"));
-        dummyTypes.add(new EventType(3, "Sport"));
-        dummyTypes.add(new EventType(4, "Hiking"));
-        dummyTypes.add(new EventType(5, "Sight seeing"));
-        dummyTypes.add(new EventType(6, "Dance"));
-        dropEventType.getItems().clear();
-        dropEventType.getItems().addAll(dummyTypes);
-    }
+
 
     private void setTicketTypes(){
         ArrayList<TicketType> ticketTypes = new ArrayList<>(bllManager.getTicketTypes());
@@ -483,8 +556,8 @@ public class NewEventController implements Initializable {
     }
 
     private void setTicketTypesHeight() {
-        RowConstraints ticketRow = gridPaneForm.getRowConstraints().get(7);
-        RowConstraints ticketRow2 = gridPaneForm.getRowConstraints().get(8);
+        RowConstraints ticketRow = gridPaneForm.getRowConstraints().get(6);
+        RowConstraints ticketRow2 = gridPaneForm.getRowConstraints().get(7);
         double flowTicketHeight = flowTicketTypes.getHeight();
         double flowSpecialTicketHeight = flowSpecialTickets.getHeight();
         ticketRow.setPrefHeight(flowTicketHeight+5);
