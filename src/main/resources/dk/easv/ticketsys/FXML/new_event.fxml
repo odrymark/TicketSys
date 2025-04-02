@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="500.0" prefWidth="600.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.NewEventController">
+<StackPane prefHeight="500.0" prefWidth="600.0" stylesheets="@../CSS/homeStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.NewEventController">
     <children>
         <VBox alignment="TOP_CENTER" spacing="5.0">
             <children>
@@ -38,7 +38,6 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="ALWAYS" />
                         <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="ALWAYS" />
                         <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
@@ -55,8 +54,8 @@
                                         <Insets right="10.0" />
                                     </HBox.margin>
                                 </DatePicker>
-                                <Spinner fx:id="spStartHour" maxWidth="70.0" disable="true" />
-                                <Spinner fx:id="spStartMinute" maxWidth="70.0" disable="true" />
+                                <Spinner fx:id="spStartHour" disable="true" maxWidth="70.0" />
+                                <Spinner fx:id="spStartMinute" disable="true" maxWidth="70.0" />
                             </children>
                         </HBox>
                         <HBox layoutX="217.0" layoutY="40.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -66,32 +65,16 @@
                                         <Insets right="10.0" />
                                     </HBox.margin>
                                 </DatePicker>
-                                <Spinner fx:id="spEndHour" maxWidth="70.0" disable="true" />
-                                <Spinner fx:id="spEndMinute" maxWidth="70.0" disable="true" />
+                                <Spinner fx:id="spEndHour" disable="true" maxWidth="70.0" />
+                                <Spinner fx:id="spEndMinute" disable="true" maxWidth="70.0" />
                             </children>
                         </HBox>
                         <Label layoutX="20.0" layoutY="16.0" text="Location:" GridPane.rowIndex="3" />
                         <TextField fx:id="txtLocation" promptText="Location" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Label layoutX="20.0" layoutY="16.0" text="Location guidance:" GridPane.rowIndex="4" />
                         <TextArea fx:id="txtaLocation" prefHeight="200.0" prefWidth="200.0" promptText="How to get there" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label layoutX="20.0" layoutY="16.0" text="Type of event:" GridPane.rowIndex="5" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                            <children>
-                                <ChoiceBox fx:id="dropEventType" prefWidth="200.0">
-                                    <HBox.margin>
-                                        <Insets right="5.0" />
-                                    </HBox.margin>
-                                </ChoiceBox>
-                                <TextField fx:id="txtNewEventType" managed="false" prefWidth="200.0" promptText="Add new event type">
-                                    <HBox.margin>
-                                        <Insets right="10.0" />
-                                    </HBox.margin>
-                                </TextField>
-                                <Button id="btn" fx:id="btnEventType" minHeight="21.0" mnemonicParsing="false" onAction="#btnEventTypeClicked" prefWidth="105.0" styleClass="inside_form_button" text="New event type" />
-                            </children>
-                        </HBox>
-                        <Label layoutX="20.0" layoutY="16.0" text="Image:" GridPane.rowIndex="6" />
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <Label layoutX="20.0" layoutY="16.0" text="Image:" GridPane.rowIndex="5" />
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                             <children>
                                 <TextField fx:id="txtFileName" disable="true" prefWidth="200.0" promptText="Filename">
                                     <HBox.margin>
@@ -101,12 +84,12 @@
                                 <Button id="btn" fx:id="btnImage" mnemonicParsing="false" onAction="#btnImageClicked" styleClass="inside_form_button" text="Browse" />
                             </children>
                         </HBox>
-                        <Label layoutX="20.0" layoutY="16.0" text="Active type of tickets:" GridPane.rowIndex="7" />
-                        <FlowPane fx:id="flowTicketTypes" hgap="10.0" maxHeight="1.7976931348623157E308" rowValignment="TOP" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.vgrow="ALWAYS" />
-                        <Label layoutX="20.0" layoutY="16.0" text="Special tickets:" GridPane.rowIndex="8" />
-                        <FlowPane fx:id="flowSpecialTickets" hgap="10" maxHeight="Infinity" prefHeight="200.0" prefWidth="200.0" rowValignment="TOP" vgap="5" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                        <Label layoutX="20.0" layoutY="16.0" text="*Description:" GridPane.rowIndex="9" />
-                        <TextArea fx:id="txtaDescription" prefHeight="200.0" prefWidth="200.0" promptText="Description of the event" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Label layoutX="20.0" layoutY="16.0" text="Active type of tickets:" GridPane.rowIndex="6" />
+                        <FlowPane fx:id="flowTicketTypes" hgap="10.0" maxHeight="1.7976931348623157E308" rowValignment="TOP" vgap="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.vgrow="ALWAYS" />
+                        <Label layoutX="20.0" layoutY="16.0" text="Special tickets:" GridPane.rowIndex="7" />
+                        <FlowPane fx:id="flowSpecialTickets" hgap="10" maxHeight="Infinity" prefHeight="200.0" prefWidth="200.0" rowValignment="TOP" vgap="5" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <Label layoutX="20.0" layoutY="16.0" text="*Description:" GridPane.rowIndex="8" />
+                        <TextArea fx:id="txtaDescription" prefHeight="200.0" prefWidth="200.0" promptText="Description of the event" GridPane.columnIndex="1" GridPane.rowIndex="8" />
 
                     </children>
                     <padding>

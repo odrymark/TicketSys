@@ -151,6 +151,10 @@ public class Event {
         this.description = text;
     }
 
+    public ArrayList<TicketType> getTicketTypes() {
+        return ticketTypes;
+    }
+
     public void setTicketTypes(ArrayList<TicketType> ticketTypes) {
         this.ticketTypes.clear();
         this.ticketTypes.addAll(ticketTypes);
