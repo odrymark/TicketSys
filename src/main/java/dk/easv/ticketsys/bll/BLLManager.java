@@ -60,6 +60,10 @@ public class BLLManager {
     public List<Customer> getAllCustomers() {
         return dalManager.getAllCustomers();
     }
+    public boolean deleteCustomer(int id) {
+        return dalManager.deleteCustomer(id);
+    }
+
 
     public boolean updateEvent(Event eventToSave) {
         return dalManager.updateEvent(eventToSave);

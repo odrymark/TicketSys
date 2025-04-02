@@ -6,6 +6,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import dk.easv.ticketsys.be.Customer;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.be.Ticket;
 import dk.easv.ticketsys.bll.BLLManager;
@@ -30,8 +31,11 @@ public class TicketController {
     @FXML private ImageView imgQRCode;
     @FXML private Label ticketEvent;
     @FXML private Label ticketParticipantName;
+    @FXML
+    private Label ticketParticipantMeil;
 
     private Event event;
+    private Customer customer;
     private BLLManager bllManager;
 
     @FXML
@@ -45,18 +49,18 @@ public class TicketController {
     }
 
     public void getEvent(Event event) {
+        this.event = event;
         if (ticketEvent == null || ticketLocation == null || ticketDate == null ||
                 ticketTime == null || ticketParticipantName == null) {
             System.err.println("FXML elements are not initialized!");
             return;
         }
-        this.event = event;
+
         ticketDate.setText(event.getStartDate());
         ticketTime.setText(event.getStartDate());
         ticketLocation.setText(event.getLocation());
         ticketEvent.setText(event.getTitle());
 
-        // Build ticket information string from event details
         String ticketInfo = buildTicketInfo(event);
 
         // Generate and display barcode and QR code images
@@ -64,9 +68,67 @@ public class TicketController {
         generateQRCode(ticketInfo);
     }
 
-    /**
-     * Generates a QR code image from the provided data and sets it in the ImageView.
-     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+        if (customer != null) {
+
+            if (ticketParticipantName != null) {
+                ticketParticipantName.setText(customer.getName());
+            }
+
+            if (ticketParticipantMeil != null) {
+                ticketParticipantMeil.setText(customer.getEmail());
+            }
+        }
+    }
+
+
+    public void printTicket() {
+        // Build the ticket information string from the event details
+        String ticketInfo = buildTicketInfo(event);
+
+        // Generate raw data for QR code and barcode
+        byte[] qrCodeData = generateQRCodeData(ticketInfo);
+        String barCodeData = generateBarCodeData(ticketInfo);
+
+        String buyerEmail = (customer != null) ? customer.getEmail() : "unknown@unknown";
+        int ticketType = 17;
+
+        // Create a new Ticket object
+        Ticket newTicket = new Ticket(
+                0,
+                event.getId(),
+                buyerEmail,
+                qrCodeData,
+                barCodeData,
+                false,
+                ticketType
+        );
+
+        // Save the ticket to the database using BLLManager
+        int newTicketId = bllManager.uploadNewTicket(newTicket);
+        if (newTicketId > 0) {
+            newTicket.setId(newTicketId);
+            System.out.println("Ticket saved with ID: " + newTicketId);
+        } else {
+            System.out.println("Error saving ticket");
+        }
+
+    }
+
+    private String buildTicketInfo(Event event) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Event: ").append(event.getTitle()).append("\n")
+                .append("Date: ").append(event.getStartDate()).append("\n")
+                .append("Location: ").append(event.getLocation()).append("\n");
+        if (customer != null) {
+            sb.append("Holder: ").append(customer.getName());
+        } else {
+            sb.append("Holder: [Not Selected]");
+        }
+        return sb.toString();
+    }
+
     public void generateQRCode(String data) {
         try {
             int width = 150;
@@ -81,9 +143,6 @@ public class TicketController {
         }
     }
 
-    /**
-     * Generates a barcode image from the provided data,  and sets it in the ImageView.
-     */
     public void generateBarcode(String data) {
         try {
             int width = 300;
@@ -107,15 +166,6 @@ public class TicketController {
             e.printStackTrace();
             System.out.println("Error generating Barcode.");
         }
-    }
-
-    private String buildTicketInfo(Event event) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Event: ").append(event.getTitle()).append("\n")
-                .append("Date: ").append(event.getStartDate()).append("\n")
-                .append("Location: ").append(event.getLocation());
-        // TODO: add customer-specific data if needed.
-        return sb.toString();
     }
 
     private byte[] generateQRCodeData(String data) {
@@ -149,32 +199,5 @@ public class TicketController {
             e.printStackTrace();
             return "";
         }
-    }
-
-    public void printTicket() {
-        // Build the ticket information string from the event details
-        String ticketInfo = buildTicketInfo(event);
-
-        // Generate raw data for QR code and barcode
-        byte[] qrCodeData = generateQRCodeData(ticketInfo);
-        String barCodeData = generateBarCodeData(ticketInfo);
-
-        //TODO
-        String buyerEmail = "user@example.com";
-        int ticketType = 17; // Example ticket type
-
-        // Create a new Ticket object
-        Ticket newTicket = new Ticket(0, event.getId(), buyerEmail, qrCodeData, barCodeData, false, ticketType);
-
-        // Save the ticket to the database using BLLManager
-        int newTicketId = bllManager.uploadNewTicket(newTicket);
-        if (newTicketId > 0) {
-            newTicket.setId(newTicketId);
-            System.out.println("Ticket saved with ID: " + newTicketId);
-        } else {
-            System.out.println("Error saving ticket");
-        }
-
-        // TODO printing functionality here.
     }
 }

@@ -272,6 +272,17 @@ public class DALManager {
         return customers;
     }
 
+    public boolean deleteCustomer(int id) {
+        try (Connection con = connectionManager.getConnection()) {
+            String sql = "DELETE FROM Customers WHERE id = ?";
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, id);
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     //TODO join with customer  mail , name(?)
