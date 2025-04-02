@@ -21,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -40,6 +41,10 @@ public class CoordinatorController {
     private HBox searchBox;
     @FXML
     private ChoiceBox<String> user;
+    @FXML
+    private HBox coord;
+    @FXML
+    private StackPane stackP;
 
 
     private BLLManager bllManager;
@@ -48,6 +53,8 @@ public class CoordinatorController {
 
     @FXML
     public void initialize() {
+        coord.prefHeightProperty().bind(stackP.heightProperty());
+        coord.prefWidthProperty().bind(stackP.widthProperty());
         try {
             bllManager = new BLLManager();
             loadEvents();
