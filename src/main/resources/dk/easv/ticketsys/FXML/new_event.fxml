@@ -55,8 +55,8 @@
                                         <Insets right="10.0" />
                                     </HBox.margin>
                                 </DatePicker>
-                                <Spinner fx:id="spStartHour" maxWidth="70.0" />
-                                <Spinner fx:id="spStartMinute" maxWidth="70.0" />
+                                <Spinner fx:id="spStartHour" maxWidth="70.0" disable="true" />
+                                <Spinner fx:id="spStartMinute" maxWidth="70.0" disable="true" />
                             </children>
                         </HBox>
                         <HBox layoutX="217.0" layoutY="40.0" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -66,8 +66,8 @@
                                         <Insets right="10.0" />
                                     </HBox.margin>
                                 </DatePicker>
-                                <Spinner fx:id="spEndHour" maxWidth="70.0" />
-                                <Spinner fx:id="spEndMinute" maxWidth="70.0" />
+                                <Spinner fx:id="spEndHour" maxWidth="70.0" disable="true" />
+                                <Spinner fx:id="spEndMinute" maxWidth="70.0" disable="true" />
                             </children>
                         </HBox>
                         <Label layoutX="20.0" layoutY="16.0" text="Location:" GridPane.rowIndex="3" />

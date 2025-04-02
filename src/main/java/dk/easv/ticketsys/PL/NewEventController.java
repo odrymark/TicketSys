@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -363,13 +364,34 @@ public class NewEventController implements Initializable {
     }
 
     private void setSpinners() {
-// Configure Hour Spinner (0-23)
+
+        //This converts the numbers on the dial to two digits
+        StringConverter<Integer> convertToTwoDigits = new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer value) {
+                return String.format("%02d", value); // Format as two digits
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                try {
+                    return Integer.parseInt(string);
+                } catch (NumberFormatException e) {
+                    return 0;
+                }
+            }
+        };
+
+
+        // Configure Hour Spinner (0-23)
         SpinnerValueFactory<Integer> hourFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 24, 12);
+        hourFactory.setConverter(convertToTwoDigits);
         spStartHour.setValueFactory(hourFactory);
         spStartHour.getValueFactory().setValue(12);
 
         // Configure Minute Spinner (0-59)
         SpinnerValueFactory<Integer> minuteFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 60, 0);
+        minuteFactory.setConverter(convertToTwoDigits);
         spStartMinute.setValueFactory(minuteFactory);
 
         // Make spinners editable
@@ -378,11 +400,13 @@ public class NewEventController implements Initializable {
 
         // Configure Hour Spinner (0-23)
         SpinnerValueFactory<Integer> hourFactoryEnd = new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 24, 12);
+        hourFactoryEnd.setConverter(convertToTwoDigits);
         spEndHour.setValueFactory(hourFactoryEnd);
         spEndHour.getValueFactory().setValue(12);
 
         // Configure Minute Spinner (0-59)
         SpinnerValueFactory<Integer> minuteFactoryEnd = new SpinnerValueFactory.IntegerSpinnerValueFactory(-1, 60, 0);
+        minuteFactoryEnd.setConverter(convertToTwoDigits);
         spEndMinute.setValueFactory(minuteFactoryEnd);
 
         // Make spinners editable
@@ -418,7 +442,17 @@ public class NewEventController implements Initializable {
                 dateEnd.setDisable(false);
             }
             updateEndDateRestrictions(newDate);
+            if (newDate != null) {
+                setSpinnersEnabled();
+            }
         });
+    }
+
+    private void setSpinnersEnabled() {
+        spStartHour.setDisable(false);
+        spStartMinute.setDisable(false);
+        spEndHour.setDisable(false);
+        spEndMinute.setDisable(false);
     }
 
     private void updateEndDateRestrictions(LocalDate minDate) {
@@ -436,8 +470,41 @@ public class NewEventController implements Initializable {
 
     private void wrapSpinner(Spinner<Integer> spinner, int min, int max) {
         try {
-            int value = Integer.parseInt(spinner.getEditor().getText());
+            //Check which spinner was changed and adjust the end/start timer as well
+            // but only if the dates are on the same day
+            if (dateStart.getValue().isEqual(dateEnd.getValue())) {
+                int startHour = (int) spStartHour.getValueFactory().getValue();
+                int startMinute = (int) spStartMinute.getValueFactory().getValue();
+                int endHour = (int) spEndHour.getValueFactory().getValue();
+                int endMinute = (int) spEndMinute.getValueFactory().getValue();
 
+                //Checking if the start time was set behind the end time
+                if (startHour > endHour || (startHour == endHour && startMinute >= endMinute)) {
+                    if (endHour == 0) {
+                        LocalDate newEndDate = dateEnd.getValue().plusDays(1);
+                        dateEnd.setValue(newEndDate);
+                        spEndMinute.getValueFactory().setValue(0);
+                    } else {
+                        int newEndHour = startHour + 1;
+                        int newEndMinute = startMinute;
+
+
+                        if (newEndMinute >= 60) {
+                            newEndMinute = 0;
+                            newEndHour++;
+                        }
+                        if (newEndHour > 23) {
+                            newEndHour = 0;
+
+                        }
+
+                        spEndHour.getValueFactory().setValue(newEndHour);
+                        spEndMinute.getValueFactory().setValue(newEndMinute);
+                    }
+                }
+            }
+            int value = Integer.parseInt(spinner.getEditor().getText());
+            // Make it move around
             if (value < min) {
                 spinner.getValueFactory().setValue(max); // Jump to max if below min
             } else if (value > max) {

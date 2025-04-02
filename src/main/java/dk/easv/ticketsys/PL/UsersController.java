@@ -267,6 +267,9 @@ public class UsersController implements Initializable {
             hboxResetPassAdmin.setVisible(false);
             hboxResetPassAdmin.setManaged(false);
             hidePasswordFields();
+            lblPassInfo.setVisible(true);
+            lblPassInfo.setManaged(true);
+            lblPassInfo.setText("New User's password will be full name, no space,\nlower case + \"01\"");
         }
     }
 
