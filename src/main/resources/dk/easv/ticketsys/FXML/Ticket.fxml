@@ -11,7 +11,7 @@
 
 <AnchorPane fx:id="ticketPane" prefHeight="450" prefWidth="650" stylesheets="@../CSS/TicketStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.TicketController">
     <children>
-        <VBox alignment="TOP_CENTER" spacing="15" AnchorPane.leftAnchor="25" AnchorPane.rightAnchor="25" AnchorPane.topAnchor="25">
+        <VBox  alignment="TOP_CENTER" spacing="15" AnchorPane.leftAnchor="25" AnchorPane.rightAnchor="25" AnchorPane.topAnchor="25">
             <children>
                 <VBox alignment="CENTER" spacing="5" styleClass="header-box">
                     <children>
@@ -19,7 +19,7 @@
                     </children>
                 </VBox>
 
-                <HBox alignment="CENTER_LEFT" spacing="30" styleClass="ticket-content">
+                <HBox fx:id="ticketContent" alignment="CENTER_LEFT" spacing="30" styleClass="ticket-content">
                     <children>
                         <VBox alignment="CENTER" spacing="10">
                             <ImageView fx:id="imgBarcode" fitHeight="180.0" fitWidth="60.0" styleClass="barcode" />
