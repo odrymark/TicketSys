@@ -55,13 +55,22 @@
 
                 <Line />
 
-                <VBox spacing="5">
-                    <Label prefWidth="41.0" styleClass="detail-label" text="Holder">
-                        <font>
-                            <Font size="18.0" />
-                        </font>
-                    </Label>
-                    <Label fx:id="ticketParticipantName" styleClass="participant-label" textFill="WHITE" />
+                <VBox prefHeight="48.0" prefWidth="248.0" spacing="5">
+               <HBox prefHeight="27.0" prefWidth="248.0">
+                  <children>
+                          <Label prefWidth="41.0" styleClass="detail-label" text="Holder">
+                              <font>
+                                  <Font size="18.0" />
+                              </font>
+                          </Label>
+                          <Label fx:id="ticketParticipantName" prefHeight="17.0" prefWidth="204.0"  />
+                  </children>
+               </HBox>
+               <HBox prefHeight="100.0" prefWidth="200.0">
+                  <children>
+                     <Label fx:id="ticketParticipantMeil" prefHeight="17.0" prefWidth="200.0" />
+                  </children>
+               </HBox>
                 </VBox>
             </VBox>
 

@@ -7,28 +7,27 @@ import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
 
 public class GetTicketController {
 
     @FXML private Label eventTitleLabel;
-    @FXML private ListView<String> participantsList;
-    @FXML private TextField participantEmailField;
-    @FXML private ComboBox<TicketType> couponTypeComboBox;
+    @FXML private ImageView eventImageView;
     @FXML private TextField customerNameField;
     @FXML private TextField customerEmailField;
     @FXML private TableView<Customer> customersTable;
+    @FXML private ComboBox<TicketType> couponTypeComboBox;
 
     private Event event;
     private BLLManager bllManager;
@@ -42,32 +41,24 @@ public class GetTicketController {
                 couponTypeComboBox.getSelectionModel().selectFirst();
             }
 
-            TableColumn<Customer, String> nameCol = new TableColumn<>("Name");
-            nameCol.setPrefWidth(150);
-            nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-
-            TableColumn<Customer, String> emailCol = new TableColumn<>("Email");
-            emailCol.setPrefWidth(250);
-            emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
-
-            customersTable.getColumns().setAll(nameCol, emailCol);
-
             loadCustomers();
         } catch (TicketExceptions e) {
             e.printStackTrace();
-            System.err.println("Error initializing BLLManager in GetTicketController!");
+            showAlert("Error", "Could not initialize BLLManager properly.");
         }
     }
 
     public void setEvent(Event event) {
         this.event = event;
         eventTitleLabel.setText(event.getTitle());
+
     }
 
     @FXML
-    private void addParticipant(ActionEvent actionEvent)  {
+    private void addParticipant(ActionEvent actionEvent) {
         String name = customerNameField.getText().trim();
         String email = customerEmailField.getText().trim();
+
         if (name.isEmpty()) {
             showAlert("Invalid Name", "Please enter a valid name.");
             return;
@@ -76,6 +67,7 @@ public class GetTicketController {
             showAlert("Invalid Email", "Please enter a valid email address.");
             return;
         }
+
         try {
             int newId = bllManager.insertCustomer(name, email);
             if (newId > 0) {
@@ -84,35 +76,53 @@ public class GetTicketController {
                 customerEmailField.clear();
                 loadCustomers();
             } else {
-                System.out.println("Error saving customer");
+                showAlert("Database Error", "Failed to save customer.");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Database Error", "Failed to save customer.");
+            showAlert("Database Error", "Failed to save customer: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void deleteParticipant(ActionEvent actionEvent) {
+        Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+        if (selectedCustomer == null) {
+            showAlert("Selection Error", "Please select a customer to delete.");
+            return;
+        }
+        try {
+            boolean deleted = bllManager.deleteCustomer(selectedCustomer.getId());
+            if (deleted) {
+                System.out.println("Customer deleted successfully.");
+                loadCustomers();
+            } else {
+                showAlert("Delete Error", "Failed to delete customer.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to delete customer: " + e.getMessage());
         }
     }
 
     private void loadCustomers() {
         try {
             List<Customer> customerList = bllManager.getAllCustomers();
-            ObservableList<Customer> customers = FXCollections.observableArrayList(customerList);
-            customersTable.setItems(customers);
+            customersTable.setItems(FXCollections.observableArrayList(customerList));
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Error", "Failed to load customers.");
-        }
-    }
-
-    @FXML
-    private void deleteParticipant(ActionEvent actionEvent) {
-        int selectedIndex = participantsList.getSelectionModel().getSelectedIndex();
-        if (selectedIndex >= 0) {
-            participantsList.getItems().remove(selectedIndex);
+            showAlert("Error", "Failed to load customers: " + e.getMessage());
         }
     }
 
     @FXML
     private void getTicket(ActionEvent actionEvent) {
+        Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+        if (selectedCustomer == null) {
+            showAlert("No customer selected", "Please select a customer from the table first.");
+            return;
+        }
+
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
@@ -122,17 +132,28 @@ public class GetTicketController {
 
             TicketController ticketController = fxmlLoader.getController();
             ticketController.getEvent(event);
-
-            String customerEmail = participantEmailField.getText().trim();
+            ticketController.setCustomer(selectedCustomer);
 
             stage.showAndWait();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @FXML
     private void getCoupon(ActionEvent actionEvent) {
+        Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+        if (selectedCustomer == null) {
+            showAlert("No customer selected", "Please select a customer from the table first.");
+            return;
+        }
+
+        TicketType selectedCouponType = couponTypeComboBox.getValue();
+        if (selectedCouponType == null) {
+            showAlert("No coupon type selected", "Please select a coupon type.");
+            return;
+        }
+
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/coupon.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
@@ -140,29 +161,30 @@ public class GetTicketController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
 
-            TicketType selectedCouponType = couponTypeComboBox.getValue();
             CouponController couponController = fxmlLoader.getController();
             couponController.setEvent(event);
+            couponController.setCustomer(selectedCustomer);
             couponController.setCouponType(selectedCouponType);
 
             stage.showAndWait();
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
     @FXML
-    private void close(ActionEvent actionEvent) {
-        closeWindow(actionEvent);
+    private void close(ActionEvent event) {
+        ((Node)event.getSource()).getScene().getWindow().hide();
     }
 
     @FXML
-    private void saveEvent(ActionEvent actionEvent) {
-        closeWindow(actionEvent);
-    }
+    private void saveEvent(ActionEvent event) {
 
-    private void closeWindow(ActionEvent actionEvent) {
-        ((Node) actionEvent.getSource()).getScene().getWindow().hide();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Save Changes");
+        alert.setHeaderText(null);
+        alert.setContentText("Event changes saved!");
+        alert.showAndWait();
     }
 
     private void showAlert(String title, String message) {

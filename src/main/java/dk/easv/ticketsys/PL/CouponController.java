@@ -6,6 +6,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import dk.easv.ticketsys.be.Customer;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.be.SpecialTicket;
 import dk.easv.ticketsys.be.TicketType;
@@ -29,16 +30,14 @@ public class CouponController {
     @FXML private Label validDate;
     @FXML private Label couponLocation;
     @FXML private Label couponHolder;
-    @FXML private Label holderMail;    // Displays the generated coupon code
-    @FXML private Label termsLabel;
+    @FXML private Label holderMail;
     @FXML private ImageView couponBarcode;
     @FXML private ImageView couponQrCode;
-
-    // Label to display the selected coupon type
     @FXML private Label couponTypeLabel;
 
     private Event event;
     private TicketType couponType;
+    private Customer customer;
     private BLLManager bllManager;
 
     @FXML
@@ -61,6 +60,11 @@ public class CouponController {
         updateCouponTypeUI();
     }
 
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+        updateUI();
+    }
+
     private void updateCouponTypeUI() {
         if (couponType != null) {
             couponTypeLabel.setText(couponType.getName());
@@ -69,31 +73,36 @@ public class CouponController {
         }
     }
 
-    /**
-     * Updates the coupon UI
-     */
     private void updateUI() {
         if (event != null) {
             couponEvent.setText(event.getTitle());
             couponLocation.setText(event.getLocation());
             validDate.setText(event.getStartDate());
-            couponHolder.setText("Customer Name");
-          //TODO mail from data
-            holderMail.setText("mail");
-
-            updateCouponTypeUI();
-
-            String couponInfo = buildCouponInfo(event);
-            generateBarcode(couponInfo);
-            generateQRCode(couponInfo);
         }
+
+        if (customer != null) {
+            couponHolder.setText(customer.getName());
+            holderMail.setText(customer.getEmail());
+        }
+
+        updateCouponTypeUI();
+
+        String couponInfo = buildCouponInfo();
+        generateBarcode(couponInfo);
+        generateQRCode(couponInfo);
     }
 
-    private String buildCouponInfo(Event event) {
+    private String buildCouponInfo() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Coupon for: ").append(event.getTitle()).append("\n")
-                .append("Location: ").append(event.getLocation()).append("\n")
-                .append("Valid Until: ").append(event.getStartDate());
+        sb.append("Coupon for: ").append(event != null ? event.getTitle() : "N/A").append("\n")
+                .append("Location: ").append(event != null ? event.getLocation() : "N/A").append("\n")
+                .append("Valid Until: ").append(event != null ? event.getStartDate() : "N/A").append("\n");
+
+        if (customer != null) {
+            sb.append("Holder: ").append(customer.getName());
+        } else {
+            sb.append("Holder: [No Customer]");
+        }
         return sb.toString();
     }
 
@@ -151,7 +160,8 @@ public class CouponController {
 
     private String generateBarCodeData(String data) {
         try {
-            int width = 300, height = 80;
+            int width = 300;
+            int height = 80;
             Map<EncodeHintType, Object> hints = new HashMap<>();
             hints.put(EncodeHintType.MARGIN, 1);
             BitMatrix bitMatrix = new MultiFormatWriter().encode(data, BarcodeFormat.CODE_128, width, height, hints);
@@ -167,14 +177,21 @@ public class CouponController {
     }
 
     public void printCoupon() {
-        String couponInfo = buildCouponInfo(event);
+        String couponInfo = buildCouponInfo();
         byte[] qrCodeData = generateQRCodeData(couponInfo);
         String barCodeData = generateBarCodeData(couponInfo);
 
         String description = "Discount Coupon";
-        int eventID = event.getId();
+        int eventID = (event != null) ? event.getId() : 0;
 
-        SpecialTicket coupon = new SpecialTicket(0, description, eventID, qrCodeData, barCodeData);
+        SpecialTicket coupon = new SpecialTicket(
+                0,
+                description,
+                eventID,
+                qrCodeData,
+                barCodeData
+        );
+
         int newCouponId = bllManager.uploadNewCoupon(coupon);
         if (newCouponId > 0) {
             coupon.setId(newCouponId);
