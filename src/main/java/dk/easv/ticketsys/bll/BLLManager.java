@@ -54,6 +54,13 @@ public class BLLManager {
         return dalManager.uploadNewTicketType(ticketType);
     }
 
+    public int insertCustomer(String name, String email) {
+        return dalManager.insertCustomer(name, email);
+    }
+    public List<Customer> getAllCustomers() {
+        return dalManager.getAllCustomers();
+    }
+
     public boolean updateEvent(Event eventToSave) {
         return dalManager.updateEvent(eventToSave);
     }

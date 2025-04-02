@@ -237,6 +237,43 @@ public class DALManager {
         }
     }
 
+    public int insertCustomer(String name, String email) {
+        int newId = 0;
+        try (Connection con = connectionManager.getConnection()) {
+            String sql = "INSERT INTO Customers (name, email) OUTPUT INSERTED.ID VALUES (?, ?);";
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                newId = rs.getInt(1);
+            }
+            return newId;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Customer> getAllCustomers() {
+        List<Customer> customers = new ArrayList<>();
+        try (Connection con = connectionManager.getConnection()) {
+            String sql = "SELECT id, name, email FROM Customers;";
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                customers.add(new Customer(id, name, email));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return customers;
+    }
+
+
+
     //TODO join with customer  mail , name(?)
     public int uploadNewCoupon(SpecialTicket coupon) {
         int newId = 0;
