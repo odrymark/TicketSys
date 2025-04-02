@@ -10,30 +10,23 @@
     -fx-padding: 15px;
 }
 
-#couponContainer, #ticketContainer {
-    -fx-background-color: #E3F2FD;
-    -fx-background-radius: 15px;
-    -fx-padding: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.5, 0, 0);
-}
-
 .header-box {
     -fx-background-color: #019ee3;
-    -fx-padding: 15px;
     -fx-background-radius: 10px;
     -fx-alignment: center;
+    -fx-padding: 10px 20px;
 }
 
 .header-label {
     -fx-text-fill: white;
-    -fx-font-size: 22px;
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
 }
 
 .ticket-content {
     -fx-background-color: #E3F2FD;
     -fx-background-radius: 15px;
-    -fx-padding: 20px;
+    -fx-padding: 15px 20px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.5, 0, 0);
 }
 
@@ -46,7 +39,7 @@
 .detail-label {
     -fx-text-fill: #00B6FF;
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
+    -fx-font-size: 16px;
 }
 
 .value-label {
@@ -54,16 +47,25 @@
     -fx-font-size: 14px;
 }
 
-.separator-line {
-    -fx-stroke: #00A8F3;
-    -fx-stroke-width: 1.5;
+.coupon-type {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 18px;
 }
 
-.qr-code {
+.separator-line, .line {
+    -fx-stroke: #ecf0f1;
+    -fx-stroke-width: 1px;
+}
+
+.barcode, .qr-code {
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0.5, 0, 0);
 }
 
-.print-button {
+.logo {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0.5, 0, 0);
+}
+
+.print-button, .print-coupon-button {
     -fx-background-color: #019ee3;
     -fx-text-fill: white;
     -fx-font-weight: bold;
@@ -74,12 +76,12 @@
     -fx-border-width: 2px;
 }
 
-.print-button:hover {
+.print-button:hover, .print-coupon-button:hover {
     -fx-background-color: #00C8FF;
     -fx-cursor: hand;
 }
 
-.print-button:pressed {
+.print-button:pressed, .print-coupon-button:pressed {
     -fx-background-color: #00A0E3;
     -fx-scale-x: 0.95;
     -fx-scale-y: 0.95;
@@ -95,4 +97,14 @@
     -fx-font-weight: bold;
     -fx-font-size: 14px;
     -fx-rotate: 15;
+}
+
+.bold-text {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.italic-blue-text {
+    -fx-text-fill: #3498db;
+    -fx-font-style: italic;
 }
