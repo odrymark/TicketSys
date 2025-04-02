@@ -15,11 +15,11 @@
             <children>
                 <VBox alignment="CENTER" spacing="5" styleClass="header-box">
                     <children>
-                        <Label styleClass="header-label" text="DISCOUNT COUPON"/>
+                        <Label styleClass="header-label" text="DISCOUNT COUPON" />
                     </children>
                 </VBox>
 
-                <HBox alignment="CENTER_LEFT" spacing="30" styleClass="ticket-content">
+                <HBox fx:id="couponContent" alignment="CENTER_LEFT" spacing="30" styleClass="ticket-content">
                     <children>
                         <VBox alignment="CENTER" spacing="10">
                             <ImageView fx:id="couponBarcode" fitHeight="180.0" fitWidth="60.0" styleClass="barcode" />

@@ -10,11 +10,13 @@ import dk.easv.ticketsys.be.Customer;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.be.Ticket;
 import dk.easv.ticketsys.bll.BLLManager;
+import dk.easv.ticketsys.bll.util.PdfSaver;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -33,6 +35,9 @@ public class TicketController {
     @FXML private Label ticketParticipantName;
     @FXML
     private Label ticketParticipantMeil;
+
+    @FXML
+    private HBox ticketContent;
 
     private Event event;
     private Customer customer;
@@ -113,6 +118,14 @@ public class TicketController {
         } else {
             System.out.println("Error saving ticket");
         }
+        if (newTicketId > 0) {
+            newTicket.setId(newTicketId);
+            System.out.println("Ticket saved with ID: " + newTicketId);
+
+            PdfSaver.savePdf(ticketContent, "ticket_" + newTicketId + ".pdf");
+            System.out.println("PDF saved for ticket " + newTicketId);
+        }
+
 
     }
 

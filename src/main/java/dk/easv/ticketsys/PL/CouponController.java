@@ -11,11 +11,13 @@ import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.be.SpecialTicket;
 import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.bll.BLLManager;
+import dk.easv.ticketsys.bll.util.PdfSaver;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -34,6 +36,8 @@ public class CouponController {
     @FXML private ImageView couponBarcode;
     @FXML private ImageView couponQrCode;
     @FXML private Label couponTypeLabel;
+    @FXML
+    private HBox couponContent;
 
     private Event event;
     private TicketType couponType;
@@ -199,5 +203,15 @@ public class CouponController {
         } else {
             System.out.println("Error saving coupon");
         }
+        if (newCouponId > 0) {
+            coupon.setId(newCouponId);
+            System.out.println("Coupon saved with ID: " + newCouponId);
+
+            PdfSaver.savePdf(couponContent, "coupon_" + newCouponId + ".pdf");
+            System.out.println("PDF saved for coupon " + newCouponId);
+        } else {
+            System.out.println("Error saving coupon");
+        }
+
     }
 }
