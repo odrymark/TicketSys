@@ -366,7 +366,7 @@ public class AdminController
         details.getChildren().addAll(nameLabel, emailLabel, typeLabel);
         card.getChildren().addAll(details, controls);
 
-        card.getProperties().put("username", user.getUsername());
+        card.getProperties().put("username", user.getFullName());
 
         return card;
     }

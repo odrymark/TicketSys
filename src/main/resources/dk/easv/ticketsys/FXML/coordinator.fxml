@@ -55,8 +55,11 @@
                                           <Image url="@../Images/search.png" />
                                        </image>
                                     </ImageView>
-                                    <TextField fx:id="search" maxWidth="200.0" prefWidth="254.0" promptText="Search" />
+                                    <TextField fx:id="search" maxWidth="200.0" onKeyTyped="#applySearch" prefWidth="254.0" promptText="Search" />
                                  </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin>
                               </HBox>
                            </children>
                            <padding>
@@ -65,7 +68,10 @@
                         </VBox>
                         <VBox alignment="TOP_RIGHT" minWidth="80.0" prefHeight="85.0" prefWidth="129.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Button fx:id="newEvent" maxHeight="32.0" minHeight="36.0" mnemonicParsing="false" onAction="#newEventTab" prefHeight="32.0" prefWidth="95.0" text="New Event" />
+                              <Button fx:id="newEvent" maxHeight="32.0" minHeight="36.0" mnemonicParsing="false" onAction="#newEventTab" prefHeight="32.0" prefWidth="95.0" text="New Event">
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                 </VBox.margin></Button>
                            </children>
                            <HBox.margin>
                               <Insets />

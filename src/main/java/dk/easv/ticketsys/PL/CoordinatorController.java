@@ -5,6 +5,9 @@ import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +48,10 @@ public class CoordinatorController {
     private HBox coord;
     @FXML
     private StackPane stackP;
+    @FXML
+    private TextField search;
+    private ObservableList<HBox> events = FXCollections.observableArrayList();
+    private FilteredList<HBox> filteredEvents = new FilteredList<>(events);
 
 
     private BLLManager bllManager;
@@ -65,19 +72,39 @@ public class CoordinatorController {
     }
 
     private void loadEvents() {
+        events.clear();
         eventsPane.getChildren().clear();
         eventCardHash = new HashMap<>();
-        List<Event> events = bllManager.getAllEvents();
-        for (Event event : events) {
+        List<Event> retrEvents = bllManager.getAllEvents();
+        for (Event event : retrEvents) {
             try {
                 InputStream imageStream = getImage(event);
                 HBox eventCard = createEventCard(imageStream, event);
-                eventsPane.getChildren().add(eventCard);
+                events.add(eventCard);
                 eventCardHash.put(event.getId(), eventCard);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        eventsPane.getChildren().addAll(filteredEvents);
+    }
+
+    @FXML
+    private void applySearch()
+    {
+        eventsPane.getChildren().clear();
+        if(search.getText().isEmpty())
+        {
+            filteredEvents.setPredicate(event -> true);
+        }
+        else
+        {
+            filteredEvents.setPredicate(event -> {
+                String title = (String) event.getProperties().get("title");
+                return title.toLowerCase().contains(search.getText().toLowerCase());
+            });
+        }
+        eventsPane.getChildren().addAll(filteredEvents);
     }
 
     @FXML
@@ -176,11 +203,14 @@ public class CoordinatorController {
         deleteBtn.setOnAction(e -> {
             bllManager.deleteEvent(event);
             eventsPane.getChildren().remove(card);
+            events.remove(card);
         });
 
         controls.getChildren().addAll(ticketBtn, editBtn, deleteBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
+
+        card.getProperties().put("title", event.getTitle());
 
         return card;
     }
