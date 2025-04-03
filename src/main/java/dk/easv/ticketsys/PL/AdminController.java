@@ -305,6 +305,7 @@ public class AdminController
         ticketBtn.setId("cardButton");*/
 
         Button infoBtn = new Button("\uD83D\uDEC8");
+        infoBtn.setFont(new Font("Arial", 16));
         infoBtn.setMinWidth(45);
         infoBtn.setId("cardButton");
 
