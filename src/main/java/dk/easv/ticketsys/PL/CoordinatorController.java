@@ -181,7 +181,8 @@ public class CoordinatorController {
         Label dateLabel = new Label("\uD83D\uDD52 " + event.getStartDate());
         dateLabel.setId("cardTextDate");
 
-        Button editBtn = new Button("Edit");
+        Button editBtn = new Button("\uD83D\uDD89");
+        editBtn.setFont(new Font("Arial", 16));
         editBtn.setMinWidth(45);
         editBtn.setId("cardButton");
         editBtn.setOnAction(e -> {
