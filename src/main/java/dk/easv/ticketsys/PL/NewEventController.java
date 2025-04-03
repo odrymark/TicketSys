@@ -133,7 +133,6 @@ public class NewEventController implements Initializable {
                 if (node instanceof CheckBox) {
                     CheckBox cb = (CheckBox) node;
                     int id = Integer.parseInt(cb.getId().replace("cb_", ""));
-                    System.out.println(id + "");
                     if (editTicketTypeHash.containsKey(id))
                         Platform.runLater(() -> cb.setSelected(true));
                 }

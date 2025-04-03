@@ -80,7 +80,8 @@ public class AdminController
         List<Event> retrEvents = bllManager.getAllEvents();
         for (Event event : retrEvents) {
             try {
-                InputStream imageStream = Main.class.getResourceAsStream("/dk/easv/ticketsys/Images/events.png");
+                GetImage getImage = new GetImage();
+                InputStream imageStream = getImage.getImage(event);
                 HBox eventCard = createEventCard(imageStream, event);
                 events.add(eventCard);
             } catch (Exception e) {
@@ -295,15 +296,16 @@ public class AdminController
         Label dateLabel = new Label("\uD83D\uDD52 " + event.getStartDate());
         dateLabel.setId("cardText");
 
-        Image ticketImg = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/images/ticket.png"));
+        /**Image ticketImg = new Image(Main.class.getResourceAsStream("/dk/easv/ticketsys/images/ticket.png"));
         ImageView ticketIcon = new ImageView(ticketImg);
         ticketIcon.setPreserveRatio(true);
         ticketIcon.setFitWidth(27);
         Button ticketBtn = new Button("", ticketIcon);
         ticketBtn.setOnAction(_ -> openTicket(event));
-        ticketBtn.setId("cardButton");
+        ticketBtn.setId("cardButton");*/
 
-        Button infoBtn = new Button("Info");
+        Button infoBtn = new Button("\uD83D\uDEC8");
+        infoBtn.setFont(new Font("Arial", 16));
         infoBtn.setMinWidth(45);
         infoBtn.setId("cardButton");
 
@@ -317,7 +319,7 @@ public class AdminController
             events.remove(card);
         });
 
-        controls.getChildren().addAll(ticketBtn, infoBtn, deleteBtn);
+        controls.getChildren().addAll(/**ticketBtn, */infoBtn, deleteBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
 
