@@ -11,7 +11,7 @@
 
 <AnchorPane fx:id="ticketPane" prefHeight="450" prefWidth="650" stylesheets="@../CSS/TicketStyle.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.TicketController">
     <children>
-        <VBox  alignment="TOP_CENTER" spacing="15" AnchorPane.leftAnchor="25" AnchorPane.rightAnchor="25" AnchorPane.topAnchor="25">
+        <VBox alignment="TOP_CENTER" spacing="15" AnchorPane.leftAnchor="25" AnchorPane.rightAnchor="25" AnchorPane.topAnchor="25">
             <children>
                 <VBox alignment="CENTER" spacing="5" styleClass="header-box">
                     <children>
@@ -80,8 +80,6 @@
             </children>
         </VBox>
 
-        <HBox alignment="CENTER_RIGHT" spacing="5" AnchorPane.bottomAnchor="15" AnchorPane.rightAnchor="25">
-            <Label styleClass="valid-label" text="Valid Ticket" />
-        </HBox>
+        <HBox alignment="CENTER_RIGHT" spacing="5" AnchorPane.bottomAnchor="15" AnchorPane.rightAnchor="25" />
     </children>
 </AnchorPane>
