@@ -86,17 +86,18 @@ public class TicketController {
 
 
     public void printTicket() {
-        // Build the ticket information string from the event details
+        // Build ticket information string
         String ticketInfo = buildTicketInfo(event);
-
-        // Generate raw data for QR code and barcode
+        // Generate QR code and barcode data based on the ticket info
         byte[] qrCodeData = generateQRCodeData(ticketInfo);
         String barCodeData = generateBarCodeData(ticketInfo);
 
+        // Use customer's email if available; otherwise, use a default value
         String buyerEmail = (customer != null) ? customer.getEmail() : "unknown@unknown";
+        // Specify the ticket type (this value can be modified as needed)
         int ticketType = 17;
 
-        // Create a new Ticket object
+        // Create a new Ticket object with initial ID 0
         Ticket newTicket = new Ticket(
                 0,
                 event.getId(),
@@ -107,24 +108,26 @@ public class TicketController {
                 ticketType
         );
 
-        // Save the ticket to the database using BLLManager
+        // Upload the ticket to the database
         int newTicketId = bllManager.uploadNewTicket(newTicket);
         if (newTicketId > 0) {
             newTicket.setId(newTicketId);
             System.out.println("Ticket saved with ID: " + newTicketId);
+
+            // Use the event title as the folder name after sanitizing it
+            String folderName = (event != null) ? sanitizeEventTitle(event.getTitle()) : "unknown";
+            // Save the PDF into the subdirectory based on the event title
+            PdfSaver.savePdf(ticketContent, "ticket_" + newTicketId + ".pdf", folderName);
+            System.out.println("PDF saved for ticket " + newTicketId);
         } else {
             System.out.println("Error saving ticket");
         }
-        if (newTicketId > 0) {
-            newTicket.setId(newTicketId);
-            System.out.println("Ticket saved with ID: " + newTicketId);
-
-            PdfSaver.savePdf(ticketContent, "ticket_" + newTicketId + ".pdf");
-            System.out.println("PDF saved for ticket " + newTicketId);
-        }
-
-
     }
+
+    private String sanitizeEventTitle(String title) {
+        return title.replaceAll("[^a-zA-Z0-9]", "_");
+    }
+
 
     private String buildTicketInfo(Event event) {
         StringBuilder sb = new StringBuilder();

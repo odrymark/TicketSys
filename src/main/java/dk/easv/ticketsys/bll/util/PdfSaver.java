@@ -14,10 +14,16 @@ import java.io.File;
 import java.io.IOException;
 
 public class PdfSaver {
-    private final static String FILEPATH = "./TicketsPDF/";
+    private final static String BASE_FILEPATH = "./TicketsPDF/";
 
+    public static void savePdf(Node node, String file, String eventIdentifier) {
+        // Create the subdirectory using the event identifier
+        String directoryPath = BASE_FILEPATH + eventIdentifier + "/";
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
 
-    public static void savePdf(Node node, String file) {
         WritableImage writableImage = node.snapshot(null, null);
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(writableImage, null);
 
@@ -25,11 +31,7 @@ public class PdfSaver {
             PDPage page = new PDPage();
             document.addPage(page);
 
-            File dir = new File(FILEPATH);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-
+            // Save a temporary image file for PDFBox processing
             File tempImageFile = File.createTempFile("nodeSnapshot", ".png");
             ImageIO.write(bufferedImage, "png", tempImageFile);
 
@@ -46,7 +48,8 @@ public class PdfSaver {
                 contentStream.drawImage(pdfImage, x, y, imageWidth, imageHeight);
             }
 
-            document.save(FILEPATH + file);
+            // Save the document in the subdirectory
+            document.save(directoryPath + file);
             tempImageFile.delete();
 
         } catch (IOException e) {

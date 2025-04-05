@@ -179,7 +179,6 @@ public class CouponController {
             return "";
         }
     }
-
     public void printCoupon() {
         String couponInfo = buildCouponInfo();
         byte[] qrCodeData = generateQRCodeData(couponInfo);
@@ -200,18 +199,19 @@ public class CouponController {
         if (newCouponId > 0) {
             coupon.setId(newCouponId);
             System.out.println("Coupon saved with ID: " + newCouponId);
-        } else {
-            System.out.println("Error saving coupon");
-        }
-        if (newCouponId > 0) {
-            coupon.setId(newCouponId);
-            System.out.println("Coupon saved with ID: " + newCouponId);
 
-            PdfSaver.savePdf(couponContent, "coupon_" + newCouponId + ".pdf");
+            // Use the event title as the folder name
+            String eventIdentifier = (event != null) ? sanitizeEventTitle(event.getTitle()) : "unknown";
+            PdfSaver.savePdf(couponContent, "coupon_" + newCouponId + ".pdf", eventIdentifier);
             System.out.println("PDF saved for coupon " + newCouponId);
         } else {
             System.out.println("Error saving coupon");
         }
-
     }
+
+    private String sanitizeEventTitle(String title) {
+        return title.replaceAll("[^a-zA-Z0-9]", "_");
+    }
+
+
 }
