@@ -53,38 +53,35 @@ public class TicketController {
         }
     }
 
-    public void getEvent(Event event) {
-        this.event = event;
-        if (ticketEvent == null || ticketLocation == null || ticketDate == null ||
-                ticketTime == null || ticketParticipantName == null) {
-            System.err.println("FXML elements are not initialized!");
-            return;
+    private void updateUI() {
+        if (event != null) {
+            ticketDate.setText(event.getStartDate());
+            ticketTime.setText(event.getStartDate());
+            ticketLocation.setText(event.getLocation());
+            ticketEvent.setText(event.getTitle());
         }
 
-        ticketDate.setText(event.getStartDate());
-        ticketTime.setText(event.getStartDate());
-        ticketLocation.setText(event.getLocation());
-        ticketEvent.setText(event.getTitle());
+        if (customer != null) {
+            ticketParticipantName.setText(customer.getName());
+            ticketParticipantMeil.setText(customer.getEmail());
+        }
 
-        String ticketInfo = buildTicketInfo(event);
+        if (event != null && customer != null) {
+            String ticketInfo = buildTicketInfo(event);
+            generateBarcode(ticketInfo);
+            generateQRCode(ticketInfo);
+        }
+    }
 
-        // Generate and display barcode and QR code images
-        generateBarcode(ticketInfo);
-        generateQRCode(ticketInfo);
+
+    public void getEvent(Event event) {
+        this.event = event;
+        updateUI();
     }
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
-        if (customer != null) {
-
-            if (ticketParticipantName != null) {
-                ticketParticipantName.setText(customer.getName());
-            }
-
-            if (ticketParticipantMeil != null) {
-                ticketParticipantMeil.setText(customer.getEmail());
-            }
-        }
+        updateUI();
     }
 
 
