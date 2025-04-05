@@ -21,6 +21,8 @@ import javafx.scene.layout.HBox;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,18 +88,18 @@ public class TicketController {
 
 
     public void printTicket() {
-        // Build ticket information string
+        // Build the ticket information string
         String ticketInfo = buildTicketInfo(event);
         // Generate QR code and barcode data based on the ticket info
         byte[] qrCodeData = generateQRCodeData(ticketInfo);
         String barCodeData = generateBarCodeData(ticketInfo);
 
-        // Use customer's email if available; otherwise, use a default value
+        // Use buyer's email if available; otherwise, use a default value
         String buyerEmail = (customer != null) ? customer.getEmail() : "unknown@unknown";
-        // Specify the ticket type (this value can be modified as needed)
+        // Specify the ticket type (modify as needed)
         int ticketType = 17;
 
-        // Create a new Ticket object with initial ID 0
+        // Create a new Ticket object with an initial ID of 0
         Ticket newTicket = new Ticket(
                 0,
                 event.getId(),
@@ -114,15 +116,31 @@ public class TicketController {
             newTicket.setId(newTicketId);
             System.out.println("Ticket saved with ID: " + newTicketId);
 
-            // Use the event title as the folder name after sanitizing it
+            // Use the event title as the folder identifier after sanitizing it
             String folderName = (event != null) ? sanitizeEventTitle(event.getTitle()) : "unknown";
-            // Save the PDF into the subdirectory based on the event title
-            PdfSaver.savePdf(ticketContent, "ticket_" + newTicketId + ".pdf", folderName);
+            // Construct the file name
+            String fileName = "ticket_" + newTicketId + ".pdf";
+            // Call PdfSaver to save the PDF file
+            PdfSaver.savePdf(ticketContent, fileName, folderName);
             System.out.println("PDF saved for ticket " + newTicketId);
+
+            // Open the PDF file using the system's default PDF viewer
+            File pdfFile = new File("./TicketsPDF/" + folderName + "/" + fileName);
+            if (java.awt.Desktop.isDesktopSupported() && java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.OPEN)) {
+                try {
+                    java.awt.Desktop.getDesktop().open(pdfFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Error opening PDF file.");
+                }
+            } else {
+                System.out.println("Desktop not supported or OPEN action not available.");
+            }
         } else {
             System.out.println("Error saving ticket");
         }
     }
+
 
     private String sanitizeEventTitle(String title) {
         return title.replaceAll("[^a-zA-Z0-9]", "_");

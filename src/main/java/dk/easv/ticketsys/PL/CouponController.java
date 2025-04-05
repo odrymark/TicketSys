@@ -22,6 +22,8 @@ import javafx.scene.layout.HBox;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -180,13 +182,18 @@ public class CouponController {
         }
     }
     public void printCoupon() {
+        // Build the coupon information string
         String couponInfo = buildCouponInfo();
+        // Generate QR code data based on the coupon info
         byte[] qrCodeData = generateQRCodeData(couponInfo);
+        // Generate barcode data based on the coupon info
         String barCodeData = generateBarCodeData(couponInfo);
 
         String description = "Discount Coupon";
+        // Use the event ID if available; otherwise, default to 0
         int eventID = (event != null) ? event.getId() : 0;
 
+        // Create a new SpecialTicket object with an initial ID of 0
         SpecialTicket coupon = new SpecialTicket(
                 0,
                 description,
@@ -195,19 +202,38 @@ public class CouponController {
                 barCodeData
         );
 
+        // Upload the coupon to the database
         int newCouponId = bllManager.uploadNewCoupon(coupon);
         if (newCouponId > 0) {
             coupon.setId(newCouponId);
             System.out.println("Coupon saved with ID: " + newCouponId);
 
-            // Use the event title as the folder name
+            // Use the event title as the folder name after sanitizing it
             String eventIdentifier = (event != null) ? sanitizeEventTitle(event.getTitle()) : "unknown";
-            PdfSaver.savePdf(couponContent, "coupon_" + newCouponId + ".pdf", eventIdentifier);
+            // Construct the file name
+            String fileName = "coupon_" + newCouponId + ".pdf";
+            // Save the PDF into the subdirectory using PdfSaver
+            PdfSaver.savePdf(couponContent, fileName, eventIdentifier);
             System.out.println("PDF saved for coupon " + newCouponId);
+
+            // Open the saved PDF using the system's default PDF viewer
+            File pdfFile = new File("./TicketsPDF/" + eventIdentifier + "/" + fileName);
+            if (java.awt.Desktop.isDesktopSupported() &&
+                    java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.OPEN)) {
+                try {
+                    java.awt.Desktop.getDesktop().open(pdfFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Error opening PDF file.");
+                }
+            } else {
+                System.out.println("Desktop not supported or OPEN action not available.");
+            }
         } else {
             System.out.println("Error saving coupon");
         }
     }
+
 
     private String sanitizeEventTitle(String title) {
         return title.replaceAll("[^a-zA-Z0-9]", "_");

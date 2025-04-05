@@ -76,8 +76,6 @@
             </children>
         </VBox>
 
-        <HBox alignment="CENTER_RIGHT" spacing="5" AnchorPane.bottomAnchor="15" AnchorPane.rightAnchor="25">
-            <Label styleClass="valid-label" text="Valid Coupon" />
-        </HBox>
+        <HBox alignment="CENTER_RIGHT" spacing="5" AnchorPane.bottomAnchor="15" AnchorPane.rightAnchor="25" />
     </children>
 </AnchorPane>
