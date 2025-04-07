@@ -133,4 +133,8 @@ public class BLLManager {
         System.out.println("File exists? " + file.exists());
         return file.exists();
     }
+
+    public List<String> getAttendees(Event event) {
+        return dalManager.getBuyerEmailsByTicketId(event);
+    }
 }
