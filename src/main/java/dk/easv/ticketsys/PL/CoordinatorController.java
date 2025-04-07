@@ -4,6 +4,7 @@ import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Event;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.be.User;
+import dk.easv.ticketsys.bll.util.AttendeeWriter;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -207,7 +208,15 @@ public class CoordinatorController {
             events.remove(card);
         });
 
-        controls.getChildren().addAll(ticketBtn, editBtn, deleteBtn);
+        Button exportBtn = new Button("Export attendees");
+        exportBtn.setMinWidth(40);
+        exportBtn.setId("cardButton");
+        exportBtn.setFont(new Font("Arial", 14));
+        exportBtn.setOnAction(e -> {
+            AttendeeWriter.exportAttendeesToFile(event, bllManager);
+        });
+
+        controls.getChildren().addAll(ticketBtn, editBtn, deleteBtn, exportBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
 

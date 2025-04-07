@@ -435,4 +435,23 @@ public class DALManager {
         }
         return userToLogIn;
     }
+
+    public List<String> getBuyerEmailsByTicketId(Event event) {
+        List<String> emails = new ArrayList<>();
+        try (Connection con = connectionManager.getConnection()) {
+            String sqlcommandSelect = "SELECT buyerEmail FROM Tickets WHERE eventId = ?";
+            PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect);
+            pstmtSelect.setInt(1, event.getId());
+            ResultSet rs = pstmtSelect.executeQuery();
+            while (rs.next()) {
+                emails.add(rs.getString("buyerEmail")
+                );
+            }
+        } catch (SQLServerException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return emails;
     }
+}
