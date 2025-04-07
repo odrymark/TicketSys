@@ -31,32 +31,32 @@ public class LoginController {
         }
     }
 
-    @FXML
+    /*@FXML
     private void login() {
         if (!username.getText().isEmpty() && !password.getText().isEmpty()) {
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/admin.fxml"));
-                //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
+                //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/admin.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
 
                 Scene scene = new Scene(fxmlLoader.load());
                 AdminController aController;
                 CoordinatorController cController;
-                aController = fxmlLoader.getController();
-                //cController = fxmlLoader.getController();
+                //aController = fxmlLoader.getController();
+                cController = fxmlLoader.getController();
                 bllManager = new BLLManager();
                 User loggedIn = bllManager.loginTest();
-                aController.setLoggedInUser(loggedIn);
-                //cController.setLoggedinUser(loggedIn);
+                //aController.setLoggedInUser(loggedIn);
+                cController.setLoggedinUser(loggedIn);
                 Stage stage = (Stage) username.getScene().getWindow();
                 stage.setScene(scene);
                 stage.show();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-        }
-/*
+        }*/
+
     @FXML
-    void login(ActionEvent event) {
+    private void login() {
         String uName = username.getText().trim();
         String pwd = password.getText().trim();
 
@@ -65,7 +65,7 @@ public class LoginController {
             return;
         }
 
-        User foundUser = bllManager.getUserByPassword(uName, pwd);
+        User foundUser = bllManager.login(uName, pwd);
 
         if (foundUser == null) {
             System.out.println("Invalid username or password!");
@@ -74,21 +74,24 @@ public class LoginController {
 
         int roleID = foundUser.getRoleID();
         switch (roleID) {
-            case 3: // Admin
-                openAdminWindow();
+            case 3:
+                openAdminWindow(foundUser);
                 break;
-            case 4: // Coordinator
-                openCoordinatorWindow();
+            case 4:
+                openCoordinatorWindow(foundUser);
                 break;
             default:
                 System.out.println("Unknown roleID: " + roleID);
         }
     }
 
-    private void openCoordinatorWindow() {
+    private void openCoordinatorWindow(User foundUser) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/coordinator.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
+            CoordinatorController cController;
+            cController = fxmlLoader.getController();
+            cController.setLoggedinUser(foundUser);
             Stage stage = (Stage) username.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
@@ -98,10 +101,13 @@ public class LoginController {
         }
     }
 
-    private void openAdminWindow() {
+    private void openAdminWindow(User foundUser) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/admin.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
+            AdminController aController;
+            aController = fxmlLoader.getController();
+            aController.setLoggedInUser(foundUser);
             Stage stage = (Stage) username.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
@@ -109,7 +115,6 @@ public class LoginController {
             System.out.println("Error opening Admin window!");
             e.printStackTrace();
         }
-    }*/
     }
-}
+    }
 
