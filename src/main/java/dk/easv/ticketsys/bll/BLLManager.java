@@ -4,7 +4,10 @@ import dk.easv.ticketsys.be.*;
 import dk.easv.ticketsys.dal.ChooseFile;
 import dk.easv.ticketsys.dal.DALManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Window;
 
 import java.io.File;
@@ -136,5 +139,26 @@ public class BLLManager {
 
     public List<String> getAttendees(Event event) {
         return dalManager.getBuyerEmailsByTicketId(event);
+    }
+
+    public ImageView cropImage(Image image) {
+        ImageView eventImage = new ImageView(image);
+
+        // Get image dimensions
+        double width = image.getWidth();
+        double height = image.getHeight();
+
+        // Calculate center crop (square)
+        double cropSize = Math.min(width, height);
+        double x = (width - cropSize) / 2;
+        double y = (height - cropSize) / 2;
+
+        eventImage.setViewport(new Rectangle2D(x, y, cropSize, cropSize));
+        eventImage.setFitWidth(120);
+        eventImage.setFitHeight(120);
+        eventImage.setPreserveRatio(false); // We're cropping, so no need to preserve
+        eventImage.setSmooth(true);
+        eventImage.setId("Image");
+        return eventImage;
     }
 }
