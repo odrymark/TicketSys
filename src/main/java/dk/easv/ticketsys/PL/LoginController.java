@@ -73,6 +73,7 @@ public class LoginController {
         }
 
         int roleID = foundUser.getRoleID();
+        System.out.println("Login roleId:" + roleID);
         switch (roleID) {
             case 3:
                 openAdminWindow(foundUser);

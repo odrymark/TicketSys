@@ -59,6 +59,100 @@ public class DALManager {
         return events;
     }
 
+    public List<Event> getAllEvents(int userId) {
+        List<Event> events = new ArrayList<>();
+        try (Connection con = connectionManager.getConnection()) {
+            String sqlcommandSelect = "DECLARE @UserId INT = " + userId + ";" +
+                    "DECLARE @UserRole NVARCHAR(100);\n" +
+                    "\n" +
+                    "-- Get the user's role\n" +
+                    "SELECT @UserRole = r.roleName\n" +
+                    "FROM dbo.Users u\n" +
+                    "JOIN dbo.Roles r ON u.roleID = r.id\n" +
+                    "WHERE u.id = @UserId;\n" +
+                    "\n" +
+                    "-- Return events depending on the role\n" +
+                    "IF @UserRole = 'Admin'\n" +
+                    "BEGIN\n" +
+                    "    SELECT e.*\n" +
+                    "    FROM dbo.Events e;\n" +
+                    "END\n" +
+                    "ELSE IF @UserRole = 'Coordinator'\n" +
+                    "BEGIN\n" +
+                    "    SELECT e.*\n" +
+                    "    FROM dbo.Events e\n" +
+                    "    JOIN dbo.EventCoordinators ec ON e.id = ec.eventID\n" +
+                    "    WHERE ec.coordinatorID = @UserId;\n" +
+                    "END\n";
+            String sqlcommandSelect3 = "DECLARE @UserId INT = 39;\n" +
+                    "\n" +
+                    "-- Get the user's role\n" +
+                    "DECLARE @UserRole NVARCHAR(100);\n" +
+                    "SELECT @UserRole = r.roleName\n" +
+                    "FROM dbo.Users u\n" +
+                    "         JOIN dbo.Roles r ON u.roleID = r.id\n" +
+                    "WHERE u.id = @UserId;\n" +
+                    "\n" +
+                    "-- Get events based on role\n" +
+                    "SELECT DISTINCT\n" +
+                    "    e.id,\n" +
+                    "    e.title,\n" +
+                    "    e.startDateTime,\n" +
+                    "    e.endDateTime,\n" +
+                    "    e.location,\n" +
+                    "    e.locationGuidence,\n" +
+                    "    e.description,\n" +
+                    "    e.imgSrc,\n" +
+                    "    e.createdBy\n" +
+                    "FROM dbo.Events e\n" +
+                    "WHERE\n" +
+                    "    @UserRole = 'Admin'\n" +
+                    "   OR e.id IN (\n" +
+                    "    SELECT eventID\n" +
+                    "    FROM dbo.EventCoordinators\n" +
+                    "    WHERE coordinatorID = @UserId\n" +
+                    ")\n" +
+                    "ORDER BY e.startDateTime;";
+            PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect3);
+            ResultSet rs = pstmtSelect.executeQuery();
+            while (rs.next()) {
+                events.add(new Event(
+                                rs.getInt("id"),
+                                rs.getString("title"),
+                                rs.getTimestamp("startDateTime"),
+                                rs.getTimestamp("endDateTime"),
+                                rs.getString("location"),
+                                rs.getString("locationGuidence"),
+                                rs.getString("description"),
+                                rs.getString("imgSrc"),
+                                rs.getInt("createdBy")
+                        )
+                );
+                String sqlcommandSelect2 = "SELECT t.id, t.title, t.isSpecial\n" +
+                        "FROM EventTicket et\n" +
+                        "JOIN TicketTypes t ON et.ticket_type_id = t.id WHERE event_id = ? ";
+                PreparedStatement pstmtSelect2 = con.prepareStatement(sqlcommandSelect2);
+                pstmtSelect2.setInt(1, rs.getInt("id"));
+                ResultSet rs2 = pstmtSelect2.executeQuery();
+                ArrayList<TicketType> ticketTypes = new ArrayList<>();
+                while (rs2.next()) {
+                    ticketTypes.add(new TicketType(
+                            rs2.getInt("id"),
+                            rs2.getString("title"),
+                            rs2.getBoolean("isSpecial")
+                    ));}
+                events.getLast().setTicketTypes(ticketTypes);
+                ticketTypes.clear();
+                //rs2.close();
+            }
+
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return events;
+    }
+
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Connection con = connectionManager.getConnection()) {

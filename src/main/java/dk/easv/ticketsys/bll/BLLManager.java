@@ -29,6 +29,8 @@ public class BLLManager {
         return dalManager.getAllEvents();
     }
 
+    public List<Event> getAllEvents(int userId) { return dalManager.getAllEvents(userId); }
+
     public List<User> getAllUsers(){
         return dalManager.getAllUsers();
     }
