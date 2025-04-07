@@ -66,7 +66,7 @@ public class CoordinatorController {
         coord.prefWidthProperty().bind(stackP.widthProperty());
         try {
             bllManager = new BLLManager();
-            loadEvents();
+            //loadEvents();
         } catch (TicketExceptions e) {
             e.printStackTrace();
         }
@@ -77,7 +77,7 @@ public class CoordinatorController {
         events.clear();
         eventsPane.getChildren().clear();
         eventCardHash = new HashMap<>();
-        List<Event> retrEvents = bllManager.getAllEvents();
+        List<Event> retrEvents = bllManager.getAllEvents(loggedinUser.getId());
         for (Event event : retrEvents) {
             try {
                 InputStream imageStream = getImage(event);
@@ -262,6 +262,7 @@ public class CoordinatorController {
         if (loggedinUser != null) {
             this.loggedinUser = loggedinUser;
             setDropDown();
+            loadEvents();
         } else
             System.out.println("No user is set who logged in");
     }
