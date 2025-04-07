@@ -84,17 +84,9 @@ public class DALManager {
                     "    JOIN dbo.EventCoordinators ec ON e.id = ec.eventID\n" +
                     "    WHERE ec.coordinatorID = @UserId;\n" +
                     "END\n";
-            String sqlcommandSelect3 = "DECLARE @UserId INT = 39;\n" +
-                    "\n" +
-                    "-- Get the user's role\n" +
+            String sqlcommandSelect3 = "DECLARE @UserId INT = " + userId + ";\n" +
                     "DECLARE @UserRole NVARCHAR(100);\n" +
-                    "SELECT @UserRole = r.roleName\n" +
-                    "FROM dbo.Users u\n" +
-                    "         JOIN dbo.Roles r ON u.roleID = r.id\n" +
-                    "WHERE u.id = @UserId;\n" +
-                    "\n" +
-                    "-- Get events based on role\n" +
-                    "SELECT DISTINCT\n" +
+                    "SELECT DISTINCT \n" +
                     "    e.id,\n" +
                     "    e.title,\n" +
                     "    e.startDateTime,\n" +
@@ -105,14 +97,22 @@ public class DALManager {
                     "    e.imgSrc,\n" +
                     "    e.createdBy\n" +
                     "FROM dbo.Events e\n" +
+                    "         LEFT JOIN dbo.EventCoordinators ec ON e.id = ec.eventID\n" +
                     "WHERE\n" +
-                    "    @UserRole = 'Admin'\n" +
-                    "   OR e.id IN (\n" +
-                    "    SELECT eventID\n" +
-                    "    FROM dbo.EventCoordinators\n" +
-                    "    WHERE coordinatorID = @UserId\n" +
-                    ")\n" +
-                    "ORDER BY e.startDateTime;";
+                    "    (\n" +
+                    "        -- If user is admin, show all\n" +
+                    "        (SELECT r.roleName FROM dbo.Users u\n" +
+                    "                                    JOIN dbo.Roles r ON u.roleID = r.id\n" +
+                    "         WHERE u.id = @UserId) = 'Admin'\n" +
+                    "            OR (\n" +
+                    "            e.startDateTime > SYSDATETIME() AND\n" +
+                    "            e.id IN (\n" +
+                    "                SELECT eventID FROM dbo.EventCoordinators\n" +
+                    "                WHERE coordinatorID = @UserId\n" +
+                    "            )\n" +
+                    "            )\n" +
+                    "        )\n" +
+                    "ORDER BY e.startDateTime;\n";
             PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect3);
             ResultSet rs = pstmtSelect.executeQuery();
             while (rs.next()) {
