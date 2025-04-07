@@ -277,7 +277,7 @@ public class AdminController
         card.setPadding(new Insets(10));
         card.setId("eventsCard");
 
-        ImageView eventImage = new ImageView(new Image(imagePath));
+        ImageView eventImage = bllManager.cropImage(new Image(imagePath));
         eventImage.setFitWidth(120);
         eventImage.setFitHeight(120);
         eventImage.setPreserveRatio(true);

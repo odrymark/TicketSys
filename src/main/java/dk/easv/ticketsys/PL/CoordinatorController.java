@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -162,11 +163,9 @@ public class CoordinatorController {
         card.setPadding(new Insets(10));
         card.setId("card");
 
-        ImageView eventImage = new ImageView(new Image(imagePath));
-        eventImage.setFitWidth(120);
-        eventImage.setFitHeight(120);
-        eventImage.setPreserveRatio(true);
-        eventImage.setId("Image");
+        Image image = new Image(imagePath);
+        ImageView eventImage = bllManager.cropImage(image);
+
 
         VBox eventDetails = new VBox(5);
         eventDetails.setAlignment(Pos.CENTER_LEFT);
@@ -321,6 +320,7 @@ public class CoordinatorController {
             System.out.println(e.getMessage());
         }
     }
+
 
 
 }
