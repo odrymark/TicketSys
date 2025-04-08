@@ -32,8 +32,8 @@
 
                                 <VBox spacing="8">
                                     <HBox alignment="CENTER_LEFT" spacing="10">
-                                        <Label styleClass="detail-label" text="Valid Until:" />
-                                        <Label fx:id="validDate" styleClass="value-label" />
+                                        <Label styleClass="detail-label" text="Date" />
+                                        <Label fx:id="Date" styleClass="value-label" />
                                     </HBox>
 
                                     <HBox alignment="CENTER_LEFT" spacing="10">

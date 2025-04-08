@@ -31,7 +31,7 @@ import java.util.Map;
 public class CouponController {
 
     @FXML private Label couponEvent;
-    @FXML private Label validDate;
+    @FXML private Label Date;
     @FXML private Label couponLocation;
     @FXML private Label couponHolder;
     @FXML private Label holderMail;
@@ -83,7 +83,7 @@ public class CouponController {
         if (event != null) {
             couponEvent.setText(event.getTitle());
             couponLocation.setText(event.getLocation());
-            validDate.setText(event.getStartDate());
+            Date.setText(event.getStartDate());
         }
 
         if (customer != null) {
