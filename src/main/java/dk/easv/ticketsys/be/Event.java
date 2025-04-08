@@ -1,6 +1,7 @@
 package dk.easv.ticketsys.be;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -116,7 +117,8 @@ public class Event {
     }
 
     public String getStartDate() {
-        return startDateTime.toString();
+        String formattedTime = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(getStartDateTime());
+        return formattedTime;
     }
 
     public String getEndDate() {
