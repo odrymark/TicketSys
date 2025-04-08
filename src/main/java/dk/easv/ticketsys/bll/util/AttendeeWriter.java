@@ -15,7 +15,8 @@ import java.time.format.DateTimeFormatter;
 
 public class AttendeeWriter {
     public static void exportAttendeesToFile(Event event, BLLManager bllManager) {
-        File attendeesFolder = new File("attendees");
+        String safeTitle = event.getTitle().replaceAll("[\\\\/:*?\"<>|\\s]", "_");
+        File attendeesFolder = new File("attendees" + File.separator + safeTitle);
         if (!attendeesFolder.exists()) {
             attendeesFolder.mkdirs();
         }
@@ -23,7 +24,6 @@ public class AttendeeWriter {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         String timestamp = LocalDateTime.now().format(formatter);
 
-        String safeTitle = event.getTitle().replaceAll("[\\\\/:*?\"<>|]", "_");
         File file = new File(attendeesFolder, safeTitle + "_Attendees_" + timestamp + ".txt");
 
         List<String> attendees = bllManager.getAttendees(event);
