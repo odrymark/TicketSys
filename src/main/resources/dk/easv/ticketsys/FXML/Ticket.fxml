@@ -31,12 +31,12 @@
 
                                 <VBox spacing="8">
                                     <HBox alignment="CENTER_LEFT" spacing="10">
-                                        <Label styleClass="detail-label" text="Date:" />
+                                        <Label styleClass="detail-label" text="Start Date:" />
                                         <Label fx:id="ticketDate" styleClass="value-label" />
                                     </HBox>
 
                                     <HBox alignment="CENTER_LEFT" spacing="10">
-                                        <Label styleClass="detail-label" text="Time:" />
+                                        <Label styleClass="detail-label" text="End Date" />
                                         <Label fx:id="ticketTime" styleClass="value-label" />
                                     </HBox>
 

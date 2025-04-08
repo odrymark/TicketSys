@@ -122,8 +122,10 @@ public class Event {
     }
 
     public String getEndDate() {
-        return endDateTime.toString();
+        String formattedTime = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(getEndDateTime());
+        return formattedTime;
     }
+
 
     public String imageSrc() {
         return imgSrc;

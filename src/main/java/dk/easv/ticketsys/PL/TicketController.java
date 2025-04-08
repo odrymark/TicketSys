@@ -58,7 +58,7 @@ public class TicketController {
     private void updateUI() {
         if (event != null) {
             ticketDate.setText(event.getStartDate());
-            ticketTime.setText(event.getStartDate());
+            ticketTime.setText(event.getEndDate());
             ticketLocation.setText(event.getLocation());
             ticketEvent.setText(event.getTitle());
         }
