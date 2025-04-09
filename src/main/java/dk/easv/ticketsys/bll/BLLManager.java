@@ -171,4 +171,8 @@ public class BLLManager {
     public ArrayList<User> getActiveCoordinators(int id) {
         return dalManager.getActiveCoordinators(id);
     }
+
+    public void saveEventCoordinatorsForEvent(ArrayList<Integer> userIds, int eventID) {
+        dalManager.saveEventCoordinatorsForEvent(userIds, eventID);
+    }
 }

@@ -242,3 +242,10 @@
     -fx-border-color: darkred; /* Darker red on focus */
     -fx-background-color: #ffcccc; /* Lighter background on focus */
 }
+
+.coordinator_button {
+    -fx-background-image: url("/dk/easv/ticketsys/Images/ppl.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: 20px;
+}

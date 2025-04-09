@@ -1,6 +1,7 @@
 package dk.easv.ticketsys.PL;
 
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.be.User;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
@@ -29,6 +30,7 @@ public class AddCoordinatorController implements Initializable {
     private ArrayList<User> allCoordinator;
     private int eventID;
     private HashMap<Integer, CheckBox> userCheckBoxMap;
+    private User loggedInUser;
 
 
 
@@ -39,6 +41,7 @@ public class AddCoordinatorController implements Initializable {
         } catch (TicketExceptions e) {
             throw new RuntimeException(e);
         }
+        loggedInUser = null;
         loadUsers();
     }
 
@@ -68,9 +71,22 @@ public class AddCoordinatorController implements Initializable {
         }
     }
 
-    @FXML private void btnSaveClicked(ActionEvent e, int eventID) {
+    @FXML private void btnSaveClicked(ActionEvent e) {
         //TODO: Save the selected coordinators for the event
-
+        ArrayList<Integer> userIds = new ArrayList<>();
+        for (Node node : vbUsers.getChildren()) {
+            if (node instanceof CheckBox) {
+                CheckBox cb = (CheckBox) node;
+                if (cb.isSelected()) {
+                    if (cb.isSelected()) {
+                        String name = cb.getText();
+                        System.out.println(cb.getText());
+                        userIds.add(Integer.valueOf(cb.getId()));
+                    }
+                }
+            }
+        }
+        bllManager.saveEventCoordinatorsForEvent(userIds, eventID);
         System.out.println("Saving...");
         //Closing the window
         ((Stage) ((Node) e.getSource()).getScene().getWindow()).close();
@@ -82,5 +98,9 @@ public class AddCoordinatorController implements Initializable {
         double usersWidth = vbUsers.getWidth();
         vbParent.setPrefHeight(usersHeight+50);
         vbParent.setPrefWidth(usersWidth+10);
+    }
+
+    public void setLoggedinUser(User loggedinUser) {
+        this.loggedInUser = loggedinUser;
     }
 }

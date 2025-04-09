@@ -575,21 +575,21 @@ public class DALManager {
         ArrayList<User> users = new ArrayList<>();
         try (Connection con = connectionManager.getConnection()) {
 
-            String sqlcommandSelect = "SELECT \n" +
-                    "    u.id AS userID,\n" +
-                    "    u.fullName,\n" +
-                    "    u.username,\n" +
-                    "    r.roleID\n" +
-                    "FROM dbo.EventCoordinators ec\n" +
-                    "JOIN dbo.Users u ON ec.coordinatorID = u.id\n" +
-                    "WHERE ec.eventID = ?;\n";
+            String sqlcommandSelect = "SELECT " +
+                    "    u.id AS userID, " +
+                    "    u.fullName, " +
+                    "    u.username, " +
+                    "    u.roleID " +
+                    "FROM dbo.EventCoordinators ec " +
+                    "JOIN dbo.Users u ON ec.coordinatorID = u.id " +
+                    "WHERE ec.eventID = ?;";
 
             PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect);
             pstmtSelect.setInt(1, eventId);
             ResultSet rs = pstmtSelect.executeQuery();
             while (rs.next()) {
                 User user = new User(
-                        rs.getInt("id"),
+                        rs.getInt("userID"),
                         rs.getString("username"),
                         rs.getString("fullName"),
                         rs.getInt("roleID")
@@ -601,4 +601,28 @@ public class DALManager {
         }
         return users;
     }
+
+    public void saveEventCoordinatorsForEvent(ArrayList<Integer> userIds, int eventID) {
+        String delete = "DELETE FROM EventCoordinators WHERE eventID = ?";
+        String insert = "INSERT INTO EventCoordinators (coordinatorID, eventID) VALUES (?, ?)";
+
+        try (Connection con = connectionManager.getConnection()){
+            con.setAutoCommit(false);
+            PreparedStatement pstDel = con.prepareStatement(delete);
+            pstDel.setInt(1, eventID);
+            PreparedStatement pstInsert = con.prepareStatement(insert);
+            for (Integer userId : userIds) {
+                pstInsert.setInt(1, userId);
+                pstInsert.setInt(2, eventID);
+                pstInsert.addBatch();
+            }
+            pstDel.execute();
+            pstInsert.executeBatch();
+            con.commit();
+            con.setAutoCommit(true);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+}
