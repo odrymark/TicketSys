@@ -163,4 +163,12 @@ public class BLLManager {
         eventImage.setId("Image");
         return eventImage;
     }
+
+    public ArrayList<User> getAllCoordinators() {
+        return dalManager.getAllCoordinators();
+    }
+
+    public ArrayList<User> getActiveCoordinators(int id) {
+        return dalManager.getActiveCoordinators(id);
+    }
 }

@@ -204,17 +204,19 @@ public class DALManager {
             if (event.getTicketTypes().size() > 0) {
 
                 String sql = "INSERT INTO EventTicket (event_id, ticket_type_id) VALUES (?, ?)";
-
-                try (PreparedStatement pstmtt = con.prepareStatement(sql);) {
+                String sqlCoordinator = "INSERT INTO EventCoordinators (coordinatorID, eventID) VALUES (?, ?)";
+                try (PreparedStatement pstmtt = con.prepareStatement(sql);
+                     PreparedStatement pstmtCoordinator = con.prepareStatement(sqlCoordinator)) {
                     con.setAutoCommit(false);
-
+                    pstmtCoordinator.setInt(1, event.getCreatedBy());
+                    pstmtCoordinator.setInt(2, newId);
                     for (TicketType ticketType : event.getTicketTypes()) {
                         pstmtt.setInt(1, newId);
                         pstmtt.setInt(2, ticketType.getId());
                         pstmtt.addBatch(); // Add insert statement to the batch
                     }
-
                     pstmtt.executeBatch();
+                    pstmtCoordinator.execute();
                     con.commit();
                     con.setAutoCommit(true);
                 } catch (SQLException e) {
@@ -541,11 +543,62 @@ public class DALManager {
                 emails.add(rs.getString("buyerEmail")
                 );
             }
-        } catch (SQLServerException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return emails;
     }
-}
+
+    public ArrayList<User> getAllCoordinators() {
+        ArrayList<User> users = new ArrayList<>();
+        try (Connection con = connectionManager.getConnection()) {
+            String sqlcommandSelect = "SELECT * FROM Users WHERE roleID = ?";
+            PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect);
+            pstmtSelect.setInt(1, 4);
+            ResultSet rs = pstmtSelect.executeQuery();
+            while (rs.next()) {
+                User user = new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("fullName"),
+                        rs.getInt("roleID")
+                );
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return users;
+    }
+
+    public ArrayList<User> getActiveCoordinators(int eventId) {
+        ArrayList<User> users = new ArrayList<>();
+        try (Connection con = connectionManager.getConnection()) {
+
+            String sqlcommandSelect = "SELECT \n" +
+                    "    u.id AS userID,\n" +
+                    "    u.fullName,\n" +
+                    "    u.username,\n" +
+                    "    r.roleID\n" +
+                    "FROM dbo.EventCoordinators ec\n" +
+                    "JOIN dbo.Users u ON ec.coordinatorID = u.id\n" +
+                    "WHERE ec.eventID = ?;\n";
+
+            PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect);
+            pstmtSelect.setInt(1, eventId);
+            ResultSet rs = pstmtSelect.executeQuery();
+            while (rs.next()) {
+                User user = new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("fullName"),
+                        rs.getInt("roleID")
+                );
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return users;
+    }
+    }
