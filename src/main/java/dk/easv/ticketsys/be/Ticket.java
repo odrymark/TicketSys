@@ -8,6 +8,7 @@ public class Ticket {
     private String barCode;
     private boolean printed;
     private int ticketType;
+    private int customerId;
 
     public Ticket(int id, int eventID, String buyerEmail, byte[] qrCode, String barCode, boolean printed, int ticketType) {
         this.id = id;
@@ -69,6 +70,13 @@ public class Ticket {
 
     public int getTicketType() {
         return ticketType;
+    }
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public void setTicketType(int ticketType) {

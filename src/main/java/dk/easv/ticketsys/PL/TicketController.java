@@ -109,6 +109,8 @@ public class TicketController {
                 false,
                 ticketType
         );
+        newTicket.setCustomerId(customer.getId());
+
 
         // Upload the ticket to the database
         int newTicketId = bllManager.uploadNewTicket(newTicket);

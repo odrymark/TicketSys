@@ -3,6 +3,7 @@ package dk.easv.ticketsys.PL;
 import dk.easv.ticketsys.Main;
 import dk.easv.ticketsys.be.Customer;
 import dk.easv.ticketsys.be.Event;
+import dk.easv.ticketsys.be.Ticket;
 import dk.easv.ticketsys.be.TicketType;
 import dk.easv.ticketsys.bll.BLLManager;
 import dk.easv.ticketsys.exceptions.TicketExceptions;
@@ -51,7 +52,7 @@ public class GetTicketController {
     public void setEvent(Event event) {
         this.event = event;
         eventTitleLabel.setText(event.getTitle());
-
+        loadCustomers();
     }
 
     @FXML
@@ -72,6 +73,58 @@ public class GetTicketController {
             int newId = bllManager.insertCustomer(name, email);
             if (newId > 0) {
                 System.out.println("Customer saved with ID: " + newId);
+
+                Customer newCustomer = new Customer(newId, name, email);
+                customersTable.getItems().add(newCustomer);
+
+                customerNameField.clear();
+                customerEmailField.clear();
+            } else {
+                showAlert("Database Error", "Failed to save customer.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to save customer: " + e.getMessage());
+        }
+    }
+
+
+/*
+    @FXML
+    private void addParticipant(ActionEvent actionEvent) {
+        String name = customerNameField.getText().trim();
+        String email = customerEmailField.getText().trim();
+
+        if (name.isEmpty()) {
+            showAlert("Invalid Name", "Please enter a valid name.");
+            return;
+        }
+        if (email.isEmpty() || !email.contains("@")) {
+            showAlert("Invalid Email", "Please enter a valid email address.");
+            return;
+        }
+
+        try {
+            int newId = bllManager.insertCustomer(name, email);
+            if (newId > 0) {
+                System.out.println("Customer saved with ID: " + newId);
+
+                Customer newCustomer = new Customer(newId, name, email);
+
+
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+
+            TicketController ticketController = loader.getController();
+            ticketController.getEvent(event);
+            ticketController.setCustomer(newCustomer);
+            ticketController.printTicket();
+            stage.showAndWait();
+
+
                 customerNameField.clear();
                 customerEmailField.clear();
                 loadCustomers();
@@ -83,6 +136,7 @@ public class GetTicketController {
             showAlert("Database Error", "Failed to save customer: " + e.getMessage());
         }
     }
+*/
 
     @FXML
     private void deleteParticipant(ActionEvent actionEvent) {
@@ -107,13 +161,19 @@ public class GetTicketController {
 
     private void loadCustomers() {
         try {
-            List<Customer> customerList = bllManager.getAllCustomers();
+            if (event == null) {
+                return;
+            }
+
+            List<Customer> customerList = bllManager.getCustomersForEvent(event.getId());
             customersTable.setItems(FXCollections.observableArrayList(customerList));
+
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Error", "Failed to load customers: " + e.getMessage());
+            showAlert("Error", "Failed to load event's customers: " + e.getMessage());
         }
     }
+
 
     @FXML
     private void getTicket(ActionEvent actionEvent) {

@@ -164,6 +164,10 @@ public class BLLManager {
         return eventImage;
     }
 
+    public List<Customer> getCustomersForEvent(int eventId) {
+        return dalManager.getCustomersForEvent(eventId);
+    }
+
     public ArrayList<User> getAllCoordinators() {
         return dalManager.getAllCoordinators();
     }

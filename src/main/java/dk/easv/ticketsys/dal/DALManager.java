@@ -375,16 +375,16 @@ public class DALManager {
     public int uploadNewTicket(Ticket ticket) {
         int newId = 0;
         try (Connection con = connectionManager.getConnection()) {
-            String sqlInsertCommand = "INSERT INTO Tickets (eventID, buyerEmail, qrCode, barCode, printed, ticketType) " +
-                    "OUTPUT INSERTED.ID " +
-                    "VALUES (?, ?, ?, ?, ?, ?);";
+            String sqlInsertCommand = "INSERT INTO Tickets (eventID, customerId, qrCode, barCode, printed, ticketType) " +
+                    "OUTPUT INSERTED.ID VALUES (?, ?, ?, ?, ?, ?);";
             PreparedStatement pstmtInsert = con.prepareStatement(sqlInsertCommand);
             pstmtInsert.setInt(1, ticket.getEventID());
-            pstmtInsert.setString(2, ticket.getBuyerEmail());
+            pstmtInsert.setInt(2, ticket.getCustomerId());
             pstmtInsert.setBytes(3, ticket.getQrCode());
             pstmtInsert.setString(4, ticket.getBarCode());
             pstmtInsert.setBoolean(5, ticket.isPrinted());
             pstmtInsert.setInt(6, ticket.getTicketType());
+
             ResultSet rs = pstmtInsert.executeQuery();
             if (rs.next()) {
                 newId = rs.getInt(1);
@@ -394,6 +394,7 @@ public class DALManager {
             throw new RuntimeException(e);
         }
     }
+
 
     public int insertCustomer(String name, String email) {
         int newId = 0;
@@ -429,6 +430,32 @@ public class DALManager {
         }
         return customers;
     }
+    public List<Customer> getCustomersForEvent(int eventId) {
+        List<Customer> customers = new ArrayList<>();
+        try (Connection con = connectionManager.getConnection()) {
+            String sql = """
+            SELECT DISTINCT c.id, c.name, c.email
+            FROM Tickets t
+            JOIN Customers c ON c.id = t.customerId
+            WHERE t.eventID = ?
+        """;
+
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, eventId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                customers.add(new Customer(id, name, email));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get customers for event with id=" + eventId, e);
+        }
+        return customers;
+    }
+
 
     public boolean deleteCustomer(int id) {
         try (Connection con = connectionManager.getConnection()) {
