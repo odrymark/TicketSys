@@ -54,7 +54,7 @@ public class GetTicketController {
         eventTitleLabel.setText(event.getTitle());
         loadCustomers();
     }
-
+/*
     @FXML
     private void addParticipant(ActionEvent actionEvent) {
         String name = customerNameField.getText().trim();
@@ -87,9 +87,9 @@ public class GetTicketController {
             showAlert("Database Error", "Failed to save customer: " + e.getMessage());
         }
     }
+*/
 
 
-/*
     @FXML
     private void addParticipant(ActionEvent actionEvent) {
         String name = customerNameField.getText().trim();
@@ -136,7 +136,7 @@ public class GetTicketController {
             showAlert("Database Error", "Failed to save customer: " + e.getMessage());
         }
     }
-*/
+
 
     @FXML
     private void deleteParticipant(ActionEvent actionEvent) {
