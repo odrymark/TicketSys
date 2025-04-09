@@ -54,8 +54,6 @@ public class AdminController
     private User userToEdit;
     private Map<String, HBox> userCardMap;
 
-
-
     private User loggedInUser;
 
     private BLLManager bllManager;
@@ -319,7 +317,16 @@ public class AdminController
             events.remove(card);
         });
 
-        controls.getChildren().addAll(/**ticketBtn, */infoBtn, deleteBtn);
+        Button addCoordinatorBtn = new Button("");
+        addCoordinatorBtn.setId("cardButton");
+        addCoordinatorBtn.getStyleClass().add("cardButton");
+        addCoordinatorBtn.getStyleClass().add("coordinator_button");
+        addCoordinatorBtn.setOnAction(e -> {
+            OpenCoordinatorWindow open = new OpenCoordinatorWindow(event, loggedInUser);
+            //openCoordinatorWindow(event);
+        });
+
+        controls.getChildren().addAll(/**ticketBtn, */infoBtn, deleteBtn, addCoordinatorBtn);
         eventDetails.getChildren().addAll(titleLabel, locationLabel, dateLabel, controls);
         card.getChildren().addAll(eventImage, eventDetails);
 

@@ -220,7 +220,8 @@ public class CoordinatorController {
         addCoordinatorBtn.getStyleClass().add("cardButton");
         addCoordinatorBtn.getStyleClass().add("coordinator_button");
         addCoordinatorBtn.setOnAction(e -> {
-            openCoordinatorWindow(event);
+            OpenCoordinatorWindow open = new OpenCoordinatorWindow(event, loggedinUser);
+            //openCoordinatorWindow(event);
         });
 
         controls.getChildren().addAll(ticketBtn, editBtn, deleteBtn, exportBtn, addCoordinatorBtn);
@@ -330,21 +331,7 @@ public class CoordinatorController {
         }
     }
 
-    private void openCoordinatorWindow(Event event) {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("FXML/add_coordinator.fxml"));
-        try {
-            Scene scene = new Scene(fxmlLoader.load());
-            AddCoordinatorController controller = fxmlLoader.getController();
-            controller.setLoggedinUser(loggedinUser);
-            controller.getCoordinators(event);
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.showAndWait();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
 
 }

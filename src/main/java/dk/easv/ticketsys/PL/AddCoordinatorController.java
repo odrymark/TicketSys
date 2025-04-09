@@ -15,6 +15,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -64,11 +65,16 @@ public class AddCoordinatorController implements Initializable {
         this.eventID = event.getId();
         ArrayList<User> coordinators = bllManager.getActiveCoordinators(eventID);
         lblEventName.setText(event.getTitle());
-        for (User coordinator : coordinators) {
-            System.out.println(coordinator.toString());
-            CheckBox cb = userCheckBoxMap.get(coordinator.getId());
-            cb.setSelected(true);
-        }
+        if (coordinators.size() > 0)
+            for (User coordinator : coordinators) {
+                System.out.println(coordinator.toString());
+                CheckBox cb = userCheckBoxMap.get(coordinator.getId());
+                if (cb == null) {
+                    throw new IllegalArgumentException("Checkbox or coordinator does not exist.");
+                }
+                cb.setSelected(true);
+
+            }
     }
 
     @FXML private void btnSaveClicked(ActionEvent e) {

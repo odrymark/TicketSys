@@ -247,5 +247,8 @@
     -fx-background-image: url("/dk/easv/ticketsys/Images/ppl.png");
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
-    -fx-background-size: 20px;
+    -fx-background-size: 25px;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
+
 }
