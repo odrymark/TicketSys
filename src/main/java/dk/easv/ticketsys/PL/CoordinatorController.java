@@ -181,10 +181,11 @@ public class CoordinatorController {
         Label dateLabel = new Label("\uD83D\uDD52 " + event.getStartDate());
         dateLabel.setId("cardTextDate");
 
-        Button editBtn = new Button("\uD83D\uDD89");
+        Button editBtn = new Button("");
         editBtn.setFont(new Font("Arial", 16));
         editBtn.setMinWidth(45);
         editBtn.setId("cardButton");
+        editBtn.getStyleClass().add("edit_button");
         editBtn.setOnAction(e -> {
             openEventEditPage(event, e);
         });
@@ -197,9 +198,10 @@ public class CoordinatorController {
         ticketBtn.setOnAction(_ -> openTicket(event));
         ticketBtn.setId("cardButton");
 
-        Button deleteBtn = new Button("\uD83D\uDDD1");
+        Button deleteBtn = new Button("");
         deleteBtn.setMinWidth(40);
         deleteBtn.setId("cardButton");
+        deleteBtn.getStyleClass().add("delete_button");
         deleteBtn.setFont(new Font("Arial", 16));
         deleteBtn.setOnAction(e -> {
             bllManager.deleteEvent(event);
@@ -207,10 +209,12 @@ public class CoordinatorController {
             events.remove(card);
         });
 
-        Button exportBtn = new Button("Export attendees");
+        Button exportBtn = new Button("");
         exportBtn.setMinWidth(40);
         exportBtn.setId("cardButton");
         exportBtn.setFont(new Font("Arial", 14));
+        exportBtn.getStyleClass().add("cardButton");
+        exportBtn.getStyleClass().add("list_button");
         exportBtn.setOnAction(e -> {
             AttendeeWriter.exportAttendeesToFile(event, bllManager);
         });
