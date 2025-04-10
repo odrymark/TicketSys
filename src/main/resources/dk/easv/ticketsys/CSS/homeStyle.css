@@ -244,11 +244,34 @@
 }
 
 .coordinator_button {
-    -fx-background-image: url("/dk/easv/ticketsys/Images/ppl.png");
+    -fx-background-image: url("/dk/easv/ticketsys/Images/people.png");
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-size: 25px;
     -fx-min-height: 30px;
     -fx-min-width: 30px;
-
+}
+.list_button {
+    -fx-background-image: url("/dk/easv/ticketsys/Images/list.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: 25px;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
+}
+.delete_button {
+    -fx-background-image: url("/dk/easv/ticketsys/Images/delete.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: 25px;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
+}
+.edit_button {
+    -fx-background-image: url("/dk/easv/ticketsys/Images/edit.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: 25px;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
 }
