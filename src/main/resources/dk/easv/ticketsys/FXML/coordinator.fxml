@@ -13,17 +13,25 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<StackPane fx:id="stackP" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.CoordinatorController">
+<StackPane fx:id="stackP" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dk.easv.ticketsys.PL.CoordinatorController">
    <children>
       <HBox fx:id="coord" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="790.0" stylesheets="@../CSS/homeStyle.css">
          <children>
             <VBox fx:id="leftBox" prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label fx:id="title" text="EASV TICKET" />
+                  <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/EASV_logo.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets left="14.0" top="15.0" />
+                     </VBox.margin>
+                  </ImageView>
                   <Button fx:id="sideBtnSelected" mnemonicParsing="false" prefHeight="25.0" prefWidth="109.0" text="My Events">
                      <graphic>
-                        <ImageView fitHeight="15.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../Images/events.png" />
                            </image>
@@ -32,6 +40,9 @@
                      <VBox.margin>
                         <Insets left="7.0" top="12.0" />
                      </VBox.margin>
+                     <font>
+                        <Font size="13.0" />
+                     </font>
                   </Button>
                </children>
             </VBox>
@@ -100,6 +111,5 @@
             </VBox>
          </children>
       </HBox>
-      <HBox fx:id="hboxSnack" disable="true" prefHeight="100.0" prefWidth="200.0" visible="false" />
    </children>
 </StackPane>

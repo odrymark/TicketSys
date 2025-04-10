@@ -116,6 +116,7 @@
     -fx-border-radius: 10px;
     -fx-border-color: #E0E0E0;
     -fx-border-width: 1px;
+    -fx-translate-x: -20px;
 }
 #search
 {
