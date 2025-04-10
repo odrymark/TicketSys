@@ -19,6 +19,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 public class GetTicketController {
@@ -54,7 +55,8 @@ public class GetTicketController {
         eventTitleLabel.setText(event.getTitle());
         loadCustomers();
     }
-/*
+
+
     @FXML
     private void addParticipant(ActionEvent actionEvent) {
         String name = customerNameField.getText().trim();
@@ -77,6 +79,8 @@ public class GetTicketController {
                 Customer newCustomer = new Customer(newId, name, email);
                 customersTable.getItems().add(newCustomer);
 
+                createTicketWithoutUI(newCustomer);
+
                 customerNameField.clear();
                 customerEmailField.clear();
             } else {
@@ -87,55 +91,41 @@ public class GetTicketController {
             showAlert("Database Error", "Failed to save customer: " + e.getMessage());
         }
     }
-*/
 
 
-    @FXML
-    private void addParticipant(ActionEvent actionEvent) {
-        String name = customerNameField.getText().trim();
-        String email = customerEmailField.getText().trim();
-
-        if (name.isEmpty()) {
-            showAlert("Invalid Name", "Please enter a valid name.");
-            return;
-        }
-        if (email.isEmpty() || !email.contains("@")) {
-            showAlert("Invalid Email", "Please enter a valid email address.");
-            return;
-        }
-
+    private void createTicketWithoutUI(Customer customer) {
         try {
-            int newId = bllManager.insertCustomer(name, email);
-            if (newId > 0) {
-                System.out.println("Customer saved with ID: " + newId);
+            String ticketInfo = "Event: " + event.getTitle() + "\n" +
+                    "Date: " + event.getStartDate() + "\n" +
+                    "Location: " + event.getLocation() + "\n" +
+                    "Holder: " + customer.getName();
 
-                Customer newCustomer = new Customer(newId, name, email);
+            byte[] qrCodeData = ticketInfo.getBytes();
+            String barCodeData = Base64.getEncoder().encodeToString(ticketInfo.getBytes());
 
+            Ticket ticket = new Ticket(
+                    0,
+                    event.getId(),
+                    customer.getEmail(),
+                    qrCodeData,
+                    barCodeData,
+                    false,
+                    17
+            );
+            ticket.setCustomerId(customer.getId());
 
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("/dk/easv/ticketsys/FXML/ticket.fxml"));
-            Scene scene = new Scene(loader.load());
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-
-            TicketController ticketController = loader.getController();
-            ticketController.getEvent(event);
-            ticketController.setCustomer(newCustomer);
-            ticketController.printTicket();
-            stage.showAndWait();
-
-
-                customerNameField.clear();
-                customerEmailField.clear();
-                loadCustomers();
+            int ticketId = bllManager.uploadNewTicket(ticket);
+            if (ticketId > 0) {
+                System.out.println("Ticket saved WITHOUT PDF with ID: " + ticketId);
             } else {
-                showAlert("Database Error", "Failed to save customer.");
+                System.out.println("Error saving ticket without PDF.");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Database Error", "Failed to save customer: " + e.getMessage());
+            showAlert("Error", "Ticket creation failed: " + e.getMessage());
         }
     }
+
 
 
     @FXML
@@ -149,6 +139,7 @@ public class GetTicketController {
             boolean deleted = bllManager.deleteCustomer(selectedCustomer.getId());
             if (deleted) {
                 System.out.println("Customer deleted successfully.");
+                customersTable.getSelectionModel().clearSelection();
                 loadCustomers();
             } else {
                 showAlert("Delete Error", "Failed to delete customer.");
@@ -167,6 +158,7 @@ public class GetTicketController {
 
             List<Customer> customerList = bllManager.getCustomersForEvent(event.getId());
             customersTable.setItems(FXCollections.observableArrayList(customerList));
+            customersTable.getSelectionModel().clearSelection();
 
         } catch (Exception e) {
             e.printStackTrace();
