@@ -562,13 +562,16 @@ public class DALManager {
     public List<String> getBuyerEmailsByTicketId(Event event) {
         List<String> emails = new ArrayList<>();
         try (Connection con = connectionManager.getConnection()) {
-            String sqlcommandSelect = "SELECT buyerEmail FROM Tickets WHERE eventId = ?";
+            String sqlcommandSelect = "SELECT c.name AS CustomerName, " +
+            "c.email AS CustomerEmail FROM dbo.Tickets t " +
+            "JOIN dbo.Customers c ON t.customerId = c.id WHERE t.eventID = ?";
             PreparedStatement pstmtSelect = con.prepareStatement(sqlcommandSelect);
             pstmtSelect.setInt(1, event.getId());
             ResultSet rs = pstmtSelect.executeQuery();
             while (rs.next()) {
-                emails.add(rs.getString("buyerEmail")
-                );
+                String toAdd = rs.getString("CustomerName") +
+                        " - " + rs.getString("CustomerEmail");
+                emails.add(toAdd);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
